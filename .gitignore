@@ -1,0 +1,10 @@
+# Compiled sorces
+obj/**
+!obj/.keep
+
+# executables
+bin/**
+!bin/.keep
+
+# IDE project files
+.geanyprj
