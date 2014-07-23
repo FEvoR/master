@@ -8,3 +8,9 @@ bin/**
 
 # IDE project files
 .geanyprj
+
+# temporary skratch files
+skratch.tex
+
+# temporary ubuntu files
+*~

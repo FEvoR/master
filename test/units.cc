@@ -6,13 +6,17 @@
 int main()
 {
     // Test the interface to fevor_crystal class
-        std::vector<double> ca1 = {1,0,0};
-        double cs = 1;
-        long double cdd = 10;
-        
-        fevor_crystal c1(ca1,cs,cdd);
+        fevor_crystal c1(std::vector<double> {1,0,0},1,10);
         c1.seeCrystal();
-    
+        double T = -9;
+        double t = 1e25;
+        double k = c1.grow(T, t);
+        std::cout << "Growth constant: " << k << std::endl;
+        
+        c1.dislocate(t, 1, k);
+        
+        c1.seeCrystal();
+        
     return 0;
 }
 

@@ -9,12 +9,28 @@
 
 class fevor_crystal {
     public:
-        // constructors
+    // constructors
         fevor_crystal() = default;
-        fevor_crystal(std::vector<double> ca, double cs, long double cdd):
-            cAxis(ca), cSize(cs), cDislDens(cdd) {/* TODO: test validity of inputs */}
+        fevor_crystal(std::vector<double> ca, double cs, double cdd):
+            cAxis(ca), cSize(cs), cDislDens(cdd) {
+                cTimeLastRecrystal = 0;
+                cSizeLastRecrystal = cSize;
+            }
         
-        // functions
+    // functions
+        void resolveScalar();
+        
+        // grow the crystal
+        double grow(const double &Tempature, const double &stepTime);
+        // get new dislocation density
+        void dislocate(const double &timeStep, const double &Medot, const double &K);
+        // migration recrystallize if favorable to do so
+        void MigRe();
+        // polygonize if favorable to do so
+        void polygonize();
+        
+        void resolveM();
+        
         void seeCrystal();
         
         
@@ -22,9 +38,13 @@ class fevor_crystal {
         // holds the crystals c-axis orientation vector in cartesian coordinates
         std::vector<double> cAxis; // unit vector
         // holds the size of the crystal
-        double cSize; // unit: m
+        double cSize; // units: m
         // holds the dislocation density of the crystal
-        long double cDislDens; // unit: #/m^2
+        double cDislDens; // units: #/m^2
+        // holds the time of last recrystallization
+        double cTimeLastRecrystal; // units: #/m^2
+        // holds the cSize at last recrystallization
+        double cSizeLastRecrystal; // units: m
         
         // Static members that are needed to compute member functions
         
