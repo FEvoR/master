@@ -15,30 +15,22 @@ class fevor_crystal {
             cAxis(ca), cSize(cs), cDislDens(cdd) {/* TODO: test validity of inputs */}
         
         // functions
-        void seeCrystal() { 
-            
-            std::cout << "The C-Axis orientation is:" << std::endl;
-            for (auto i : cAxis)
-                std::cout << i << " ";
-            std::cout << std::endl;
-            
-            std::cout << "The crystal size is:" << std::endl;
-            std::cout << cSize << " m" << std::endl;
-            
-            std::cout << "The crystal dislocation density is:" << std::endl;
-            std::cout << cDislDens << " m^{-2}" << std::endl;
-        }
+        void seeCrystal();
         
         
     private:
         // holds the crystals c-axis orientation vector in cartesian coordinates
         std::vector<double> cAxis; // unit vector
-        
         // holds the size of the crystal
         double cSize; // unit: m
-        
         // holds the dislocation density of the crystal
         long double cDislDens; // unit: #/m^2
+        
+        // Static members that are needed to compute member functions
+        
+        
+        
+        // Default values for static members
 };
 
 
