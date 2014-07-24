@@ -25,7 +25,7 @@ class fevor_crystal {
         // get new dislocation density
         void dislocate(const double &timeStep, const double &Medot, const double &K);
         // migration recrystallize if favorable to do so
-        void MigRe();
+        void migRe(const double &Estress, const double &modelTime, const double &timeStep);
         // polygonize if favorable to do so
         void polygonize();
         

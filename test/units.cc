@@ -13,7 +13,11 @@ int main()
         double k = c1.grow(T, t);
         std::cout << "Growth constant: " << k << std::endl;
         
-        c1.dislocate(t, 1, k);
+        c1.dislocate(1, 1, k);
+        
+        c1.seeCrystal();
+        
+        c1.migRe(1, t, t);
         
         c1.seeCrystal();
         
