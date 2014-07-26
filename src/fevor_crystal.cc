@@ -8,6 +8,47 @@
 
 // Define function members
 
+void fevor_crystal::resolveM(const double &Medot, const double &Mrss) {
+    double glenExp = 3;
+    double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
+    double beta = 630; // from Thors 2001 paper (pg 510, above eqn 16)
+    
+    double A = 0;
+    if (temperature > -10) {
+        double Q = 115;
+        A = 24e-25*beta*exp(-Q/(R*(273.13+temperature))); // units: s^{-1} Pa^{-n}
+    } else {
+        double Q = 60;
+        A = 3.5e-25*beta*exp(-Q/(R*(273.13+temperature))); // units: s^{-1} Pa^{-n}
+    }
+    // From Cuffy + Patterson (4 ed.) pg. 73
+    
+    // Burgers vector for each slip system
+    if ((cAxis[1] == 0) && (cAxis[2] == 0)) {
+        std::vector<double> burger1 = {1/3,0,0};
+        std::vector<double> burger2 = {(1+sqrt(3))/6,-sqrt(3)/6,0};
+        std::vector<double> burger3 = {(1-sqrt(3))/6,sqrt(3)/6,0};
+    } else {
+        double xyline = sqrt(cAxis[0]*cAxis[0]+cAxis[1]*cAxis[1]);
+        
+        std::vector<double> burger1 = {cAxis[0]*cAxis[2]/xyline/3,
+                                       cAxis[1]*cAxis[2]/xyline/3,
+                                       -xyline/3};
+        
+        std::vector<double> burger2 = {burger1[0]/2+sqrt(3)*cAxis[1]/xyline/6,
+                                       burger1[1]/2-sqrt(3)*cAxis[0]/xyline/6,
+                                       -xyline/6};
+        
+        std::vector<double> burger3 = {burger1[0]/2-sqrt(3)*cAxis[1]/xyline/6,
+                                       burger1[1]/2+sqrt(3)*cAxis[0]/xyline/6,
+                                       -xyline/6};
+    }
+    
+    
+    
+    
+}
+
 double fevor_crystal::grow(const double &tempature, const double &modelTime) {
     double K_0 = 8.2e-9; // units: m^2 s^{-1}
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
@@ -16,7 +57,7 @@ double fevor_crystal::grow(const double &tempature, const double &modelTime) {
         Q = 0.7*115; // units: kJ mol^{-1}
     else
         Q = 0.7*60; // units: kJ mol^{-1}
-        // From Kuffy + Patterson (4 ed.) pg. 40
+        // From Cuffy + Patterson (4 ed.) pg. 40
     
     double K = 0;
     K  = K_0*exp(-Q/(R*(273.13+tempature))); // units: m^2 s^{-1}
@@ -29,7 +70,7 @@ double fevor_crystal::grow(const double &tempature, const double &modelTime) {
 
 
 void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const double &K) {
-    double b = 4.5-10; // units: m
+    double b = 4.5e-10; // units: m
     double alpha = 1; // units: -
         // Thor. 2002: constant grater than 1. However, everyone just uses 1:
             // Thor 2002, De La Chapelle 1998, Montagnant 2000
@@ -39,8 +80,6 @@ void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const
     // Change in disloation density
     rhoDot = Medot/(b*cSize) - alpha*cDislDens*K/(cSize*cSize);  // units: m^{-2} s^{-1}
     
-    std::cout << "\n rhoDot: " << rhoDot << "\n" << std::endl;
-    
     cDislDens = cDislDens + rhoDot*timeStep; // units: m^{-2}
     
     // set boundary condition -- can't have a negative dislocation density
@@ -48,7 +87,7 @@ void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const
         cDislDens = 0; // units: m^{-2}
 }
 
-void fevor_crystal::migRe(const double &Estress, const double &modelTime, const double &timeStep) {
+unsigned int fevor_crystal::migRe(const double &Mstress, const double &modelTime, const double &timeStep) {
     double Ggb = 0.065; // units: J m^{-2}
     double G = 3.4e9; // units: Pa
     double b = 4.5e-10; //units: m
@@ -84,22 +123,43 @@ void fevor_crystal::migRe(const double &Estress, const double &modelTime, const 
     Edis = kappa*G*cDislDens*b*b; // units: J m^{-3}
     
     if (Edis <= Egb)
-        return;
+        return 0;
 
     cDislDens = 1e10; // units: m^{-2} 
     
     double PC = 1; // units Pa^{4/3} m 
         // Shimizu 2008
-    cSize = PC*Estress; // units: m
+    cSize = PC*Mstress; // units: m
     
-    // TODO: select an orientation!    
+    // TODO: select an orientation!
+        // Should be close to max MRSS
     
     cTimeLastRecrystal = modelTime+timeStep;
     cSizeLastRecrystal = cSize;
     
+    return 1;
 }
 
-//~ void fevor_crystal::polygonize();
+unsigned int fevor_crystal::polygonize(const double &Mstress, const double &Mrss, const double &modelTime, const double &timeStep) {
+    double del = 0.065; // units: - 
+        // ratio threshold -- Thor. 2002 [26]
+    double rhop = 5.4e10; // units: m^{-2} 
+        // dislocation density needed to form a wall -- Thor. 2002 [26]
+    
+    if (Mrss/Mstress >= del || cDislDens < rhop)
+        return 0;
+    
+    cDislDens -= rhop;
+    cSize /= 2;
+    
+    // TODO: select an orientation!
+        // Should be toward max MRSS -- away from vertical in uni. comp. 
+    
+    cTimeLastRecrystal = modelTime+timeStep;
+    cSizeLastRecrystal = cSize;
+    
+    return 1;
+}
 
 
 

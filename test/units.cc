@@ -11,13 +11,19 @@ int main()
         double T = -9;
         double t = 1e25;
         double k = c1.grow(T, t);
-        std::cout << "Growth constant: " << k << std::endl;
+        std::cout << "\n Growth constant: " << k << "\n " << std::endl;
         
         c1.dislocate(1, 1, k);
         
         c1.seeCrystal();
         
-        c1.migRe(1, t, t);
+        unsigned int numberMigRe = 0;
+        numberMigRe += c1.migRe(1, t, t);
+        std::cout << "\n Times MigRed: " << numberMigRe << "\n " << std::endl;
+        
+        unsigned int numberPoly = 0;
+        numberPoly += c1.polygonize(1, 1, t, t);
+        std::cout << "\n Times Polygonized: " << numberPoly << "\n " << std::endl;
         
         c1.seeCrystal();
         

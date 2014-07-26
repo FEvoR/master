@@ -18,18 +18,16 @@ class fevor_crystal {
             }
         
     // functions
-        void resolveScalar();
-        
+        // get the strain-stress relation tensor (4th order)
+        void resolveM();
         // grow the crystal
-        double grow(const double &Tempature, const double &stepTime);
+        double grow(const double &Tempature, const double &modelTime);
         // get new dislocation density
         void dislocate(const double &timeStep, const double &Medot, const double &K);
         // migration recrystallize if favorable to do so
-        void migRe(const double &Estress, const double &modelTime, const double &timeStep);
+        unsigned int migRe(const double &Mstress, const double &modelTime, const double &timeStep);
         // polygonize if favorable to do so
-        void polygonize();
-        
-        void resolveM();
+        unsigned int polygonize(const double &Mstress, const double &Mrss, const double &modelTime, const double &timeStep);
         
         void seeCrystal();
         
