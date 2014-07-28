@@ -19,7 +19,7 @@ class fevor_crystal {
         
     // functions
         // get the strain-stress relation tensor (4th order)
-        void resolveM();
+        std::vector<double> resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss);
         // grow the crystal
         double grow(const double &Tempature, const double &modelTime);
         // get new dislocation density

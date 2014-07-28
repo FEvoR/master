@@ -4,11 +4,14 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
+#include <numeric>
+#include <algorithm>
 #include "fevor_crystal.hh"
+#include "vector_tensor_opperations.hh"
 
 // Define function members
 
-void fevor_crystal::resolveM(const double &Medot, const double &Mrss) {
+std::vector<double> fevor_crystal::resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss) {
     double glenExp = 3;
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
     double beta = 630; // from Thors 2001 paper (pg 510, above eqn 16)
@@ -24,28 +27,74 @@ void fevor_crystal::resolveM(const double &Medot, const double &Mrss) {
     // From Cuffy + Patterson (4 ed.) pg. 73
     
     // Burgers vector for each slip system
+    std::vector<double> burger1, burger2, burger3;
     if ((cAxis[1] == 0) && (cAxis[2] == 0)) {
-        std::vector<double> burger1 = {1/3,0,0};
-        std::vector<double> burger2 = {(1+sqrt(3))/6,-sqrt(3)/6,0};
-        std::vector<double> burger3 = {(1-sqrt(3))/6,sqrt(3)/6,0};
+        burger1 = {1/3,0,0};
+        burger2 = {(1+sqrt(3))/6,-sqrt(3)/6,0};
+        burger3 = {(1-sqrt(3))/6,sqrt(3)/6,0};
     } else {
         double xyline = sqrt(cAxis[0]*cAxis[0]+cAxis[1]*cAxis[1]);
         
-        std::vector<double> burger1 = {cAxis[0]*cAxis[2]/xyline/3,
-                                       cAxis[1]*cAxis[2]/xyline/3,
-                                       -xyline/3};
+        burger1 = {cAxis[0]*cAxis[2]/xyline/3,
+                   cAxis[1]*cAxis[2]/xyline/3,
+                   -xyline/3};
         
-        std::vector<double> burger2 = {burger1[0]/2+sqrt(3)*cAxis[1]/xyline/6,
-                                       burger1[1]/2-sqrt(3)*cAxis[0]/xyline/6,
-                                       -xyline/6};
+        burger2 = {burger1[0]/2+sqrt(3)*cAxis[1]/xyline/6,
+                   burger1[1]/2-sqrt(3)*cAxis[0]/xyline/6,
+                   -xyline/6};
         
-        std::vector<double> burger3 = {burger1[0]/2-sqrt(3)*cAxis[1]/xyline/6,
-                                       burger1[1]/2+sqrt(3)*cAxis[0]/xyline/6,
-                                       -xyline/6};
+        burger3 = {burger1[0]/2-sqrt(3)*cAxis[1]/xyline/6,
+                   burger1[1]/2+sqrt(3)*cAxis[0]/xyline/6,
+                   -xyline/6};
     }
     
+    // calculate shmidt tensors
+        // 1x6 vector containing the 6 independent elements of the 3x3 
+        // shmidt tensor (upper triangle) in ROW-MAJOR order. 
+    std::vector<double> shmidt1, shmidt2,shmidt3;
+    shmidt1 = vectorOuter(burger1,cAxis);
+    shmidt2 = vectorOuter(burger2,cAxis);
+    shmidt3 = vectorOuter(burger3,cAxis);
+    
+    std::vector<double> Mbase1, Mbase2, Mbase3;
+    Mbase1 = tensorOuter(shmidt1, shmidt1);
+    Mbase2 = tensorOuter(shmidt2, shmidt2);
+    Mbase3 = tensorOuter(shmidt3, shmidt3);
+    
+    double rss1, rss2,rss3;
+    rss1 = std::inner_product(shmidt1.cbegin(),shmidt1.cend(), stress.cbegin(), 0);
+    rss2 = std::inner_product(shmidt2.cbegin(),shmidt2.cend(), stress.cbegin(), 0);
+    rss3 = std::inner_product(shmidt3.cbegin(),shmidt3.cend(), stress.cbegin(), 0);
+    
+    std::transform(burger1.begin(),burger1.end(),burger1.begin(), 
+                    [&](double x){return x*rss1;});
+    std::transform(burger2.begin(),burger2.end(),burger2.begin(), 
+                    [&](double x){return x*rss2;});
+    std::transform(burger3.begin(),burger3.end(),burger3.begin(), 
+                    [&](double x){return x*rss3;});
+    
+    std::transform(burger1.begin(),burger1.end(),burger2.begin(), burger1.begin(),
+                    std::plus<double>());
+    std::transform(burger1.begin(),burger1.end(),burger3.begin(), burger1.begin(),
+                    std::plus<double>());
+    
+    Mrss = tensorMagnitude(burger1);
     
     
+    std::transform(Mbase1.begin(), Mbase1.end(), Mbase1.begin(), 
+                   [&](double x){return A*pow(rss1,glenExp-1)*x;} );
+    std::transform(Mbase2.begin(), Mbase2.end(), Mbase2.begin(), 
+                   [&](double x){return A*pow(rss2,glenExp-1)*x;} );
+    std::transform(Mbase3.begin(), Mbase3.end(), Mbase3.begin(), 
+                   [&](double x){return A*pow(rss3,glenExp-1)*x;} );
+                   
+    
+    std::transform(Mbase1.begin(), Mbase1.end(), Mbase2.begin(),Mbase1.begin(), 
+                   std::plus<double>());
+    std::transform(Mbase1.begin(), Mbase1.end(), Mbase3.begin(),Mbase1.begin(), 
+                   std::plus<double>());
+    
+    return Mbase1;
     
 }
 
@@ -166,7 +215,7 @@ unsigned int fevor_crystal::polygonize(const double &Mstress, const double &Mrss
 void fevor_crystal::seeCrystal() { 
     
     std::cout << "The C-Axis orientation is:" << std::endl;
-    for (auto i : cAxis)
+    for (auto &i : cAxis)
         std::cout << i << " ";
     std::cout << std::endl;
 
