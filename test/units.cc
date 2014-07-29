@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "../src/fevor_crystal.hh"
-    // FIXME: bad practice! Fix includes.
+#include "fevor_crystal.hh"
     
 int main()
 {
