@@ -6,6 +6,7 @@
 #include <cmath>
 #include <numeric>
 #include <algorithm>
+#include <random>
 #include "fevor_crystal.hh"
 #include "vector_tensor_opperations.hh"
 
@@ -136,7 +137,7 @@ void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const
         cDislDens = 0; // units: m^{-2}
 }
 
-unsigned int fevor_crystal::migRe(const double &Mstress, const double &modelTime, const double &timeStep) {
+unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const double &modelTime, const double &timeStep) {
     double Ggb = 0.065; // units: J m^{-2}
     double G = 3.4e9; // units: Pa
     double b = 4.5e-10; //units: m
@@ -176,12 +177,45 @@ unsigned int fevor_crystal::migRe(const double &Mstress, const double &modelTime
 
     cDislDens = 1e10; // units: m^{-2} 
     
+    double Mstress = 0;
+    std::vector<double> c = {1, sqrt(2), sqrt(2), 1, sqrt(2), 1};
+    std::transform(c.begin(), c.end(), stress.begin(),c.begin(), 
+                   std::multiplies<double>());
+    
+    Mstress = tensorMagnitude(c);
+    
     double PC = 1; // units Pa^{4/3} m 
         // Shimizu 2008
     cSize = PC*Mstress; // units: m
     
-    // TODO: select an orientation!
+    // Select an orientation!
         // Should be close to max MRSS
+    double theta = 0, phi = 0;
+    getAxisAngles(theta, phi);
+    const double PI  =3.141592653589793238463;
+    
+    int stressIndex1 = (stress[3] > stress[0] ? 3 : 0);
+    int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
+    stressIndex2     = (stress[4] > stress[stressIndex2] ? 4 : stressIndex2);
+    
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> dPhi(0,2*PI);
+    
+     if (stress[stressIndex1] < stress[stressIndex2]) {
+        // simple shear -- orientation will be near vertical
+        std::uniform_real_distribution<double> dTheta(0,PI/6);
+        theta = dTheta(generator);
+        phi = dPhi(generator);
+        
+        
+    } else {
+        // uniaxial comp. or pure shear -- orientation will be near theta = 45 degrees
+        std::uniform_real_distribution<double> dTheta(PI/6,PI/3);
+        theta = dTheta(generator);
+        phi = dPhi(generator);
+    }
+    
+    getNewAxis(theta, phi);
     
     cTimeLastRecrystal = modelTime+timeStep;
     cSizeLastRecrystal = cSize;
@@ -189,11 +223,17 @@ unsigned int fevor_crystal::migRe(const double &Mstress, const double &modelTime
     return 1;
 }
 
-unsigned int fevor_crystal::polygonize(const double &Mstress, const double &Mrss, const double &modelTime, const double &timeStep) {
+unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep) {
     double del = 0.065; // units: - 
         // ratio threshold -- Thor. 2002 [26]
     double rhop = 5.4e10; // units: m^{-2} 
         // dislocation density needed to form a wall -- Thor. 2002 [26]
+    double Mstress = 0;
+    std::vector<double> c = {1, sqrt(2), sqrt(2), 1, sqrt(2), 1};
+    std::transform(c.begin(), c.end(), stress.begin(),c.begin(), 
+                   std::multiplies<double>());
+    
+    Mstress = tensorMagnitude(c);
     
     if (Mrss/Mstress >= del || cDislDens < rhop)
         return 0;
@@ -201,8 +241,33 @@ unsigned int fevor_crystal::polygonize(const double &Mstress, const double &Mrss
     cDislDens -= rhop;
     cSize /= 2;
     
-    // TODO: select an orientation!
-        // Should be toward max MRSS -- away from vertical in uni. comp. 
+    // Select an orientation!
+        // Should be toward max MRSS --away from vertical in uni. comp. or 
+        // pure shear, towards vertical if simple shear.
+    double theta = 0, phi = 0;
+    getAxisAngles(theta, phi);
+    const double PI  =3.141592653589793238463;
+    
+    int stressIndex1 = (stress[3] > stress[0] ? 3 : 0);
+    int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
+    stressIndex2     = (stress[4] > stress[stressIndex2] ? 4 : stressIndex2);
+    
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution(0,100);
+    
+    if (stress[stressIndex1] < stress[stressIndex2] && theta < PI/6) {
+        // toward vertical
+        theta -= PI/36;
+        
+    } else if (theta < PI/6) {
+        // away from vetical
+        theta += PI/36;
+    } else {
+        // randomly toward/away from vertical
+        theta += (  distribution(generator) < 50 ? -PI/36 : PI/36);
+    } 
+    
+    getNewAxis(theta, phi);
     
     cTimeLastRecrystal = modelTime+timeStep;
     cSizeLastRecrystal = cSize;
@@ -226,5 +291,16 @@ void fevor_crystal::seeCrystal() {
     std::cout << cDislDens << " m^{-2}" << std::endl;
 }
 
-// Define static data members
+void fevor_crystal::getAxisAngles(double &theta, double &phi) {
+    
+    double HXY = sqrt(cAxis[0]*cAxis[0] + cAxis[1]*cAxis[1]);
+    theta = atan2(HXY, cAxis[2]);
+    phi   = atan2(cAxis[1], cAxis[0]);
+    
+}
 
+void fevor_crystal::getNewAxis(double &theta, double &phi) {
+    
+    cAxis = {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
+    
+}

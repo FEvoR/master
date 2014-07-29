@@ -57,7 +57,7 @@ std::vector<double> tensorMixedInner(std::vector<double> &t1, std::vector<double
     return tensor;
 }
 
-
+// magnitude of a full tensor. 
 double tensorMagnitude(std::vector<double> &t1) {
     double mag = 0;
     for (auto &ii : t1)
@@ -65,4 +65,3 @@ double tensorMagnitude(std::vector<double> &t1) {
         
     return sqrt(mag);
 }
-

@@ -25,9 +25,11 @@ class fevor_crystal {
         // get new dislocation density
         void dislocate(const double &timeStep, const double &Medot, const double &K);
         // migration recrystallize if favorable to do so
-        unsigned int migRe(const double &Mstress, const double &modelTime, const double &timeStep);
+        unsigned int migRe(const std::vector<double> &stress, const double &modelTime, const double &timeStep);
         // polygonize if favorable to do so
-        unsigned int polygonize(const double &Mstress, const double &Mrss, const double &modelTime, const double &timeStep);
+        unsigned int polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep);
+        void getAxisAngles(double &theta, double &phi);
+        void getNewAxis(double &theta, double &phi);
         
         void seeCrystal();
         
