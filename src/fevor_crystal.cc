@@ -6,6 +6,7 @@
 #include <cmath>
 #include <numeric>
 #include <algorithm>
+#include <chrono>
 #include <random>
 #include "fevor_crystal.hh"
 #include "vector_tensor_opperations.hh"
@@ -198,7 +199,8 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
     stressIndex2     = (stress[4] > stress[stressIndex2] ? 4 : stressIndex2);
     
-    std::default_random_engine generator;
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator(seed);
     std::uniform_real_distribution<double> dPhi(0,2*PI);
     
      if (stress[stressIndex1] < stress[stressIndex2]) {
@@ -252,7 +254,8 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
     stressIndex2     = (stress[4] > stress[stressIndex2] ? 4 : stressIndex2);
     
-    std::default_random_engine generator;
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator(seed);
     std::uniform_real_distribution<double> distribution(0,100);
     
     if (stress[stressIndex1] < stress[stressIndex2] && theta < PI/6) {
