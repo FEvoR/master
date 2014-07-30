@@ -5,7 +5,6 @@
 #define FEVOR_CRYSTAL
 
 #include <vector>
-#include <iostream>
 
 class fevor_crystal {
     public:

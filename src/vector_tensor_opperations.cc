@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include <numeric>
+#include "vector_tensor_opperations.hh"
 
 // Vector containing the independent elements of the outer product between
 // two vectors (upper triangle of resultant tensor) in ROW-MAJOR order.

@@ -1,6 +1,7 @@
 # Compiled sorces
 obj/**
 !obj/.keep
+*.o
 
 # executables
 bin/**

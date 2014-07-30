@@ -279,16 +279,22 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
 
 void fevor_crystal::seeCrystal() { 
     
+    
     std::cout << "The C-Axis orientation is:" << std::endl;
+    
+    std::cout.precision(4);
+    
     for (auto &i : cAxis)
-        std::cout << i << " ";
+        std::cout << std::fixed << i << " ";
     std::cout << std::endl;
 
     std::cout << "The crystal size is:" << std::endl;
-    std::cout << cSize << " m" << std::endl;
+    std::cout << std::scientific << cSize << " m" << std::endl;
 
     std::cout << "The crystal dislocation density is:" << std::endl;
-    std::cout << cDislDens << " m^{-2}" << std::endl;
+    std::cout << std::scientific << cDislDens << " m^{-2}" << std::endl;
+    
+    std::cout.precision(0);
 }
 
 void fevor_crystal::getAxisAngles(double &theta, double &phi) {
@@ -303,4 +309,10 @@ void fevor_crystal::getNewAxis(double &theta, double &phi) {
     
     cAxis = {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
     
+    double cAxisMag = tensorMagnitude(cAxis);
+    
+    if (cAxisMag != 1) {
+    std::transform(cAxis.begin(), cAxis.end(), cAxis.begin(), 
+                   [&](double x){return x/sqrt(cAxisMag);} );
+    }
 }
