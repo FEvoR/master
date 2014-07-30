@@ -5,6 +5,7 @@
 #include <iostream>
 #include <chrono>
 #include <random>
+#include <cmath>
 #include "fevor_crystal.hh"
 #include "test_crystal.hh"
 
@@ -15,25 +16,36 @@ void test_resolveM() {
     
 }
 
-void test_grow(){
+double test_grow(){
     fevor_crystal c1(std::vector<double> {1,0,0},0.01,10);
-    c1.seeCrystal();
+    //~ c1.seeCrystal();
     
-    double temperature, model_time;
+    double temperature, model_time, K;
     temperature = -11; // units: degrees C
     model_time = 1000.0*365*24*60*60;   // units: m
     
-    c1.grow(temperature, model_time);
+    K = c1.grow(temperature, model_time);
     
     c1.seeCrystal();
     
-    std::cout << "New Crystal Size should be: 0.010055" << std::endl;
+    std::cout << "New Crystal Size should be: 1.0055e-2" << std::endl;
+    
+    return K;
 }
 
-void test_dislocate() {
+void test_dislocate(const double &K) {
+    fevor_crystal c1(std::vector<double> {1,0,0},1.0055e-2,1e10);
+    //~ c1.seeCrystal();
     
+    double timeStep = 1000.0*365*24*60*60;
+    double Medot = 0.7071; //TODO: Decide if Medot needs to be devided by 2!
     
+    c1.dislocate(timeStep, Medot, K);
     
+    c1.seeCrystal();
+    
+    std::cout << "Growth Constant was:" << K << "\n"
+              << "New Dislocation Density should be: 4.9282e21" << std::endl;
 }
 
 void test_migRe() {

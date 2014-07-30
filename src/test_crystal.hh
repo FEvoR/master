@@ -6,9 +6,9 @@
 
     void test_resolveM();
     
-    void test_grow();
+    double test_grow();
     
-    void test_dislocate();
+    void test_dislocate(const double &K);
     
     void test_migRe();
     

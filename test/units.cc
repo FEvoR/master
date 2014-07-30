@@ -16,13 +16,17 @@ int main()
               << "*************** \n"
               << "BEGIN TEST_GROW \n"
               << "*************** \n" << std::endl;
-    test_grow();
+    double K;
+    K = test_grow();
+    
+    std::cout << "Growth Constant: " << K
+              << " \n" << std::endl;
     
     std::cout << "\n"
               << "******************** \n"
               << "BEGIN TEST_DISLOCATE \n"
               << "******************** \n" << std::endl;
-    //~ test_dislocate();          
+    test_dislocate( K );          
     
     std::cout << "\n"
               << "**************** \n"
