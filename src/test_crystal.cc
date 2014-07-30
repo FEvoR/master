@@ -16,9 +16,18 @@ void test_resolveM() {
 }
 
 void test_grow(){
+    fevor_crystal c1(std::vector<double> {1,0,0},0.01,10);
+    c1.seeCrystal();
     
+    double temperature, model_time;
+    temperature = -11; // units: degrees C
+    model_time = 1000.0*365*24*60*60;   // units: m
     
+    c1.grow(temperature, model_time);
     
+    c1.seeCrystal();
+    
+    std::cout << "New Crystal Size should be: 0.010055" << std::endl;
 }
 
 void test_dislocate() {
