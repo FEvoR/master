@@ -12,8 +12,4 @@
 #include "vector_tensor_opperations.hh"
 
 // Define function members
-void stepInTime() {
-    
-    
-    
-}
+

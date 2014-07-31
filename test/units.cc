@@ -2,6 +2,7 @@
 #include <vector>
 #include "fevor_crystal.hh"
 #include "test_crystal.hh"
+#include "fevor_distribution.hh"
 
 // Test the interface to fevor_crystal class
 int main()
@@ -45,6 +46,14 @@ int main()
               << "BEGIN TEST_RESOLVEM \n"
               << "******************* \n" << std::endl;
     test_resolveM();
+    
+        std::cout << "\n"
+              << "*********************** \n"
+              << "BEGIN TEST_DISTRIBUTION \n"
+              << "*********************** \n" << std::endl;
+        
+        fevor_distribution d1(10, 1.0); 
+        
     
     return 0;
 }
