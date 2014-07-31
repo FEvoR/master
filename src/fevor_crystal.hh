@@ -12,13 +12,13 @@ class fevor_crystal {
         fevor_crystal() = default;
         fevor_crystal(std::vector<double> ca, double cs, double cdd):
             cAxis(ca), cSize(cs), cDislDens(cdd) {
-                cTimeLastRecrystal = 0;
+                cTimeLastRecrystal = 0.0;
                 cSizeLastRecrystal = cSize;
             }
         
     // functions
         // get the strain-stress relation tensor (4th order)
-        std::vector<double> resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss);
+        std::vector<double> resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot);
         // grow the crystal
         double grow(const double &Tempature, const double &modelTime);
         // get new dislocation density
@@ -27,11 +27,12 @@ class fevor_crystal {
         unsigned int migRe(const std::vector<double> &stress, const double &modelTime, const double &timeStep);
         // polygonize if favorable to do so
         unsigned int polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep);
+        
         void getAxisAngles(double &theta, double &phi);
+        
         void getNewAxis(double &theta, double &phi);
         
         void seeCrystal();
-        
         
     private:
         // holds the crystals c-axis orientation vector in cartesian coordinates
@@ -44,12 +45,6 @@ class fevor_crystal {
         double cTimeLastRecrystal; // units: #/m^2
         // holds the cSize at last recrystallization
         double cSizeLastRecrystal; // units: m
-        
-        // Static members that are needed to compute member functions
-        
-        
-        
-        // Default values for static members
 };
 
 

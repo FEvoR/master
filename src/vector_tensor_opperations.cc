@@ -25,7 +25,7 @@ std::vector<double> vectorOuter(const std::vector<double> &v1, const std::vector
 
 // Vector containing the elements of the outer product between two tensors 
 // in ROW-MAJOR order (M_ijkl = M_1111, M_1112, M_1113,...)
-std::vector<double> tensorOuter(std::vector<double> &t1, std::vector<double> &t2) {
+std::vector<double> tensorOuter(const std::vector<double> &t1, const std::vector<double> &t2) {
     std::vector<double> tensor;
 
     for (auto &ii : t1) {
@@ -40,7 +40,7 @@ std::vector<double> tensorOuter(std::vector<double> &t1, std::vector<double> &t2
 
 // Vector containing the elements of the inner product between two tensors  
 // in ROW-MAJOR order of mixed rank.
-std::vector<double> tensorMixedInner(std::vector<double> &t1, std::vector<double> &t2) {
+std::vector<double> tensorMixedInner(const std::vector<double> &t1, const std::vector<double> &t2) {
     std::vector<double> tensor;
     decltype(t2.size()) sz2 = t2.size();
     
@@ -59,10 +59,37 @@ std::vector<double> tensorMixedInner(std::vector<double> &t1, std::vector<double
 }
 
 // magnitude of a full tensor. 
-double tensorMagnitude(std::vector<double> &t1) {
+double tensorMagnitude(const std::vector<double> &t1) {
     double mag = 0;
     for (auto &ii : t1)
         mag += ii*ii;
         
     return sqrt(mag);
+}
+
+void tensorDisplay(const std::vector<double> &tensor, const int rows, const int columns) {
+    
+    std::cout.precision(4);
+    
+    for (int ii = 0; ii != rows; ++ii) {
+        for (int jj = 0; jj != columns; ++jj) {
+            
+            if (ii == 0 && jj == 0){
+                std::cout << std::scientific
+                          << tensor[ii*columns+jj] << " ";
+            } else {
+            
+            std::cout << tensor[ii*columns+jj] << " ";
+            
+            }
+            
+            if (jj == columns-1)
+                std::cout << "\n";
+            
+        }
+    }
+    
+    
+    std::cout << std:: endl;
+    
 }

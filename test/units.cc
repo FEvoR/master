@@ -32,19 +32,19 @@ int main()
               << "**************** \n"
               << "BEGIN TEST_MIGRE \n"
               << "**************** \n" << std::endl;
-    //~ test_migRe();
+    test_migRe();
     
     std::cout << "\n"
               << "********************* \n"
               << "BEGIN TEST_POLYGONIZE \n"
               << "********************* \n" << std::endl;
-    //~ test_polygonize();
+    test_polygonize();
     
     std::cout << "\n"
               << "******************* \n"
               << "BEGIN TEST_RESOLVEM \n"
               << "******************* \n" << std::endl;
-    //~ test_resolveM();
+    test_resolveM();
     
     return 0;
 }

@@ -13,42 +13,53 @@
 
 // Define function members
 
-std::vector<double> fevor_crystal::resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss) {
-    double glenExp = 3;
+std::vector<double> fevor_crystal::resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot) {
+    double glenExp = 3.0;
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
-    double beta = 630; // from Thors 2001 paper (pg 510, above eqn 16)
+    double beta = 630.0; // from Thors 2001 paper (pg 510, above eqn 16)
+    double Q = 0.0;
+    double A = 0.0;
     
-    double A = 0;
-    if (temperature > -10) {
-        double Q = 115;
-        A = 24e-25*beta*exp(-Q/(R*(273.13+temperature))); // units: s^{-1} Pa^{-n}
-    } else {
-        double Q = 60;
-        A = 3.5e-25*beta*exp(-Q/(R*(273.13+temperature))); // units: s^{-1} Pa^{-n}
-    }
+    Q = (temperature > -10.0 ? 115.0 : 60.0);
+    A = 3.5e-25*beta*exp(-(Q/R)*(1.0/(273.13+temperature)-1.0/263.13)); // units: s^{-1} Pa^{-n}
     // From Cuffy + Patterson (4 ed.) pg. 73
+    
+    std::cout.precision(4);
+    std::cout << std::scientific << "Flow factor A:" << A << std::endl;
+    
+    seeCrystal();
     
     // Burgers vector for each slip system
     std::vector<double> burger1, burger2, burger3;
-    if ((cAxis[1] == 0) && (cAxis[2] == 0)) {
-        burger1 = {1/3,0,0};
-        burger2 = {(1+sqrt(3))/6,-sqrt(3)/6,0};
-        burger3 = {(1-sqrt(3))/6,sqrt(3)/6,0};
+    burger1 = burger2 = burger3 = {0.0,0.0,0.0};
+    
+    if ((cAxis[0] == 0.0) && (cAxis[1] == 0.0)) {
+        burger1 = {1.0/3.0,0.0,0.0};
+        burger2 = {(1.0+sqrt(3.0))/6.0,-sqrt(3.0)/6.0,0.0};
+        burger3 = {(1.0-sqrt(3.0))/6.0, sqrt(3.0)/6.0,0.0};
     } else {
         double xyline = sqrt(cAxis[0]*cAxis[0]+cAxis[1]*cAxis[1]);
         
-        burger1 = {cAxis[0]*cAxis[2]/xyline/3,
-                   cAxis[1]*cAxis[2]/xyline/3,
-                   -xyline/3};
+        burger1 = {cAxis[0]*cAxis[2]/xyline/3.0,
+                   cAxis[1]*cAxis[2]/xyline/3.0,
+                   -xyline/3.0};
         
-        burger2 = {burger1[0]/2+sqrt(3)*cAxis[1]/xyline/6,
-                   burger1[1]/2-sqrt(3)*cAxis[0]/xyline/6,
-                   -xyline/6};
+        burger2 = {burger1[0]/2.0+sqrt(3.0)*cAxis[1]/xyline/6.0,
+                   burger1[1]/2.0-sqrt(3.0)*cAxis[0]/xyline/6.0,
+                   -xyline/6.0};
         
-        burger3 = {burger1[0]/2-sqrt(3)*cAxis[1]/xyline/6,
-                   burger1[1]/2+sqrt(3)*cAxis[0]/xyline/6,
-                   -xyline/6};
+        burger3 = {burger1[0]/2.0-sqrt(3.0)*cAxis[1]/xyline/6.0,
+                   burger1[1]/2.0+sqrt(3.0)*cAxis[0]/xyline/6.0,
+                   -xyline/6.0};
     }
+    
+    
+    //~ std::cout << std::scientific << "Burger 1:" << std::endl;
+    //~ tensorDisplay(burger1,3,1);
+    //~ std::cout << std::scientific << "Burger 2:" << std::endl;
+    //~ tensorDisplay(burger2,3,1);
+    //~ std::cout << std::scientific << "Burger 3:" << std::endl;
+    //~ tensorDisplay(burger3,3,1);
     
     // calculate shmidt tensors
         // 1x6 vector containing the 6 independent elements of the 3x3 
@@ -57,6 +68,13 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
     shmidt1 = vectorOuter(burger1,cAxis);
     shmidt2 = vectorOuter(burger2,cAxis);
     shmidt3 = vectorOuter(burger3,cAxis);
+    
+    //~ std::cout << std::scientific << "shmidt 1:" << std::endl;
+    //~ tensorDisplay(shmidt1,3,3);
+    //~ std::cout << std::scientific << "shmidt 2:" << std::endl;
+    //~ tensorDisplay(shmidt2,3,3);
+    //~ std::cout << std::scientific << "shmidt 3:" << std::endl;
+    //~ tensorDisplay(shmidt3,3,3);
     
     std::vector<double> Mbase1, Mbase2, Mbase3;
     Mbase1 = tensorOuter(shmidt1, shmidt1);
@@ -95,6 +113,11 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
                    std::plus<double>());
     std::transform(Mbase1.begin(), Mbase1.end(), Mbase3.begin(),Mbase1.begin(), 
                    std::plus<double>());
+                   
+    std::vector<double> edot;
+    edot = tensorMixedInner(Mbase1, stress);
+    
+    Medot = tensorMagnitude(edot)*sqrt(1.0/2.0);
     
     return Mbase1;
     
@@ -103,14 +126,14 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
 double fevor_crystal::grow(const double &tempature, const double &modelTime) {
     double K_0 = 8.2e-9; // units: m^2 s^{-1}
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
-    double Q = 0;
-    if (tempature >= -10) // in degrees C
-        Q = 0.7*115; // units: kJ mol^{-1}
+    double Q = 0.0;
+    if (tempature >= -10.0) // in degrees C
+        Q = 0.7*115.0; // units: kJ mol^{-1}
     else
-        Q = 0.7*60; // units: kJ mol^{-1}
+        Q = 0.7*60.0; // units: kJ mol^{-1}
         // From Cuffy + Patterson (4 ed.) pg. 40
     
-    double K = 0;
+    double K = 0.0;
     K  = K_0*exp(-Q/(R*(273.13+tempature))); // units: m^2 s^{-1}
     
     cSize = std::sqrt(K*(modelTime-cTimeLastRecrystal) + cSizeLastRecrystal*cSizeLastRecrystal);
@@ -119,13 +142,12 @@ double fevor_crystal::grow(const double &tempature, const double &modelTime) {
 
 }
 
-
 void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const double &K) {
     double b = 4.5e-10; // units: m
-    double alpha = 1; // units: -
+    double alpha = 1.0; // units: -
         // Thor. 2002: constant grater than 1. However, everyone just uses 1:
             // Thor 2002, De La Chapelle 1998, Montagnant 2000
-    double rhoDot = 0; // units: m^{-2} s^{-1}
+    double rhoDot = 0.0; // units: m^{-2} s^{-1}
     
     
     // Change in disloation density
@@ -134,8 +156,8 @@ void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const
     cDislDens = cDislDens + rhoDot*timeStep; // units: m^{-2}
     
     // set boundary condition -- can't have a negative dislocation density
-    if (cDislDens < 0)
-        cDislDens = 0; // units: m^{-2}
+    if (cDislDens < 0.0)
+        cDislDens = 0.0; // units: m^{-2}
 }
 
 unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const double &modelTime, const double &timeStep) {
@@ -169,29 +191,30 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
      * can be a constant. Note: log() is the natural log.
      */
     
-    double Egb = 0, Edis = 0;
-    Egb = 3*Ggb/cSize; // units: J m^{-3}
+    double Egb = 0.0, Edis = 0.0;
+    Egb = 3.0*Ggb/cSize; // units: J m^{-3}
     Edis = kappa*G*cDislDens*b*b; // units: J m^{-3}
     
     if (Edis <= Egb)
         return 0;
 
-    cDislDens = 1e10; // units: m^{-2} 
+    cDislDens = 1.0e10; // units: m^{-2} 
     
-    double Mstress = 0;
-    std::vector<double> c = {1, sqrt(2), sqrt(2), 1, sqrt(2), 1};
+    double Mstress = 0.0;
+    std::vector<double> c = {1.0, sqrt(2.0), sqrt(2.0), 1.0, sqrt(2.0), 1.0};
     std::transform(c.begin(), c.end(), stress.begin(),c.begin(), 
                    std::multiplies<double>());
     
-    Mstress = tensorMagnitude(c);
+    Mstress = tensorMagnitude(c)*sqrt(1.0/2.0); 
+        // efective stress: Thor. 2002, 3-4, [29]
     
-    double PC = 1; // units Pa^{4/3} m 
+    double PC = 1.0; // units Pa^{4/3} m 
         // Shimizu 2008
-    cSize = PC*Mstress; // units: m
+    cSize = PC*pow(Mstress, -4.0/3.0); // units: m
     
     // Select an orientation!
         // Should be close to max MRSS
-    double theta = 0, phi = 0;
+    double theta = 0.0, phi = 0.0;
     getAxisAngles(theta, phi);
     const double PI  =3.141592653589793238463;
     
@@ -201,18 +224,18 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
     
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
-    std::uniform_real_distribution<double> dPhi(0,2*PI);
+    std::uniform_real_distribution<double> dPhi(0.0,2.0*PI);
     
      if (stress[stressIndex1] < stress[stressIndex2]) {
         // simple shear -- orientation will be near vertical
-        std::uniform_real_distribution<double> dTheta(0,PI/6);
+        std::uniform_real_distribution<double> dTheta(0.0,PI/6.0);
         theta = dTheta(generator);
         phi = dPhi(generator);
         
         
     } else {
         // uniaxial comp. or pure shear -- orientation will be near theta = 45 degrees
-        std::uniform_real_distribution<double> dTheta(PI/6,PI/3);
+        std::uniform_real_distribution<double> dTheta(PI/6.0,PI/3.0);
         theta = dTheta(generator);
         phi = dPhi(generator);
     }
@@ -230,23 +253,23 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
         // ratio threshold -- Thor. 2002 [26]
     double rhop = 5.4e10; // units: m^{-2} 
         // dislocation density needed to form a wall -- Thor. 2002 [26]
-    double Mstress = 0;
-    std::vector<double> c = {1, sqrt(2), sqrt(2), 1, sqrt(2), 1};
+    double Mstress = 0.0;
+    std::vector<double> c = {1.0, sqrt(2.0), sqrt(2.0), 1.0, sqrt(2.0), 1.0};
     std::transform(c.begin(), c.end(), stress.begin(),c.begin(), 
                    std::multiplies<double>());
     
-    Mstress = tensorMagnitude(c);
+    Mstress = tensorMagnitude(c)*sqrt(1.0/2.0);
     
     if (Mrss/Mstress >= del || cDislDens < rhop)
         return 0;
     
     cDislDens -= rhop;
-    cSize /= 2;
+    cSize /= 2.0;
     
     // Select an orientation!
         // Should be toward max MRSS --away from vertical in uni. comp. or 
         // pure shear, towards vertical if simple shear.
-    double theta = 0, phi = 0;
+    double theta = 0.0, phi = 0.0;
     getAxisAngles(theta, phi);
     const double PI  =3.141592653589793238463;
     
@@ -256,18 +279,18 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
-    std::uniform_real_distribution<double> distribution(0,100);
+    std::uniform_real_distribution<double> distribution(0.0,100.0);
     
-    if (stress[stressIndex1] < stress[stressIndex2] && theta < PI/6) {
+    if (stress[stressIndex1] < stress[stressIndex2] && theta < PI/6.0) {
         // toward vertical
-        theta -= PI/36;
+        theta -= PI/36.0;
         
-    } else if (theta < PI/6) {
+    } else if (theta < PI/6.0) {
         // away from vetical
-        theta += PI/36;
+        theta += PI/36.0;
     } else {
         // randomly toward/away from vertical
-        theta += (  distribution(generator) < 50 ? -PI/36 : PI/36);
+        theta += (  distribution(generator) < 50.0 ? -PI/36.0 : PI/36.0);
     } 
     
     getNewAxis(theta, phi);
@@ -277,8 +300,6 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     
     return 1;
 }
-
-
 
 void fevor_crystal::seeCrystal() { 
     
@@ -314,7 +335,7 @@ void fevor_crystal::getNewAxis(double &theta, double &phi) {
     
     double cAxisMag = tensorMagnitude(cAxis);
     
-    if (cAxisMag != 1) {
+    if (cAxisMag != 1.0) {
     std::transform(cAxis.begin(), cAxis.end(), cAxis.begin(), 
                    [&](double x){return x/sqrt(cAxisMag);} );
     }

@@ -2,7 +2,7 @@
 
 CXX=g++
 INC_DIR=-I src/
-CXXFLAGS=-c -std=c++11 -g -Wall $(INC_DIR) -v
+CXXFLAGS=-c -std=c++11 -g -Wall $(INC_DIR)
 LDFLAGS=
 
 COMMON_SOURCES= $(wildcard src/*.cc)
