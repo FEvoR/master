@@ -17,8 +17,7 @@ class fevor_distribution {
             for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
                 
                 crystals.push_back( fevor_crystal ({0.0,0.0,1.0}, 0.01, 1.0e10) );
-                
-                crystals[ii].seeCrystal();
+                softness.push_back(1.0);
                 
             }
         }
@@ -28,30 +27,21 @@ class fevor_distribution {
         
         // save distribution to disk
         
-        // calculate distribution eigenvalues
-        
-        // calculate distribution bulk M
+        // calculate distribution bulk M and bulk edot
         
         // calculate NNI softness parameter
         
         
         
     private:
-    unsigned int  numberCrystals;
+        unsigned int  numberCrystals;
 
-    double watsonK;
+        double watsonK;
 
-    std::vector<fevor_crystal> crystals;
+        std::vector<fevor_crystal> crystals;
+        
+        std::vector<double> softness;
     
-    std::vector<double> softness;
-    
-    std::vector<fevor_crystal> bulkM;
-    
-    std::vector<fevor_crystal> bulkEdot;
-    
-
-    
-
     
 };
 

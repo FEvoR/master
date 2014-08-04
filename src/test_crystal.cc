@@ -145,13 +145,12 @@ void test_angles() {
     std::cout << std::fixed << "Angles are: \n" << "Theta: " << theta << " Phi: " << phi << std::endl;
     
     const double PI  =3.141592653589793238463;
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine generator(seed);
+    std::random_device seed;
     std::uniform_real_distribution<double> dPhi(0.0,2.0*PI);
     std::uniform_real_distribution<double> dTheta(0.0,PI/2.0);
     
-    theta = dTheta(generator);
-    phi = dPhi(generator);
+    theta = dTheta(seed);
+    phi = dPhi(seed);
     
     std::cout.precision(4);
     std::cout << std::fixed << "New angles are: \n" << "Theta: " << theta << " Phi: " << phi << std::endl;

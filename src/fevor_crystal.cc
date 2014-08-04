@@ -222,22 +222,21 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
     stressIndex2     = (stress[4] > stress[stressIndex2] ? 4 : stressIndex2);
     
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine generator(seed);
+    std::random_device seed;
     std::uniform_real_distribution<double> dPhi(0.0,2.0*PI);
     
      if (stress[stressIndex1] < stress[stressIndex2]) {
         // simple shear -- orientation will be near vertical
         std::uniform_real_distribution<double> dTheta(0.0,PI/6.0);
-        theta = dTheta(generator);
-        phi = dPhi(generator);
+        theta = dTheta(seed);
+        phi = dPhi(seed);
         
         
     } else {
         // uniaxial comp. or pure shear -- orientation will be near theta = 45 degrees
         std::uniform_real_distribution<double> dTheta(PI/6.0,PI/3.0);
-        theta = dTheta(generator);
-        phi = dPhi(generator);
+        theta = dTheta(seed);
+        phi = dPhi(seed);
     }
     
     getNewAxis(theta, phi);
@@ -277,8 +276,7 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
     stressIndex2     = (stress[4] > stress[stressIndex2] ? 4 : stressIndex2);
     
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine generator(seed);
+    std::random_device seed;
     std::uniform_real_distribution<double> distribution(0.0,100.0);
     
     if (stress[stressIndex1] < stress[stressIndex2] && theta < PI/6.0) {
@@ -290,7 +288,7 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
         theta += PI/36.0;
     } else {
         // randomly toward/away from vertical
-        theta += (  distribution(generator) < 50.0 ? -PI/36.0 : PI/36.0);
+        theta += (  distribution(seed) < 50.0 ? -PI/36.0 : PI/36.0);
     } 
     
     getNewAxis(theta, phi);
