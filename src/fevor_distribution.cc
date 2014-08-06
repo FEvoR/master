@@ -16,14 +16,16 @@
 std::vector<double> fevor_distribution::stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, double &nMigre, double &nPoly, std::vector<double> &bulkEdot) {
     
     double crystalMagEdot;
-    std::vector<double> bulkM(36, 0.0);
-    std::vector<double> crystalM(36, 0.0);
+    std::vector<double> bulkM(81, 0.0);
+    std::vector<std::vector<double>> crystalM;
     double crystalK;
+    //FIXME: crystalM may need to change depending on how fevor crystal changes with M and rotate
+    
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
-        crystalM = crystals[ii].resolveM(temperature, stress, magRSS[ii], crystalMagEdot);
+        crystalM.push_back( crystals[ii].resolveM(temperature, stress, magRSS[ii], crystalMagEdot) );
 
-        std::transform(bulkM.begin(),bulkM.end(),crystalM.begin(), bulkM.begin(),
+        std::transform(bulkM.begin(),bulkM.end(),crystalM[ii].begin(), bulkM.begin(),
                     std::plus<double>());
 
         crystalK = crystals[ii].grow(temperature, modelTime);
@@ -40,7 +42,7 @@ std::vector<double> fevor_distribution::stepInTime(const double &temperature, co
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         
-        crystals[ii].rotate();
+        crystals[ii].rotate(crystalM[ii]);
         
     }
     

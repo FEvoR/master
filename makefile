@@ -1,5 +1,3 @@
-# TODO: implement CMake
-
 CXX=g++
 INC_DIR=-I src/
 CXXFLAGS=-c -std=c++11 -g -Wall $(INC_DIR)

@@ -14,6 +14,8 @@
 // Define function members
 
 std::vector<double> fevor_crystal::resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot) {
+    // FIXME -- rotate needs vel - vel! So M should be just M, need to calc edot in sep. step.
+    
     double glenExp = 3.0;
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
     double beta = 630.0; // from Thors 2001 paper (pg 510, above eqn 16)
@@ -304,9 +306,8 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     return 1;
 }
 
-void fevor_crystal::rotate() {
-    
-    // do nothing
+void fevor_crystal::rotate(std::vector<double> &crystalV) {
+    // TODO: make this rotate() function
     
 }
 
