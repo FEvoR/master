@@ -78,10 +78,15 @@ void fevor_distribution::setSoftness(double cc, double cn) {
 void fevor_distribution::saveDistribution() {
     // FIXME: Make it actually save, now just prints to cout
     
-    std::cout << "*****************\n" 
-              << "The Distribution:\n" 
-              << "*****************\n" << std::endl;
-        
+    std::cout << "# "
+              << "Crystal"                << ", "
+              << "C-Axis (x)"             << ", "
+              << "C-Axis (y)"             << ", "
+              << "C-Axis (z)"             << ", "
+              << "Size (m)"               << ", "
+              << "Disl. dens. (1/m^2)"    << ", "
+              << "Last recr. time (s)"    << ", "
+              << "Size at last recr. (m)" << std::endl;
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         

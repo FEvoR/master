@@ -331,7 +331,7 @@ void fevor_crystal::seeCrystal() {
 }
 
 void fevor_crystal::printCrystal() {
-    
+     
     std::cout.precision(4);
     
     std::cout << std::fixed
