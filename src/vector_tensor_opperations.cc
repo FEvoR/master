@@ -67,6 +67,18 @@ double tensorMagnitude(const std::vector<double> &t1) {
     return sqrt(mag);
 }
 
+std::vector<double> matrixTranspose(const std::vector<double> &m1, const int rows, const int columns) {
+    std::vector<double> matrix;
+    for (int ii = 0; ii != columns; ++ii) {
+        for (int jj = 0; jj != rows; ++jj) {
+            matrix.push_back(m1[ii+jj*3]);
+        }
+    }
+    
+    return matrix;
+    
+}
+
 void tensorDisplay(const std::vector<double> &tensor, const int rows, const int columns) {
     
     std::cout.precision(4);

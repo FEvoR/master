@@ -3,6 +3,7 @@
 #include "fevor_crystal.hh"
 #include "test_crystal.hh"
 #include "fevor_distribution.hh"
+#include "vector_tensor_opperations.hh"
 
 // Test the interface to fevor_crystal class
 int main()
@@ -47,12 +48,26 @@ int main()
               << "******************* \n" << std::endl;
     test_resolveM();
     
-        std::cout << "\n"
-              << "*********************** \n"
-              << "BEGIN TEST_DISTRIBUTION \n"
-              << "*********************** \n" << std::endl;
+    std::cout << "\n"
+          << "*********************** \n"
+          << "BEGIN TEST_DISTRIBUTION \n"
+          << "*********************** \n" << std::endl;
+    
+    fevor_distribution d1({3,3,3}, 1.0); 
+    
+    d1.saveDistribution();
         
-        fevor_distribution d1(10, 1.0); 
+    
+    std::cout << "\n"
+          << "*************************** \n"
+          << "BEGIN TEST_MATRIX_TRANSPOSE \n"
+          << "*************************** \n" << std::endl;
+        
+        std::vector<double> matrix = {0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0};
+        tensorDisplay(matrix, 3, 3);
+        
+        matrix = matrixTranspose(matrix, 3, 3);
+        tensorDisplay(matrix, 3, 3);
         
     
     return 0;

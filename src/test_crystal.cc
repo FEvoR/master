@@ -20,7 +20,9 @@ void test_resolveM() {
     phi = PI/4.0;
     c1.getNewAxis(theta, phi);
     
-    std::vector<double> stress = {10000.0,0.0,0.0,0.0,0.0,-10000.0};
+    std::vector<double> stress = {10000.0,     0.0,     0.0,
+                                      0.0,     0.0,     0.0,
+                                      0.0,     0.0,-10000.0};
     double temperature = -10.0;
     double Mrss = 1.0;
     double Medot = 1.0;
@@ -28,20 +30,20 @@ void test_resolveM() {
     std::vector<double> bigM;
     bigM = c1.resolveM(temperature, stress, Mrss, Medot);
     
-    std::cout << "bigM size should be: 36" << "\n"
+    std::cout << "bigM size should be: 81" << "\n"
               << "bigM size is: " << bigM.size() << std::endl;
               
-    std::vector<double> velGrad = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-    velGrad = tensorMixedInner(bigM, stress);
+    std::vector<double> edot = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+    edot = tensorMixedInner(bigM, stress);
     
-    std::cout << "\n" << "velGrad is:" << std::endl;
-    tensorDisplay(velGrad, 6, 1);
+    std::cout << "\n" << "edot is:" << std::endl;
+    tensorDisplay(edot, 9, 1);
     
     //~ std::cout << "\n" << "bigM is:" << std::endl;
-    //~ tensorDisplay(bigM, 6, 6);
+    //~ tensorDisplay(bigM, 9, 9);
     
     //~ std::cout << "\n" << "stress is:" << std::endl;
-    //~ tensorDisplay(stress, 6, 1);
+    //~ tensorDisplay(stress, 9, 1);
     
     
 }
@@ -84,7 +86,11 @@ void test_migRe() {
     double model_time, time_step;
     model_time = time_step = 1000.0*365.0*24.0*60.0*60.0;
     
-    c1.migRe({10000.0,.00,0.0,0.0,0.0,-10000.0}, model_time, time_step);
+    std::vector<double> stress = {10000.0,     0.0,     0.0,
+                                      0.0,     0.0,     0.0,
+                                      0.0,     0.0,-10000.0};
+    
+    c1.migRe(stress, model_time, time_step);
 
     c1.seeCrystal();
     
@@ -111,7 +117,11 @@ void test_polygonize() {
     double model_time, time_step;
     model_time = time_step = 1000.0*365.0*24.0*60.0*60.0;
     
-    c1.polygonize({10000.0,0.0,0.0,0.0,0.0,-10000.0}, 1.0, model_time, time_step);
+    std::vector<double> stress = {10000.0,     0.0,     0.0,
+                                      0.0,     0.0,     0.0,
+                                      0.0,     0.0,-10000.0};
+    
+    c1.polygonize(stress, 1.0, model_time, time_step);
     c1.seeCrystal();
     
     std::cout << "New Grain Size should be: 5.0000e-3" << "\n"

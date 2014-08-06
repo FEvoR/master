@@ -26,6 +26,8 @@ class fevor_crystal {
         unsigned int migRe(const std::vector<double> &stress, const double &modelTime, const double &timeStep);
         // polygonize if favorable to do so
         unsigned int polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep);
+        // rotate the crystals
+        void rotate();
         
         void getAxisAngles(double &theta, double &phi);
         

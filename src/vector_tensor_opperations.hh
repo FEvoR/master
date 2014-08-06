@@ -21,8 +21,12 @@ std::vector<double> tensorMixedInner(const std::vector<double> &t1, const std::v
 // double containing the magnitude of a tensor in ROW-MAJOR order.
 double tensorMagnitude(const std::vector<double> &t1);
 
+// transpose a matrix
+std::vector<double> matrixTranspose(const std::vector<double> &matrix, const int rows, const int columns);
+
 // display a tensor
 void tensorDisplay(const std::vector<double> &tensor, const int rows, const int columns);
+
 
 
 #endif

@@ -62,12 +62,11 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
     //~ tensorDisplay(burger3,3,1);
     
     // calculate shmidt tensors
-        // 1x6 vector containing the 6 independent elements of the 3x3 
-        // shmidt tensor (upper triangle) in ROW-MAJOR order. 
+        // 1x9 vector containing the  3x3 shmidt tensor in ROW-MAJOR order. 
     std::vector<double> shmidt1, shmidt2,shmidt3;
-    shmidt1 = vectorOuter(burger1,cAxis);
-    shmidt2 = vectorOuter(burger2,cAxis);
-    shmidt3 = vectorOuter(burger3,cAxis);
+    shmidt1 = tensorOuter(burger1,cAxis);
+    shmidt2 = tensorOuter(burger2,cAxis);
+    shmidt3 = tensorOuter(burger3,cAxis);
     
     //~ std::cout << std::scientific << "shmidt 1:" << std::endl;
     //~ tensorDisplay(shmidt1,3,3);
@@ -76,6 +75,9 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
     //~ std::cout << std::scientific << "shmidt 3:" << std::endl;
     //~ tensorDisplay(shmidt3,3,3);
     
+    
+    // calculate M on each slip system
+        // 1x81 vector containing the 9x9 matrix in ROW-MAJOR order. 
     std::vector<double> Mbase1, Mbase2, Mbase3;
     Mbase1 = tensorOuter(shmidt1, shmidt1);
     Mbase2 = tensorOuter(shmidt2, shmidt2);
@@ -114,12 +116,19 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
     std::transform(Mbase1.begin(), Mbase1.end(), Mbase3.begin(),Mbase1.begin(), 
                    std::plus<double>());
                    
+    Mbase2 = matrixTranspose(Mbase1,9,9);
+    std::transform(Mbase1.begin(), Mbase1.end(), Mbase2.begin(),Mbase1.begin(), 
+                   std::plus<double>());
+    std::transform(Mbase1.begin(),Mbase1.end(),Mbase1.begin(), 
+                    [&](double x){return x/2.0;});
+    
     std::vector<double> edot;
     edot = tensorMixedInner(Mbase1, stress);
     
     Medot = tensorMagnitude(edot)*sqrt(1.0/2.0);
     
     return Mbase1;
+        // this is (M + M')/2! edot = Mbase1*stress!
     
 }
 
@@ -201,11 +210,7 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
     cDislDens = 1.0e10; // units: m^{-2} 
     
     double Mstress = 0.0;
-    std::vector<double> c = {1.0, sqrt(2.0), sqrt(2.0), 1.0, sqrt(2.0), 1.0};
-    std::transform(c.begin(), c.end(), stress.begin(),c.begin(), 
-                   std::multiplies<double>());
-    
-    Mstress = tensorMagnitude(c)*sqrt(1.0/2.0); 
+    Mstress = tensorMagnitude(stress)*sqrt(1.0/2.0); 
         // efective stress: Thor. 2002, 3-4, [29]
     
     double PC = 1.0; // units Pa^{4/3} m 
@@ -218,9 +223,9 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
     getAxisAngles(theta, phi);
     const double PI  =3.141592653589793238463;
     
-    int stressIndex1 = (stress[3] > stress[0] ? 3 : 0);
+    int stressIndex1 = (stress[4] > stress[0] ? 4 : 0);
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
-    stressIndex2     = (stress[4] > stress[stressIndex2] ? 4 : stressIndex2);
+    stressIndex2     = (stress[5] > stress[stressIndex2] ? 5 : stressIndex2);
     
     std::random_device seed;
     std::uniform_real_distribution<double> dPhi(0.0,2.0*PI);
@@ -272,9 +277,9 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     getAxisAngles(theta, phi);
     const double PI  =3.141592653589793238463;
     
-    int stressIndex1 = (stress[3] > stress[0] ? 3 : 0);
+    int stressIndex1 = (stress[4] > stress[0] ? 4 : 0);
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
-    stressIndex2     = (stress[4] > stress[stressIndex2] ? 4 : stressIndex2);
+    stressIndex2     = (stress[5] > stress[stressIndex2] ? 5 : stressIndex2);
     
     std::random_device seed;
     std::uniform_real_distribution<double> distribution(0.0,100.0);
@@ -297,6 +302,12 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     cSizeLastRecrystal = cSize;
     
     return 1;
+}
+
+void fevor_crystal::rotate() {
+    
+    // do nothing
+    
 }
 
 void fevor_crystal::seeCrystal() { 
