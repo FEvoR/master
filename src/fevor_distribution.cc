@@ -85,8 +85,11 @@ void fevor_distribution::saveDistribution() {
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         
-        std::cout << "\n" << "Crystal: " << ii << std::endl;
+        std::cout.precision(4);
+        
+        std::cout << std::fixed << ii << ", ";
+            // FIXME: print unsigned int with leading zeros
                   
-        crystals[ii].seeCrystal();
+        crystals[ii].printCrystal();
     }
 }

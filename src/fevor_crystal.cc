@@ -330,6 +330,22 @@ void fevor_crystal::seeCrystal() {
     std::cout.precision(0);
 }
 
+void fevor_crystal::printCrystal() {
+    
+    std::cout.precision(4);
+    
+    std::cout << std::fixed
+              << cAxis[0]           << ", "
+              << cAxis[1]           << ", "
+              << cAxis[2]           << ", "
+              << std::scientific
+              << cSize              << ", "
+              << cDislDens          << ", "
+              << cTimeLastRecrystal << ", "
+              << cSizeLastRecrystal << std::endl;
+    
+}
+
 void fevor_crystal::getAxisAngles(double &theta, double &phi) {
     
     double HXY = sqrt(cAxis[0]*cAxis[0] + cAxis[1]*cAxis[1]);

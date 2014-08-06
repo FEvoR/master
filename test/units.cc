@@ -58,18 +58,6 @@ int main()
     d1.saveDistribution();
         
     
-    std::cout << "\n"
-          << "*************************** \n"
-          << "BEGIN TEST_MATRIX_TRANSPOSE \n"
-          << "*************************** \n" << std::endl;
-        
-        std::vector<double> matrix = {0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0};
-        tensorDisplay(matrix, 3, 3);
-        
-        matrix = matrixTranspose(matrix, 3, 3);
-        tensorDisplay(matrix, 3, 3);
-        
-    
     return 0;
 }
 

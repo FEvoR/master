@@ -34,6 +34,7 @@ class fevor_crystal {
         void getNewAxis(double &theta, double &phi);
         
         void seeCrystal();
+        void printCrystal();
         
     private:
         // holds the crystals c-axis orientation vector in cartesian coordinates
