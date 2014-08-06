@@ -39,11 +39,11 @@ void test_resolveM() {
     std::cout << "\n" << "edot is:" << std::endl;
     tensorDisplay(edot, 9, 1);
     
-    //~ std::cout << "\n" << "bigM is:" << std::endl;
-    //~ tensorDisplay(bigM, 9, 9);
+    std::cout << "\n" << "bigM is:" << std::endl;
+    tensorDisplay(bigM, 9, 9);
     
-    //~ std::cout << "\n" << "stress is:" << std::endl;
-    //~ tensorDisplay(stress, 9, 1);
+    std::cout << "\n" << "stress is:" << std::endl;
+    tensorDisplay(stress, 9, 1);
     
     
 }
@@ -70,7 +70,7 @@ void test_dislocate(const double &K) {
     //~ c1.seeCrystal();
     
     double timeStep = 1000.0*365.0*24.0*60.0*60.0;
-    double Medot = sqrt(1.0/2.0); //TODO: Decide if Medot needs to be devided by 2!
+    double Medot = sqrt(1.0/2.0);
     
     c1.dislocate(timeStep, Medot, K);
     
@@ -171,5 +171,3 @@ void test_angles() {
     
     
 }
-
-
