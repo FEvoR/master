@@ -10,7 +10,7 @@
 class fevor_distribution {
     public:
     // constructors
-        // construct a distribution from a saved distribution
+        //TODO: construct a distribution from a saved distribution
         
         // construct a distribution using the Watson distribution for axis angles
         fevor_distribution(std::vector<unsigned int> lwh, double wk): dimensions(lwh), watsonK(wk)  {

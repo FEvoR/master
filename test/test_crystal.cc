@@ -10,6 +10,14 @@
 #include "test_crystal.hh"
 #include "vector_tensor_opperations.hh"
 
+//TODO: develop a robust test suite that includes edge cases
+
+void test_rotate(){
+    
+    //TODO: test fevor_crystal.rotate
+    std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
+    
+}
 
 void test_resolveM() {
     fevor_crystal c1(std::vector<double> {0,0,1},0.01,1e11);

@@ -4,6 +4,8 @@
 #ifndef TEST_CRYSTAL
 #define TEST_CRYSTAL
 
+    void test_rotate();
+    
     void test_resolveM();
     
     double test_grow();
