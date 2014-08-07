@@ -211,7 +211,7 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
     std::random_device seed;
     std::uniform_real_distribution<double> dPhi(0.0,2.0*PI);
     
-     if (stress[stressIndex1] < stress[stressIndex2]) {
+    if (stress[stressIndex1] < stress[stressIndex2]) {
         // simple shear -- orientation will be near vertical
         std::uniform_real_distribution<double> dTheta(0.0,PI/6.0);
         theta = dTheta(seed);
@@ -335,15 +335,15 @@ void fevor_crystal::printCrystal() {
      
     std::cout.precision(4);
     
-    std::cout << std::setw(5) << std::fixed
-              << cAxis[0]           << ", "
-              << cAxis[1]           << ", "
-              << cAxis[2]           << ", "
-              << std::setw(10) << std::scientific
-              << cSize              << ", "
-              << cDislDens          << ", "
-              << cTimeLastRecrystal << ", "
-              << cSizeLastRecrystal << std::endl;
+    std::cout << std::fixed
+              << std::setw(8) << cAxis[0]           << ", "
+              << std::setw(8) << cAxis[1]           << ", "
+              << std::setw(8) << cAxis[2]           << ", "
+              << std::setw(11) << std::scientific
+              << std::setw(11) << cSize              << ", "
+              << std::setw(11) << cDislDens          << ", "
+              << std::setw(11) << cTimeLastRecrystal << ", "
+              << std::setw(11) << cSizeLastRecrystal << std::endl;
     
 }
 
@@ -365,4 +365,9 @@ void fevor_crystal::getNewAxis(double &theta, double &phi) {
     std::transform(cAxis.begin(), cAxis.end(), cAxis.begin(), 
                    [&](double x){return x/sqrt(cAxisMag);} );
     }
+}
+void fevor_crystal::getNewAxis(std::vector<double> ax) {
+    // TODO: error handling!
+    //~ if (ax.size() == 3)
+        cAxis = ax;
 }

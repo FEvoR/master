@@ -32,6 +32,7 @@ class fevor_crystal {
         void getAxisAngles(double &theta, double &phi);
         
         void getNewAxis(double &theta, double &phi);
+        void getNewAxis(std::vector<double> ax);
         
         void seeCrystal();
         void printCrystal();

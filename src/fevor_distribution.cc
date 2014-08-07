@@ -116,3 +116,52 @@ void fevor_distribution::saveDistribution() {
         crystals[ii].printCrystal();
     }
 }
+
+void fevor_distribution::generateWatsonAxes(const double &wk) {
+    const double PI  =3.141592653589793238463;
+    //TODO: look up random_device vs default_random_engine and how to preserve
+    // it across function calls
+    std::random_device seed;
+    
+    if (wk == 0) {
+        // isotropic
+        std::normal_distribution<double> rNumb(-1.0,1.0);
+        std::vector<double> axis;
+        
+        for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
+        
+            axis = {rNumb(seed), rNumb(seed), rNumb(seed)};
+            double axisMag = tensorMagnitude(axis);
+            if (axisMag != 1.0) {
+                std::transform(axis.begin(), axis.end(), axis.begin(), 
+                                [&](double x){return x/sqrt(axisMag);} );
+            }
+        
+            crystals[ii].getNewAxis(axis);
+        }
+        
+    } else if (wk < -1000.5) {
+        // perfect bipolar (single maximum)
+        for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
+                crystals[ii].getNewAxis({0.0,0.0,1.0});
+        }
+    } else if (wk < 0) {
+        // bipolar (single maximum)
+        //TODO: find c++ equivelent of randomsample() in MATLAB
+        
+    } else if (wk > 500.0) {
+        // perfect girdle
+        std::uniform_real_distribution<double> gPhi(0,2.0*PI);
+        double theta, phi;
+        theta = PI/2.0;
+        
+        for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
+                phi   = gPhi(seed);
+                crystals[ii].getNewAxis(theta, phi);
+        }
+    } else { //(wk > 0)
+        // girdle
+        //TODO: find c++ equivelent of erf() and erfinv() in MATLAB
+            // or better way to calculate Q
+    }
+}

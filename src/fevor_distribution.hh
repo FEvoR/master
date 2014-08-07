@@ -25,9 +25,9 @@ class fevor_distribution {
                 
                 contribCrystal  = 1.0;
                 contribNeighbor = 0.0;
-                
-                
             }
+            
+            generateWatsonAxes(watsonK);
         }
         
         
@@ -44,7 +44,8 @@ class fevor_distribution {
         // save distribution to disk
         void saveDistribution();
         
-        
+        //TODO: generate watson cAxis for distrobution
+        void generateWatsonAxes(const double &wk);
         
     private:
         std::vector<unsigned int> dimensions;
