@@ -4,7 +4,7 @@ CXXFLAGS=-c -std=c++11 -g -Wall $(INC_DIR)
 LDFLAGS=
 
 COMMON_SOURCES= $(wildcard src/*.cc)
-TARGET_SOURCES= 
+TARGET_SOURCES= compairisonStep.cc
 TEST_SOURCES= $(wildcard test/*.cc)
 
 COMMON_OBJECTS= $(COMMON_SOURCES:.cc=.o)
@@ -12,7 +12,7 @@ TARGET_OBJECTS= $(TARGET_SOURCES:.cc=.o)
 TEST_OBJECTS=   $(TEST_SOURCES:.cc=.o)
 
 
-TARGET_EXECUTABLE=
+TARGET_EXECUTABLE= bin/compairisonStep
 TEST_EXECUTABLE= bin/units
 
 .PHONY: all target tests
