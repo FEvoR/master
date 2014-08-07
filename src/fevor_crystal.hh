@@ -27,7 +27,7 @@ class fevor_crystal {
         // polygonize if favorable to do so
         unsigned int polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep);
         // rotate the crystals
-        void rotate();
+        void rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress);
         
         void getAxisAngles(double &theta, double &phi);
         

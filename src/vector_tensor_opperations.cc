@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include <numeric>
+#include <algorithm>
 #include "vector_tensor_opperations.hh"
 
 // Vector containing the independent elements of the outer product between
@@ -77,6 +78,37 @@ std::vector<double> matrixTranspose(const std::vector<double> &m1, const int row
     
     return matrix;
     
+}
+
+std::vector<double> vectorTimesExpm(const std::vector<double> &vec, const std::vector<double> &m, int terms){
+    
+    std::vector<double> sum = vec;
+    std::vector<double> tempMat;
+    
+    for (int ii = 1; ii != terms; ++ii ) {
+        tempMat = matrixPowTimesVector(m, ii, vec);
+        std::transform(tempMat.begin(), tempMat.end(),tempMat.begin(), 
+                       [&](double x){return x/factorial(ii);} );
+        
+        std::transform(sum.begin(), sum.end(),tempMat.begin(),sum.begin(), 
+                       std::plus<double>() );
+        
+    }
+    
+    return sum;
+}
+
+std::vector<double> matrixPowTimesVector(std::vector<double> m, int power, std::vector<double> vec) {
+        if (power > 1)
+            return tensorMixedInner(matrixPowTimesVector(m, power -1, vec), vec);
+        return tensorMixedInner(m, vec);
+}
+
+int factorial(int n) {
+        if (n > 1)
+            return factorial(n-1) * n;
+        
+        return 1;
 }
 
 void tensorDisplay(const std::vector<double> &tensor, const int rows, const int columns) {

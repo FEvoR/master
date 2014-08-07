@@ -24,6 +24,13 @@ double tensorMagnitude(const std::vector<double> &t1);
 // transpose a matrix
 std::vector<double> matrixTranspose(const std::vector<double> &matrix, const int rows, const int columns);
 
+// get the taylor series of expm()
+std::vector<double> vectorTimesExpm(const std::vector<double> &vec, const std::vector<double> &m, int terms);
+
+std::vector<double> matrixPowTimesVector(std::vector<double> m, int power, std::vector<double> vec);
+
+int factorial(int n);
+
 // display a tensor
 void tensorDisplay(const std::vector<double> &tensor, const int rows, const int columns);
 

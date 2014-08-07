@@ -33,11 +33,11 @@ void test_resolveM() {
     std::cout << "bigM size should be: 81" << "\n"
               << "bigM size is: " << bigM.size() << std::endl;
               
-    std::vector<double> edot = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-    edot = tensorMixedInner(bigM, stress);
+    std::vector<double> vel;
+    vel = tensorMixedInner(bigM, stress);
     
-    std::cout << "\n" << "edot is:" << std::endl;
-    tensorDisplay(edot, 9, 1);
+    std::cout << "\n" << "vel is:" << std::endl;
+    tensorDisplay(vel, 9, 1);
     
     std::cout << "\n" << "bigM is:" << std::endl;
     tensorDisplay(bigM, 9, 9);

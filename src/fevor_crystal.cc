@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <numeric>
 #include <algorithm>
@@ -14,8 +15,6 @@
 // Define function members
 
 std::vector<double> fevor_crystal::resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot) {
-    // FIXME -- rotate needs vel - vel! So M should be just M, need to calc edot in sep. step.
-    
     double glenExp = 3.0;
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
     double beta = 630.0; // from Thors 2001 paper (pg 510, above eqn 16)
@@ -25,11 +24,6 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
     Q = (temperature > -10.0 ? 115.0 : 60.0);
     A = 3.5e-25*beta*exp(-(Q/R)*(1.0/(273.13+temperature)-1.0/263.13)); // units: s^{-1} Pa^{-n}
     // From Cuffy + Patterson (4 ed.) pg. 73
-    
-    std::cout.precision(4);
-    std::cout << std::scientific << "Flow factor A:" << A << std::endl;
-    
-    seeCrystal();
     
     // Burgers vector for each slip system
     std::vector<double> burger1, burger2, burger3;
@@ -55,28 +49,12 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
                    -xyline/6.0};
     }
     
-    
-    //~ std::cout << std::scientific << "Burger 1:" << std::endl;
-    //~ tensorDisplay(burger1,3,1);
-    //~ std::cout << std::scientific << "Burger 2:" << std::endl;
-    //~ tensorDisplay(burger2,3,1);
-    //~ std::cout << std::scientific << "Burger 3:" << std::endl;
-    //~ tensorDisplay(burger3,3,1);
-    
     // calculate shmidt tensors
         // 1x9 vector containing the  3x3 shmidt tensor in ROW-MAJOR order. 
     std::vector<double> shmidt1, shmidt2,shmidt3;
     shmidt1 = tensorOuter(burger1,cAxis);
     shmidt2 = tensorOuter(burger2,cAxis);
     shmidt3 = tensorOuter(burger3,cAxis);
-    
-    //~ std::cout << std::scientific << "shmidt 1:" << std::endl;
-    //~ tensorDisplay(shmidt1,3,3);
-    //~ std::cout << std::scientific << "shmidt 2:" << std::endl;
-    //~ tensorDisplay(shmidt2,3,3);
-    //~ std::cout << std::scientific << "shmidt 3:" << std::endl;
-    //~ tensorDisplay(shmidt3,3,3);
-    
     
     // calculate M on each slip system
         // 1x81 vector containing the 9x9 matrix in ROW-MAJOR order. 
@@ -86,10 +64,10 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
     Mbase3 = tensorOuter(shmidt3, shmidt3);
     
     double rss1, rss2,rss3;
-    rss1 = std::inner_product(shmidt1.cbegin(),shmidt1.cend(), stress.cbegin(), 0);
-    rss2 = std::inner_product(shmidt2.cbegin(),shmidt2.cend(), stress.cbegin(), 0);
-    rss3 = std::inner_product(shmidt3.cbegin(),shmidt3.cend(), stress.cbegin(), 0);
-    
+    rss1 = std::inner_product(shmidt1.cbegin(),shmidt1.cend(), stress.cbegin(), 0.0);
+    rss2 = std::inner_product(shmidt2.cbegin(),shmidt2.cend(), stress.cbegin(), 0.0);
+    rss3 = std::inner_product(shmidt3.cbegin(),shmidt3.cend(), stress.cbegin(), 0.0);
+        
     std::transform(burger1.begin(),burger1.end(),burger1.begin(), 
                     [&](double x){return x*rss1;});
     std::transform(burger2.begin(),burger2.end(),burger2.begin(), 
@@ -104,33 +82,34 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
     
     Mrss = tensorMagnitude(burger1);
     
-    
     std::transform(Mbase1.begin(), Mbase1.end(), Mbase1.begin(), 
                    [&](double x){return A*pow(rss1,glenExp-1)*x;} );
     std::transform(Mbase2.begin(), Mbase2.end(), Mbase2.begin(), 
                    [&](double x){return A*pow(rss2,glenExp-1)*x;} );
     std::transform(Mbase3.begin(), Mbase3.end(), Mbase3.begin(), 
                    [&](double x){return A*pow(rss3,glenExp-1)*x;} );
-                   
+           
     
     std::transform(Mbase1.begin(), Mbase1.end(), Mbase2.begin(),Mbase1.begin(), 
                    std::plus<double>());
     std::transform(Mbase1.begin(), Mbase1.end(), Mbase3.begin(),Mbase1.begin(), 
                    std::plus<double>());
                    
+    
+    
     Mbase2 = matrixTranspose(Mbase1,9,9);
-    std::transform(Mbase1.begin(), Mbase1.end(), Mbase2.begin(),Mbase1.begin(), 
+    std::transform(Mbase2.begin(), Mbase2.end(), Mbase1.begin(),Mbase2.begin(), 
                    std::plus<double>());
-    std::transform(Mbase1.begin(),Mbase1.end(),Mbase1.begin(), 
+    std::transform(Mbase2.begin(),Mbase2.end(),Mbase2.begin(), 
                     [&](double x){return x/2.0;});
+    // Mbase2 now (Mbase1 + Mbase1')/2
     
     std::vector<double> edot;
-    edot = tensorMixedInner(Mbase1, stress);
+    edot = tensorMixedInner(Mbase2, stress);
     
     Medot = tensorMagnitude(edot)*sqrt(1.0/2.0);
     
     return Mbase1;
-        // this is (M + M')/2! edot = Mbase1*stress!
     
 }
 
@@ -306,9 +285,30 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     return 1;
 }
 
-void fevor_crystal::rotate(std::vector<double> &crystalV) {
-    // TODO: make this rotate() function
+void fevor_crystal::rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress) {
     
+    std::vector<double> bigMtrans, rdot;
+    bigMtrans = matrixTranspose(bigM,9,9);
+    std::transform(bigM.begin(), bigM.end(), bigMtrans.begin(),bigMtrans.begin(), 
+                   std::minus<double>());
+    std::transform(bigMtrans.begin(),bigMtrans.end(),bigMtrans.begin(), 
+                    [](double x){return x/2.0;});
+    // bigMtrans now (bigM + bigM')/2
+    
+    rdot = tensorMixedInner(bigMtrans, stress);
+    
+    std::vector<double> r = { 0, 1, 1,
+                             -1, 0, 1,
+                             -1,-1, 0};
+    
+    
+    std::transform(r.begin(),r.end(), bulkEdot.begin(), r.begin(), 
+                    std::multiplies<double>() );
+    std::transform(r.begin(),r.end(), rdot.begin(), r.begin(), 
+                    std::minus<double>() );
+                    
+    // rotate crystals C' = (I+A+A^2/2+A^3/6+...)*C
+    cAxis = vectorTimesExpm(cAxis,r, 3);
 }
 
 void fevor_crystal::seeCrystal() { 
@@ -335,11 +335,11 @@ void fevor_crystal::printCrystal() {
      
     std::cout.precision(4);
     
-    std::cout << std::fixed
+    std::cout << std::setw(5) << std::fixed
               << cAxis[0]           << ", "
               << cAxis[1]           << ", "
               << cAxis[2]           << ", "
-              << std::scientific
+              << std::setw(10) << std::scientific
               << cSize              << ", "
               << cDislDens          << ", "
               << cTimeLastRecrystal << ", "
