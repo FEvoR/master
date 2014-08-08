@@ -17,7 +17,8 @@ int main()
                                        0,     0,     0,
                                    10000,     0,-10000};
     double modelTime = 0.0;
-    double timeStep = 1000.0*365.0*24.0*60.0*60.0;
+    double timeStep = 10000.0*365.0*24.0*60.0*60.0;
+    
     double nMigre, nPoly;
     nMigre = nPoly = 0;
     std::vector<double> bulkEdot(9, 0.0);
@@ -30,6 +31,19 @@ int main()
     //~ double watsonK = -2.0;     // bipolar
     //~ "./util/compairisonDist.csv"
     fevor_distribution d1(packingDimensions, "./util/compairisonDist.csv");
+    
+    std::cout << "\n" << "************************************ \n"
+                    << "Compairison timeStep: FEvoR vs Thor. \n"
+                    << "************************************ \n"
+                    << "\n"
+                    << "Model Setup is: \n"
+                    << "    " << "Softness Parameters: 1, 0 \n"
+                    << "    " << "Temperature: " << temperature << " degrees C\n"
+                    << "    " << "Stress (Pa): " << std::endl;
+                    tensorDisplay(stress, 3, 3);
+    std::cout << "\n" << "Initial time: " << modelTime << "s \n"
+                    << "Time Step: " << timeStep << "s \n"
+                    << std::endl;
     
     std::cout << "\n" << "Got initial distribution! \n" << std::endl;
     
@@ -45,6 +59,11 @@ int main()
     
     std::cout << "Bulk Edot was:" << std::endl;
     tensorDisplay(bulkEdot,3,3);
+    std::cout << "Number of Polygonizations:" << nPoly << std::endl;
+    std::cout << "Number of Migration Recrystallizations:" << nMigre << std::endl;
+    
+    
+    
         
     std::cout << "\n" << "Time to preform a timestep: " << msecs << " ms \n" << std::endl;
     

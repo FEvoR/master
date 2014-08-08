@@ -59,6 +59,8 @@ cdata(:,2:4) = cN;
 %% plot data
 
 display(bedot);
+display(NPOLY);
+display(NMIGRE);
 
 MSize = 90;
 LWidth = 3;
