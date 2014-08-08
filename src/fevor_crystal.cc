@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <cmath>
 #include <numeric>
 #include <algorithm>
@@ -285,17 +286,15 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     return 1;
 }
 
-void fevor_crystal::rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress) {
+void fevor_crystal::rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress, const double &timeStep) {
     
-    std::vector<double> bigMtrans, rdot;
-    bigMtrans = matrixTranspose(bigM,9,9);
-    std::transform(bigM.begin(), bigM.end(), bigMtrans.begin(),bigMtrans.begin(), 
+    std::vector<double> rdot, rdotTrans;
+    rdot = tensorMixedInner(bigM, stress);
+    rdotTrans = matrixTranspose(rdot, 3, 3);
+    std::transform(rdot.begin(), rdot.end(), rdotTrans.begin(),rdot.begin(), 
                    std::minus<double>());
-    std::transform(bigMtrans.begin(),bigMtrans.end(),bigMtrans.begin(), 
-                    [](double x){return x/2.0;});
-    // bigMtrans now (bigM + bigM')/2
-    
-    rdot = tensorMixedInner(bigMtrans, stress);
+    std::transform(rdot.begin(),rdot.end(),rdot.begin(), 
+                    [&](double x){return x/2.0;});
     
     std::vector<double> r = { 0, 1, 1,
                              -1, 0, 1,
@@ -307,8 +306,18 @@ void fevor_crystal::rotate(const std::vector<double> &bigM, const std::vector<do
     std::transform(r.begin(),r.end(), rdot.begin(), r.begin(), 
                     std::minus<double>() );
                     
+    std::transform(r.begin(),r.end(),r.begin(), 
+                    [&](double x){return x*timeStep;});
     // rotate crystals C' = (I+A+A^2/2+A^3/6+...)*C
     cAxis = vectorTimesExpm(cAxis,r, 3);
+        // two terms seem to work fine. Three to be safe.
+    
+    
+    //make unit vectors!
+    double magCaxis;
+    magCaxis = tensorMagnitude(cAxis);
+    std::transform(cAxis.begin(),cAxis.end(),cAxis.begin(), 
+                    [&](double x){return x/magCaxis;});
 }
 
 void fevor_crystal::seeCrystal() { 
@@ -347,6 +356,22 @@ void fevor_crystal::printCrystal() {
     
 }
 
+void fevor_crystal::printCrystal(std::ofstream &file) {
+     
+    file.precision(4);
+    
+    file << std::fixed
+         << std::setw(8) << cAxis[0]           << ", "
+         << std::setw(8) << cAxis[1]           << ", "
+         << std::setw(8) << cAxis[2]           << ", "
+         << std::setw(11) << std::scientific
+         << std::setw(11) << cSize              << ", "
+         << std::setw(11) << cDislDens          << ", "
+         << std::setw(11) << cTimeLastRecrystal << ", "
+         << std::setw(11) << cSizeLastRecrystal << std::endl;
+    
+}
+
 void fevor_crystal::getAxisAngles(double &theta, double &phi) {
     
     double HXY = sqrt(cAxis[0]*cAxis[0] + cAxis[1]*cAxis[1]);
@@ -370,4 +395,17 @@ void fevor_crystal::getNewAxis(std::vector<double> ax) {
     // TODO: error handling!
     //~ if (ax.size() == 3)
         cAxis = ax;
+}
+
+ void fevor_crystal::setAll(const double &ca0, const double &ca1, const double &ca2, 
+                    const double &csz, const double &cdd, 
+                    const double &ctlr, const double &cslr) {
+    
+    getNewAxis({ca0, ca1, ca2});
+    
+    cSize     = csz;
+    cDislDens = cdd;
+    
+    cTimeLastRecrystal = ctlr;
+    cSizeLastRecrystal = cslr;
 }

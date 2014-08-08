@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
+#include <sstream>
 #include <cmath>
 #include <numeric>
 #include <algorithm>
@@ -39,7 +41,7 @@ std::vector<double> fevor_distribution::stepInTime(const double &temperature, co
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         
-        crystals[ii].rotate(crystalM[ii], bulkEdot, stress);
+        crystals[ii].rotate(crystalM[ii], bulkEdot, stress, timeStep);
     }
     
     modelTime += timeStep;
@@ -81,14 +83,16 @@ void fevor_distribution::getSoftness(std::vector<std::vector<double>> &crystalM,
         }
     }
     
-    std::vector<double> bulkMtrans;
-    bulkMtrans = matrixTranspose(bulkM,9,9);
-    std::transform(bulkM.begin(), bulkM.end(), bulkMtrans.begin(),bulkMtrans.begin(), 
+    std::transform(bulkM.begin(),bulkM.end(),bulkM.begin(), 
+                    [&](double x){return x/numberCrystals;});
+    
+    std::vector<double> bulkEdotTrans;
+    bulkEdot = tensorMixedInner(bulkM, stress);
+    bulkEdotTrans = matrixTranspose(bulkEdot, 3, 3);
+    std::transform(bulkEdot.begin(), bulkEdot.end(), bulkEdotTrans.begin(),bulkEdot.begin(), 
                    std::plus<double>());
-    std::transform(bulkMtrans.begin(),bulkMtrans.end(),bulkMtrans.begin(), 
-                    [&](double x){return x/(2.0*numberCrystals);});
-                    
-    bulkEdot = tensorMixedInner(bulkMtrans, stress);
+    std::transform(bulkEdot.begin(),bulkEdot.end(),bulkEdot.begin(), 
+                    [&](double x){return x/2.0;});
 }
 
 void fevor_distribution::setSoftness(double cc, double cn) {
@@ -97,8 +101,6 @@ void fevor_distribution::setSoftness(double cc, double cn) {
 }
 
 void fevor_distribution::saveDistribution() {
-    // FIXME: Make it actually save, now just prints to cout
-    
     std::cout << "# "
               << "Crystal"                << ", "
               << "C-Axis (x)"             << ", "
@@ -114,6 +116,64 @@ void fevor_distribution::saveDistribution() {
         std::cout << std::setw(5) << ii << ", ";
                   
         crystals[ii].printCrystal();
+    }
+}
+void fevor_distribution::saveDistribution(std::string fname){
+    std::ofstream file(fname);
+    
+    file << "# "
+              << "Crystal"                << ", "
+              << "C-Axis (x)"             << ", "
+              << "C-Axis (y)"             << ", "
+              << "C-Axis (z)"             << ", "
+              << "Size (m)"               << ", "
+              << "Disl. dens. (1/m^2)"    << ", "
+              << "Last recr. time (s)"    << ", "
+              << "Size at last recr. (m)" << std::endl;
+    
+    for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
+        
+        file << std::setw(5) << ii << ", ";
+                  
+        crystals[ii].printCrystal(file);
+    }
+    
+    
+}
+
+
+void fevor_distribution::loadDistribution( std::string fname ) {
+    std::ifstream file(fname);
+    std::string line;
+    std::string field;
+    double fieldVal;
+    unsigned int ii = 0;
+    std::vector<double> data;
+    
+    while (std::getline(file, line) && ii != numberCrystals) {
+        if (line.find("#") == 0)
+            continue;
+            
+        std::istringstream streamLine(line);
+        while (std::getline(streamLine,field,',')) {
+            std::istringstream streamField(field);
+            
+            streamField >> fieldVal;
+            data.push_back(fieldVal);
+        }
+        
+        ++ii; 
+    }
+    
+    for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
+        // data[ii*8] is crystal number, skip this
+        crystals[ii].setAll(data[ii*8+1],
+                            data[ii*8+2],
+                            data[ii*8+3],
+                            data[ii*8+4],
+                            data[ii*8+5],
+                            data[ii*8+6],
+                            data[ii*8+7]);
     }
 }
 
@@ -147,7 +207,13 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         }
     } else if (wk < 0) {
         // bipolar (single maximum)
-        //TODO: find c++ equivelent of randomsample() in MATLAB
+        /*TODO: find c++ equivelent of randomsample() in MATLAB 
+         * UPDATE: BOOST provides way to random sample. Will need boost to 
+         * implemnet a girdle distribution. -- should be done anyways.
+         */
+        std::cout << "Warning! Bipolar distribution not implemented yet!\n"
+                  << "Use an isotropic, perfect bipolar, or perfect girdle."
+                  << std::endl;
         
     } else if (wk > 500.0) {
         // perfect girdle
@@ -161,7 +227,13 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         }
     } else { //(wk > 0)
         // girdle
-        //TODO: find c++ equivelent of erf() and erfinv() in MATLAB
-            // or better way to calculate Q
+        /*TODO: find c++ equivelent of erfinv() in MATLAB or better way to 
+         * calculate Q. UPDATE: BOOST provides erfinv()! Will need boost to
+         * implemnet a girdle distribution. -- should be done anyways.
+         */
+        
+        std::cout << "Warning! Girdle distribution not implemented yet!\n"
+                  << "Use an isotropic, perfect bipolar, or perfect girdle."
+                  << std::endl;
     }
 }

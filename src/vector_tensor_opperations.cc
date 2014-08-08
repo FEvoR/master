@@ -89,26 +89,27 @@ std::vector<double> vectorTimesExpm(const std::vector<double> &vec, const std::v
         tempMat = matrixPowTimesVector(m, ii, vec);
         std::transform(tempMat.begin(), tempMat.end(),tempMat.begin(), 
                        [&](double x){return x/factorial(ii);} );
-        
         std::transform(sum.begin(), sum.end(),tempMat.begin(),sum.begin(), 
                        std::plus<double>() );
-        
     }
     
     return sum;
 }
 
 std::vector<double> matrixPowTimesVector(std::vector<double> m, int power, std::vector<double> vec) {
-        if (power > 1)
-            return tensorMixedInner(matrixPowTimesVector(m, power -1, vec), vec);
-        return tensorMixedInner(m, vec);
+    // tried recursion first -- crashes on power > 3
+    std::vector<double> temp = vec;
+    for (int ii = 0; ii != power; ++ii) {
+        temp = tensorMixedInner(m, temp);
+    }    
+    return temp;
 }
 
 int factorial(int n) {
-        if (n > 1)
-            return factorial(n-1) * n;
-        
-        return 1;
+    if (n > 1)
+        return factorial(n-1) * n;
+    
+    return 1;
 }
 
 void tensorDisplay(const std::vector<double> &tensor, const int rows, const int columns) {

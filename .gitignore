@@ -3,6 +3,9 @@ obj/**
 !obj/.keep
 *.o
 
+# utility files
+util/compairisonDist_stepped*
+
 # executables
 bin/**
 !bin/.keep

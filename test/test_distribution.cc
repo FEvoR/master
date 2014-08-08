@@ -14,7 +14,7 @@
 void test_stepInTime() {
     fevor_distribution d1({3,3,3}, 1.0); 
     
-    d1.saveDistribution();
+    //~ d1.saveDistribution();
     
     double temperature = -10.0;
     std::vector<double> stress = { 10000,     0, 10000,

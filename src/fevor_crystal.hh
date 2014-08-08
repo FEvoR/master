@@ -5,6 +5,7 @@
 #define FEVOR_CRYSTAL
 
 #include <vector>
+#include <fstream>
 
 class fevor_crystal {
     public:
@@ -27,7 +28,7 @@ class fevor_crystal {
         // polygonize if favorable to do so
         unsigned int polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep);
         // rotate the crystals
-        void rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress);
+        void rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress, const double &timeStep);
         
         void getAxisAngles(double &theta, double &phi);
         
@@ -36,7 +37,12 @@ class fevor_crystal {
         
         void seeCrystal();
         void printCrystal();
+        void printCrystal(std::ofstream &file);
         
+        void setAll(const double &ca1, const double &ca2, const double &ca3, 
+                    const double &csz, const double &cdd, 
+                    const double &ctlr, const double &cslr);
+                    
     private:
         // holds the crystals c-axis orientation vector in cartesian coordinates
         std::vector<double> cAxis; // unit vector
@@ -48,6 +54,8 @@ class fevor_crystal {
         double cTimeLastRecrystal; // units: #/m^2
         // holds the cSize at last recrystallization
         double cSizeLastRecrystal; // units: m
+        
+        
 };
 
 
