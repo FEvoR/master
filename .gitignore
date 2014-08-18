@@ -18,3 +18,8 @@ skratch.tex
 
 # temporary ubuntu files
 *~
+
+# files to maintain proper license documentation
+prependLicense.sh
+licenseHeaderMatlab
+licenseHeaderCPP

@@ -1,0 +1,46 @@
+The code in FEvoR is distributed under the GNU General Public
+License with an exception added to clarify our intention to allow
+FEvoR to interface with MATLAB(R) as well as any other MATLAB code
+or MEX-files a user may have installed, regardless of their licensing
+terms. The full text of the GPL can be found in the GPLv3 file
+at the top level of the FEvoR distribution.
+
+While not required by the terms of the license, we do request that
+publications derived from the use of FEvoR explicitly acknowledge
+that fact by citing [1].
+
+    [1] Kennedy, J. H., Pettit, E. C., & Di Prinzio, C. L. (2013). 
+        The evolution of crystal fabric in ice sheets and its link 
+        to climate history. Journal of Glaciology, 59(214), 357–373.
+        doi:10.3189/2013JoG12J159
+
+The following is the official license notice which should appear in
+each source file.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % FEvoR: Fabric Evolution with Recrystallization %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Copyright (C) 2009-2014  Joseph H Kennedy
+    %
+    % This file is part of FEvoR
+    %
+    % FEvoR is free software: you can redistribute it and/or modify it under the 
+    % terms of the GNU General Public License as published by the Free Software 
+    % Foundation, either version 3 of the License, or (at your option) any later 
+    % version.
+    %
+    % FEvoR is distributed in the hope that it will be useful, but WITHOUT ANY 
+    % WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+    % FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more 
+    % details.
+    %
+    % You should have received a copy of the GNU General Public License along 
+    % with FEvoR.  If not, see <http://www.gnu.org/licenses/>.
+    %
+    % Additional permission under GNU GPL version 3 section 7
+    %
+    % If you modify FEvoR, or any covered work, to interface with
+    % other modules (such as MATLAB code and MEX-files) available in a
+    % MATLAB(R) or comparable environment containing parts covered
+    % under other licensing terms, the licensors of FEvoR grant
+    % you additional permission to convey the resulting work.
