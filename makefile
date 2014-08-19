@@ -4,29 +4,40 @@ CXXFLAGS=-c -std=c++11 -g -Wall $(INC_DIR)
 LDFLAGS=
 
 COMMON_SOURCES= $(wildcard src/*.cc)
-TARGET_SOURCES= compairisonStep.cc
-TEST_SOURCES= $(wildcard test/*.cc)
+TEST_SOURCES= test/test_crystal.cc test/test_distribution.cc
 
 COMMON_OBJECTS= $(COMMON_SOURCES:.cc=.o)
-TARGET_OBJECTS= $(TARGET_SOURCES:.cc=.o)
 TEST_OBJECTS=   $(TEST_SOURCES:.cc=.o)
 
+TARGET_SOURCES=
+TARGET_OBJECTS= $(TARGET_SOURCES:.cc=.o)
+TARGET_EXECUTABLE=
 
-TARGET_EXECUTABLE= bin/compairisonStep
-TEST_EXECUTABLE= bin/units
+TEST_UNITS_SRC= test/units.cc
+TEST_UNITS_OBJ= $(TEST_UNITS_SRC:.cc=.o)
+TEST_UNITS_EXE= bin/units
 
-.PHONY: all target tests
+COMPARE_STEP_SRC= test/comparisonStep.cc
+COMPARE_STEP_OBJ=$(COMPARE_STEP_SRC:.cc=.o)
+COMPARE_STEP_EXE= bin/comparisonStep
 
-all: target tests
+.PHONY: all target units comparisonStep
+
+all: target units comparisonStep
 
 target: $(TARGET_EXECUTABLE)
 
-tests: $(TEST_EXECUTABLE)
+units: $(TEST_UNITS_EXE)
+
+comparisonStep: $(COMPARE_STEP_EXE)
 
 $(TARGET_EXECUTABLE): $(COMMON_OBJECTS) $(TARGET_OBJECTS)
 	$(CXX) $(LDFLAGS) $^ -o $@
 
-$(TEST_EXECUTABLE): $(COMMON_OBJECTS) $(TEST_OBJECTS)
+$(TEST_UNITS_EXE): $(COMMON_OBJECTS) $(TEST_OBJECTS) $(TEST_UNITS_OBJ)
+	$(CXX) $(LDFLAGS) $^ -o $@
+
+$(COMPARE_STEP_EXE): $(COMMON_OBJECTS) $(TEST_OBJECTS) $(COMPARE_STEP_OBJ)
 	$(CXX) $(LDFLAGS) $^ -o $@
 
 .cc.o:
