@@ -17,6 +17,10 @@ skratch.tex
 # temporary ubuntu files
 *~
 
+# Examples
+Example/distribution_initial.csv
+Example/distribution_final.csv
+
 # files to maintain proper license documentation
 prependLicense.sh
 .licenseHeaderMatlab

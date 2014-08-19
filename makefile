@@ -9,9 +9,9 @@ COMMON_OBJECTS= $(COMMON_SOURCES:.cc=.o)
 TEST_SOURCES= test/test_crystal.cc test/test_distribution.cc
 TEST_OBJECTS=   $(TEST_SOURCES:.cc=.o)
 
-TARGET_SOURCES=
+TARGET_SOURCES= Example/singleStep.cc
 TARGET_OBJECTS= $(TARGET_SOURCES:.cc=.o)
-TARGET_EXECUTABLE=
+TARGET_EXECUTABLE= bin/singleStep
 
 TEST_UNITS_SRC= test/units.cc
 TEST_UNITS_OBJ= $(TEST_UNITS_SRC:.cc=.o)
