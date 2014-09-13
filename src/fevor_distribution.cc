@@ -206,7 +206,7 @@ void fevor_distribution::loadDistribution( std::string fname ) {
 }
 
 void fevor_distribution::generateWatsonAxes(const double &wk) {
-    const double PI  =3.141592653589793238463;
+
     //TODO: look up random_device vs default_random_engine and how to preserve
     // it across function calls
     std::random_device seed;
@@ -245,9 +245,9 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         
     } else if (wk > 500.0) {
         // perfect girdle
-        std::uniform_real_distribution<double> gPhi(0,2.0*PI);
+        std::uniform_real_distribution<double> gPhi(0,2.0*M_PI);
         double theta, phi;
-        theta = PI/2.0;
+        theta = M_PI/2.0;
         
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
                 phi   = gPhi(seed);
