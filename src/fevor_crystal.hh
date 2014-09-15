@@ -38,12 +38,7 @@
 class fevor_crystal {
     public:
     // constructors
-        fevor_crystal(std::vector<double> ca, double cs, double cdd):
-            cAxis(ca), cSize(cs), cDislDens(cdd) {
-                cTimeLastRecrystal = 0.0;
-                cSizeLastRecrystal = cSize;
-            }
-        
+    fevor_crystal(std::vector<double> ca, double cs, double cdd);
     // functions
         // get the strain-stress relation tensor (4th order)
         std::vector<double> resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot);
