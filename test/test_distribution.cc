@@ -36,7 +36,7 @@
 #include <cmath>
 #include "fevor_distribution.hh"
 #include "test_distribution.hh"
-#include "vector_tensor_opperations.hh"
+#include "vector_tensor_operations.hh"
 
 
 void test_stepInTime() {

@@ -32,7 +32,7 @@
 #include "test_crystal.hh"
 #include "fevor_distribution.hh"
 #include "test_distribution.hh"
-#include "vector_tensor_opperations.hh"
+#include "vector_tensor_operations.hh"
 
 // Test the interface to fevor_crystal class
 int main()

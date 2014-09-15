@@ -34,7 +34,7 @@
 #include <cmath>
 #include <numeric>
 #include <algorithm>
-#include "vector_tensor_opperations.hh"
+#include "vector_tensor_operations.hh"
 
 // Vector containing the independent elements of the outer product between
 // two vectors (upper triangle of resultant tensor) in ROW-MAJOR order.

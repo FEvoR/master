@@ -37,7 +37,7 @@
 #include <chrono>
 #include <random>
 #include "fevor_crystal.hh"
-#include "vector_tensor_opperations.hh"
+#include "vector_tensor_operations.hh"
 
 fevor_crystal::fevor_crystal(std::vector<double> ca, double cs, double cdd):
     cAxis(ca), cSize(cs), cDislDens(cdd) {

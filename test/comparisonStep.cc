@@ -31,7 +31,7 @@
 #include <vector>
 #include <ctime>
 #include "fevor_distribution.hh"
-#include "vector_tensor_opperations.hh"
+#include "vector_tensor_operations.hh"
 
 // Perform a compairison time step between FEvoR and Thor
 int main()

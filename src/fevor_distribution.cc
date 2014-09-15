@@ -40,7 +40,7 @@
 #include <chrono>
 #include <random>
 #include "fevor_crystal.hh"
-#include "vector_tensor_opperations.hh"
+#include "vector_tensor_operations.hh"
 #include "fevor_distribution.hh"
 
 fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh): dimensions(lwh) {

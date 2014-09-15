@@ -16,7 +16,7 @@ set(test_sources
 add_library(fevor_common
   src/fevor_crystal.cc
   src/fevor_distribution.cc
-  src/vector_tensor_opperations.cc
+  src/vector_tensor_operations.cc
 )
 
 add_executable(singleStep Example/singleStep.cc)

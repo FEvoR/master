@@ -36,7 +36,7 @@
 #include <cmath>
 #include "fevor_crystal.hh"
 #include "test_crystal.hh"
-#include "vector_tensor_opperations.hh"
+#include "vector_tensor_operations.hh"
 
 //TODO: develop a robust test suite that includes edge cases
 
