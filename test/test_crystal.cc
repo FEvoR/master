@@ -50,10 +50,9 @@ void test_rotate(){
 void test_resolveM() {
     fevor_crystal c1(std::vector<double> {0,0,1},0.01,1e11);
     
-    const double PI  =3.141592653589793238463;
     double theta, phi;
-    theta = PI/4.0;
-    phi = PI/4.0;
+    theta = M_PI/4.0;
+    phi = M_PI/4.0;
     c1.getNewAxis(theta, phi);
     
     std::vector<double> stress = {10000.0,     0.0,     0.0,
@@ -190,10 +189,9 @@ void test_angles() {
     std::cout.precision(4);
     std::cout << std::fixed << "Angles are: \n" << "Theta: " << theta << " Phi: " << phi << std::endl;
     
-    const double PI  =3.141592653589793238463;
     std::random_device seed;
-    std::uniform_real_distribution<double> dPhi(0.0,2.0*PI);
-    std::uniform_real_distribution<double> dTheta(0.0,PI/2.0);
+    std::uniform_real_distribution<double> dPhi(0.0,2.0*M_PI);
+    std::uniform_real_distribution<double> dTheta(0.0,M_PI/2.0);
     
     theta = dTheta(seed);
     phi = dPhi(seed);

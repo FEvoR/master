@@ -235,25 +235,24 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
         // Should be close to max MRSS
     double theta = 0.0, phi = 0.0;
     getAxisAngles(theta, phi);
-    const double PI  =3.141592653589793238463;
     
     int stressIndex1 = (stress[4] > stress[0] ? 4 : 0);
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
     stressIndex2     = (stress[5] > stress[stressIndex2] ? 5 : stressIndex2);
     
     std::random_device seed;
-    std::uniform_real_distribution<double> dPhi(0.0,2.0*PI);
+    std::uniform_real_distribution<double> dPhi(0.0,2.0*M_PI);
     
     if (stress[stressIndex1] < stress[stressIndex2]) {
         // simple shear -- orientation will be near vertical
-        std::uniform_real_distribution<double> dTheta(0.0,PI/6.0);
+        std::uniform_real_distribution<double> dTheta(0.0,M_PI/6.0);
         theta = dTheta(seed);
         phi = dPhi(seed);
         
         
     } else {
         // uniaxial comp. or pure shear -- orientation will be near theta = 45 degrees
-        std::uniform_real_distribution<double> dTheta(PI/6.0,PI/3.0);
+        std::uniform_real_distribution<double> dTheta(M_PI/6.0,M_PI/3.0);
         theta = dTheta(seed);
         phi = dPhi(seed);
     }
@@ -289,7 +288,6 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
         // pure shear, towards vertical if simple shear.
     double theta = 0.0, phi = 0.0;
     getAxisAngles(theta, phi);
-    const double PI  =3.141592653589793238463;
     
     int stressIndex1 = (stress[4] > stress[0] ? 4 : 0);
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
@@ -298,16 +296,16 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     std::random_device seed;
     std::uniform_real_distribution<double> distribution(0.0,100.0);
     
-    if (stress[stressIndex1] < stress[stressIndex2] && theta < PI/6.0) {
+    if (stress[stressIndex1] < stress[stressIndex2] && theta < M_PI/6.0) {
         // toward vertical
-        theta -= PI/36.0;
+        theta -= M_PI/36.0;
         
-    } else if (theta < PI/6.0) {
+    } else if (theta < M_PI/6.0) {
         // away from vertical
-        theta += PI/36.0;
+        theta += M_PI/36.0;
     } else {
         // randomly toward/away from vertical
-        theta += (  distribution(seed) < 50.0 ? -PI/36.0 : PI/36.0);
+        theta += (  distribution(seed) < 50.0 ? -M_PI/36.0 : M_PI/36.0);
     } 
     
     getNewAxis(theta, phi);
