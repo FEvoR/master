@@ -257,9 +257,9 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         }
     } else if (wk < 0) {
         // bipolar (single maximum)
-        /*TODO: find c++ equivelent of randomsample() in MATLAB 
+        /*TODO: find c++ equivalent of randomsample() in MATLAB
          * UPDATE: BOOST provides way to random sample. Will need boost to 
-         * implemnet a girdle distribution. -- should be done anyways.
+         * implement a girdle distribution. -- should be done anyways.
          */
         std::cout << "Warning! Bipolar distribution not implemented yet!\n"
                   << "Use an isotropic, perfect bipolar, or perfect girdle."
@@ -277,9 +277,9 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         }
     } else { //(wk > 0)
         // girdle
-        /*TODO: find c++ equivelent of erfinv() in MATLAB or better way to 
+        /*TODO: find c++ equivalent of erfinv() in MATLAB or better way to
          * calculate Q. UPDATE: BOOST provides erfinv()! Will need boost to
-         * implemnet a girdle distribution. -- should be done anyways.
+         * implement a girdle distribution. -- should be done anyways.
          */
         
         std::cout << "Warning! Girdle distribution not implemented yet!\n"

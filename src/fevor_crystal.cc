@@ -173,7 +173,7 @@ void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const
     double rhoDot = 0.0; // units: m^{-2} s^{-1}
     
     
-    // Change in disloation density
+    // Change in dislocation density
     rhoDot = Medot/(b*cSize) - alpha*cDislDens*K/(cSize*cSize);  // units: m^{-2} s^{-1}
     
     cDislDens = cDislDens + rhoDot*timeStep; // units: m^{-2}
@@ -225,7 +225,7 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
     
     double Mstress = 0.0;
     Mstress = tensorMagnitude(stress)*sqrt(1.0/2.0); 
-        // efective stress: Thor. 2002, 3-4, [29]
+        // effective stress: Thor. 2002, 3-4, [29]
     
     double PC = 1.0; // units Pa^{4/3} m 
         // Shimizu 2008
@@ -303,7 +303,7 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
         theta -= PI/36.0;
         
     } else if (theta < PI/6.0) {
-        // away from vetical
+        // away from vertical
         theta += PI/36.0;
     } else {
         // randomly toward/away from vertical
