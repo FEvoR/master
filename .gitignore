@@ -8,6 +8,13 @@ util/compairisonDist_stepped*
 bin/**
 !bin/.keep
 
+# compiled libraries
+lib/**
+!lib/.keep
+
+# build directory
+build/**
+
 # IDE project files
 .geanyprj
 

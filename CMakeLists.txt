@@ -3,7 +3,8 @@ cmake_minimum_required (VERSION 2.8.0)
 project (FEvoR)
 
 set(CMAKE_MACOSX_RPATH 0)
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 # FEvoR requires the c++11 flag
 add_definitions(-std=c++11)
