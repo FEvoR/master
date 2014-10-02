@@ -35,3 +35,13 @@ target_link_libraries(testUnits fevor_common)
 # hard-wired).
 add_executable(comparisonStep ${test_sources} test/comparisonStep.cc)
 target_link_libraries(comparisonStep fevor_common)
+
+# install the FEvoR library
+install(TARGETS fevor_common
+        LIBRARY DESTINATION lib/${CMAKE_PROJECT_NAME})
+
+install(FILES 
+  src/fevor_distribution.hh
+  src/fevor_crystal.hh
+  src/vector_tensor_operations.hh
+  DESTINATION include/${CMAKE_PROJECT_NAME})
