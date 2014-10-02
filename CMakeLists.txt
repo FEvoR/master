@@ -18,26 +18,26 @@ set(test_sources
   test/test_distribution.cc
   )
 
-add_library(fevor_common
+add_library(fevor
   src/fevor_crystal.cc
   src/fevor_distribution.cc
   src/vector_tensor_operations.cc
 )
 
 add_executable(singleStep Example/singleStep.cc)
-target_link_libraries(singleStep fevor_common)
+target_link_libraries(singleStep fevor)
 
 add_executable(testUnits ${test_sources} test/units.cc)
-target_link_libraries(testUnits fevor_common)
+target_link_libraries(testUnits fevor)
 
 # This one compiles, but will crash unless executed from the top
 # directory of the source tree (the path to an input file is
 # hard-wired).
 add_executable(comparisonStep ${test_sources} test/comparisonStep.cc)
-target_link_libraries(comparisonStep fevor_common)
+target_link_libraries(comparisonStep fevor)
 
 # install the FEvoR library
-install(TARGETS fevor_common
+install(TARGETS fevor
         LIBRARY DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(FILES 
