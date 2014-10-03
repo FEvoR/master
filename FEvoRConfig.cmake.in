@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+set_and_check(FEvoR_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set_and_check(FEvoR_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
+
+check_required_components(FEvoR)
+
+find_library(FEvoR_LIB FEvoR PATHS ${FEvoR_LIB_DIR}/FEvoR)
+set(FEvoR_INCLUDES ${FEvoR_INCLUDE_DIR}/FEvoR CACHE PATH "FEvoR includes directory")

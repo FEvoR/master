@@ -1,11 +1,8 @@
 cmake_minimum_required (VERSION 2.8.0)
 
 project (FEvoR)
-
-# TODO: need to set version numbers. 
-# TODO: Build and Export the FEvoRConfig.cmake file automatically
-#SET(${PROJECT_NAME}_VERSION_MAJOR 0)
-#SET(${PROJECT_NAME}_VERSION_MINOR 1)
+set (${PROJECT_NAME}_VERSION_MAJOR 0)
+set (${PROJECT_NAME}_VERSION_MINOR 1)
 
 set(CMAKE_MACOSX_RPATH 0)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
@@ -41,15 +38,31 @@ target_link_libraries(testUnits FEvoR)
 add_executable(comparisonStep ${test_sources} test/comparisonStep.cc)
 target_link_libraries(comparisonStep FEvoR)
 
+# build package config file
+set(INCLUDE_INSTALL_DIR include CACHE PATH "headers directory" )
+set(LIB_INSTALL_DIR lib CACHE PATH "library directory" )
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    ${PROJECT_NAME}Config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    INSTALL_DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}
+    PATH_VARS INCLUDE_INSTALL_DIR LIB_INSTALL_DIR)
+write_basic_package_version_file(
+	${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+	VERSION ${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}
+	COMPATIBILITY AnyNewerVersion )
+
 # install the FEvoR library
 install(TARGETS FEvoR
-        LIBRARY DESTINATION lib/${CMAKE_PROJECT_NAME})
+        LIBRARY DESTINATION lib/${PROJECT_NAME})
 
 install(FILES 
   src/fevor_distribution.hh
   src/fevor_crystal.hh
   src/vector_tensor_operations.hh
-  DESTINATION include/${CMAKE_PROJECT_NAME})
+  DESTINATION include/${PROJECT_NAME})
 
-install(FILES FEvoRConfig.cmake DESTINATION lib/${CMAKE_PROJECT_NAME})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake 
+              ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+        DESTINATION lib/${PROJECT_NAME})
 
