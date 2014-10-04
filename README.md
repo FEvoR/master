@@ -5,6 +5,8 @@ Copyright (C) 2009-2014  Joseph H Kennedy
 
 This file is part of FEvoR
 
+FEvoR is hosted at https://github.com/FEvoR
+
 FEvoR is free software: you can redistribute it and/or modify it under the 
 terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
@@ -34,7 +36,7 @@ FEvoR is a statistical fabric evolution model that includes
 recrystallization processes such as:
     Grain Growth
     Polygonization
-    Migration Recrstallization
+    Migration Recrystallization
 
 FEvoR was devoloped at the University of Alaska Fairbanks (UAF) by 
 Joseph H Kennedy. For a detailed description of this model, see: 
@@ -53,17 +55,35 @@ FEvoR is based on the work by Dr. Thorsteinsson, see:
     recrystallization. Journal of Geophysical Research Solid Earth, 
     107(B1,2014), 1–13. doi:10.1029/2001JB000244
 
-=====================
-DOWNLOAD INSTRUCTIONS
-=====================
+====================
+INSTALL INSTRUCTIONS
+====================
 
-FEvoR is hosted at https://github.com/FEvoR
+Prerequisites: 
+ * C++ Boost libary: http://www.boost.org/
+ * CMake for build and installation
 
-To obtain a copy of the latest stable release:
-    git clone https://github.com/FEvoR/stable.git
+To install:
 
-To obtain a copy of the latest development version:
-    git clone https://github.com/FEvoR/master.git
+Clone the FEvoR repository from github. 
 
-Alternatively, the latest development version of FEvoR can be downloaded at:
-    https://github.com/FEvoR/archive/master.zip
+```
+git clone git://github.com:FEvoR/master.git fevor
+```
+
+Then, if you have boost installed, you can make and install FEvoR like so:
+
+```
+cd fevor
+mkdir build && cd build
+cmake ..
+make install
+```
+There is no unistall routine within the make file. However, you can uninstall
+the FEvoR library by running
+
+```
+xargs rm < install_manifest.txt
+```
+
+from with the build directory. 
