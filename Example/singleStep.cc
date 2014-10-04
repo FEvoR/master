@@ -52,7 +52,7 @@ int main()
     double modelTime = 0.0;
     double timeStep = 10000.0*365.0*24.0*60.0*60.0;
     
-    double nMigre, nPoly;
+    unsigned int nMigre, nPoly;
     nMigre = nPoly = 0;
     std::vector<double> bulkEdot(9, 0.0);
     

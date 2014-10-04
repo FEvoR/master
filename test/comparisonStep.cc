@@ -47,7 +47,7 @@ int main()
     double modelTime = 0.0;
     double timeStep = 10000.0*365.0*24.0*60.0*60.0;
     
-    double nMigre, nPoly;
+    unsigned int nMigre, nPoly;
     nMigre = nPoly = 0;
     std::vector<double> bulkEdot(9, 0.0);
     
@@ -59,6 +59,7 @@ int main()
     //~ double watsonK = -2.0;     // bipolar
     //~ "./util/compairisonDist.csv"
     fevor_distribution d1(packingDimensions, "./util/compairisonDist.csv");
+                       // FIXME will not run -- make this based on build dir!
     
     std::cout << "\n" << "************************************ \n"
                     << "Compairison timeStep: FEvoR vs Thor. \n"
@@ -84,7 +85,8 @@ int main()
     
     std::cout << "\n" << "Stepped Distribution! \n" << std::endl;
     d1.saveDistribution("./util/compairisonDist_stepped_cpp.csv");
-    
+                       // FIXME will not run -- make this based on build dir!
+
     std::cout << "Bulk Edot was:" << std::endl;
     tensorDisplay(bulkEdot,3,3);
     std::cout << "Number of Polygonizations:" << nPoly << std::endl;

@@ -66,7 +66,7 @@ fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, double wk)
 }
 
 // Define function members
-std::vector<double> fevor_distribution::stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, double &nMigre, double &nPoly, std::vector<double> &bulkEdot) {
+std::vector<double> fevor_distribution::stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot) {
     
     double crystalMagEdot;
     std::vector<double> bulkM(81, 0.0);
