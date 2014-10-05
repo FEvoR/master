@@ -62,8 +62,8 @@ int main()
         //~ double watsonK = 0.0;      // isotropic 
         //~ double watsonK = 10000.0;  // perfect girdle
         //~ double watsonK = -10000.0; // perfect bipolar
-        //~ double watsonK = 2.0;      // girdle
-        double watsonK = -2.0;     // bipolar
+        double watsonK = 5.0;      // girdle
+        //~ double watsonK = -2.0;     // bipolar
     fevor_distribution d1(packingDimensions, watsonK);
     
     // load a distribution from a CSV file named FILENAME.csv

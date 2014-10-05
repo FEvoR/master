@@ -281,7 +281,7 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         
         
     } else if (wk > 500.0) {
-        // perfect girdle
+        // perfect equatorial girdle
         std::uniform_real_distribution<double> gPhi(0,2.0*M_PI);
         double theta, phi;
         theta = M_PI/2.0;
@@ -291,14 +291,25 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
                 crystals[ii].getNewAxis(theta, phi);
         }
     } else { //(wk > 0)
-        // girdle
-        /*TODO: find c++ equivalent of erfinv() in MATLAB or better way to
-         * calculate Q. UPDATE: BOOST provides erfinv()! Will need boost to
-         * implement a girdle distribution. -- should be done anyways.
-         */
+        // equatorial girdle
+        std::vector<double> weights;
+        std::vector<double> x;
+        double erfVal = Faddeeva::erf(wk);
         
-        std::cout << "Warning! Girdle distribution not implemented yet!\n"
-                  << "Use an isotropic, bipolar, or perfect girdle."
-                  << std::endl;
+        for (double ww = 0.0; ww < M_PI; ww+=0.001){
+            x.push_back(ww);
+            weights.push_back( 1.0/(2.0*M_PI)*std::sqrt(wk/M_PI)*(1.0/erfVal)*std::exp(-wk*std::cos(ww)*std::cos(ww)) );
+        }
+        
+        std::uniform_real_distribution<double> gPhi(0,2.0*M_PI);
+        std::piecewise_linear_distribution<double> dTheta (x.begin(),x.end(),weights.begin());
+        double theta, phi;
+        
+        for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
+                phi   = gPhi(seed);
+                theta = dTheta(seed);
+                
+                crystals[ii].getNewAxis(theta, phi);
+        }
     }
 }
