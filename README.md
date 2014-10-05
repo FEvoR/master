@@ -61,21 +61,21 @@ FEvoR is based on the work by Dr. Thorsteinsson, see:
 INSTALL INSTRUCTIONS
 ====================
 
-Prerequisites: 
- * C++ Boost libary: http://www.boost.org/
- * CMake for build and installation
+FEvoR only requires the C++ standard library and C++11 compliant compiler.
+FEvor comes packaged with the Faddeeva package (Dec. 2012) available at
+<http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package>.
 
 To install:
 
 Clone the FEvoR repository from github. 
 
-```
+```bash
 git clone git://github.com:FEvoR/master.git fevor
 ```
 
 Then, if you have boost installed, you can make and install FEvoR like so:
 
-```
+```bash
 cd fevor
 mkdir build && cd build
 cmake ..
@@ -84,7 +84,7 @@ make install
 There is no unistall routine within the make file. However, you can uninstall
 the FEvoR library by running
 
-```
+```bash
 xargs rm < install_manifest.txt
 ```
 
