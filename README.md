@@ -38,7 +38,7 @@ recrystallization processes such as:
     Polygonization
     Migration Recrystallization
 
-FEvoR was devoloped at the University of Alaska Fairbanks (UAF) by 
+FEvoR was developed at the University of Alaska Fairbanks (UAF) by 
 Joseph H Kennedy. For a detailed description of this model, see:
  
     Kennedy, J. H., Pettit, E. C., & Di Prinzio, C. L. (2013). 
@@ -88,4 +88,4 @@ the FEvoR library by running
 xargs rm < install_manifest.txt
 ```
 
-from with the build directory. 
+from within the build directory. 

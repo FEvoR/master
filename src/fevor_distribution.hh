@@ -51,7 +51,7 @@ class fevor_distribution {
         std::vector<double> stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot);
         
         // calculate NNI softness parameter
-        void getSoftness(std::vector<std::vector<double>> &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress);
+        void getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress);
         
         // set softness ratio
         void setSoftness(double cc, double cn);
