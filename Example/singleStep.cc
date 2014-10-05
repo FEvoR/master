@@ -56,14 +56,14 @@ int main()
     nMigre = nPoly = 0;
     std::vector<double> bulkEdot(9, 0.0);
     
-    std::vector<unsigned int> packingDimensions = {3,3,3};
+    std::vector<unsigned int> packingDimensions = {10,10,10};
     
     // Create a random distribution using the Watson ODF
-        double watsonK = 0.0;      // isotropic 
+        //~ double watsonK = 0.0;      // isotropic 
         //~ double watsonK = 10000.0;  // perfect girdle
         //~ double watsonK = -10000.0; // perfect bipolar
         //~ double watsonK = 2.0;      // girdle
-        //~ double watsonK = -2.0;     // bipolar
+        double watsonK = -2.0;     // bipolar
     fevor_distribution d1(packingDimensions, watsonK);
     
     // load a distribution from a CSV file named FILENAME.csv
@@ -82,7 +82,7 @@ int main()
                       << "    " "Time Step: " << timeStep << "s \n"
                       << std::endl;
     
-    std::string saveInitial = "./Example/distribution_initial.csv";
+    std::string saveInitial = "distribution_initial.csv";
     d1.saveDistribution(saveInitial);
     
     std::cout << "\n" << "Initial distribution saved in: " 
@@ -96,7 +96,7 @@ int main()
     end = clock();
     msecs = ((double) (end - start)) * 1000 / CLOCKS_PER_SEC;
     
-    std::string saveFinal = "./Example/distribution_final.csv";
+    std::string saveFinal = "distribution_final.csv";
     d1.saveDistribution(saveFinal);
     
     std::cout << "\n" << "Stepped Distribution! Saved in: " 

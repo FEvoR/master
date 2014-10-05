@@ -7,7 +7,7 @@ close all, clear all, clc
 addpath ~/Documents/Programs/Thor/trunk/
 
 % perform a time step
-Test.timing;
+Test.timing; % FIXME: This is not included in FEvoR!
 
 iN   = [sin(icdist.theta).*cos(icdist.phi) sin(icdist.theta).*sin(icdist.phi) cos(icdist.theta)];
 fN   = [sin(fcdist.theta).*cos(fcdist.phi) sin(fcdist.theta).*sin(fcdist.phi) cos(fcdist.theta)];

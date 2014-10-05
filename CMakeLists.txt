@@ -24,6 +24,7 @@ add_library(FEvoR
   src/fevor_crystal.cc
   src/fevor_distribution.cc
   src/vector_tensor_operations.cc
+  src/Faddeeva.cc
 )
 
 add_executable(singleStep Example/singleStep.cc)
@@ -60,6 +61,7 @@ install(FILES
   src/fevor_distribution.hh
   src/fevor_crystal.hh
   src/vector_tensor_operations.hh
+  src/Faddeeva.hh
   DESTINATION include/${PROJECT_NAME})
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake 

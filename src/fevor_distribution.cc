@@ -42,6 +42,7 @@
 #include "fevor_crystal.hh"
 #include "vector_tensor_operations.hh"
 #include "fevor_distribution.hh"
+#include "Faddeeva.hh"
 
 fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
@@ -257,13 +258,27 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         }
     } else if (wk < 0) {
         // bipolar (single maximum)
-        /*TODO: find c++ equivalent of randomsample() in MATLAB
-         * UPDATE: BOOST provides way to random sample. Will need boost to 
-         * implement a girdle distribution. -- should be done anyways.
-         */
-        std::cout << "Warning! Bipolar distribution not implemented yet!\n"
-                  << "Use an isotropic, perfect bipolar, or perfect girdle."
-                  << std::endl;
+        std::vector<double> weights;
+        std::vector<double> x;
+        double abs_wk = std::abs(wk);
+        double DawsonVal = Faddeeva::Dawson(abs_wk);
+        
+        for (double ww = 0.0; ww < M_PI; ww+=0.001){
+            x.push_back(ww);
+            weights.push_back( 1.0/(4.0*M_PI)*std::sqrt(abs_wk)*std::exp(wk)/DawsonVal*std::exp(-wk*std::cos(ww)*std::cos(ww)) );
+        }
+        
+        std::uniform_real_distribution<double> gPhi(0,2.0*M_PI);
+        std::piecewise_linear_distribution<double> dTheta (x.begin(),x.end(),weights.begin());
+        double theta, phi;
+        
+        for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
+                phi   = gPhi(seed);
+                theta = dTheta(seed);
+                
+                crystals[ii].getNewAxis(theta, phi);
+        }
+        
         
     } else if (wk > 500.0) {
         // perfect girdle
@@ -283,7 +298,7 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
          */
         
         std::cout << "Warning! Girdle distribution not implemented yet!\n"
-                  << "Use an isotropic, perfect bipolar, or perfect girdle."
+                  << "Use an isotropic, bipolar, or perfect girdle."
                   << std::endl;
     }
 }
