@@ -39,13 +39,15 @@ recrystallization processes such as:
     Migration Recrystallization
 
 FEvoR was devoloped at the University of Alaska Fairbanks (UAF) by 
-Joseph H Kennedy. For a detailed description of this model, see: 
+Joseph H Kennedy. For a detailed description of this model, see:
+ 
     Kennedy, J. H., Pettit, E. C., & Di Prinzio, C. L. (2013). 
     The evolution of crystal fabric in ice sheets and its link to climate 
     history. Journal of Glaciology, 59(214), 357–373. 
     doi:10.3189/2013JoG12J159
 
 FEvoR is based on the work by Dr. Thorsteinsson, see:
+
     Thorsteinsson, T. (2001). 
     An analytical approach to deformation of anisotropic ice-cryrstal 
     aggregates. Journal of Glaciology, 47(158), 507–516.
