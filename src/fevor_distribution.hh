@@ -63,7 +63,7 @@ class fevor_distribution {
         // save distribution to disk
         void loadDistribution( std::string fname );
         
-        //TODO: generate watson cAxis for distrobution
+        //generate watson cAxis for distribution
         void generateWatsonAxes(const double &wk);
         
     private:
