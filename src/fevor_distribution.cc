@@ -66,12 +66,13 @@ fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, double wk)
 }
 
 // construct a distribution from a big vector of all distribution data
-fevor_distribution(std::vector<unsigned int> lwh, std::vector<double> &data): dimensions(lwh) {
+fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, std::vector<double> &data): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         
-        crystals.push_back( fevor_crystal ({data[ii],data[ii+1],data[ii+2]}, 
-                                           data[ii+3], data[ii+4], data[ii+5], data[ii+6]) );
+        crystals.push_back( fevor_crystal ({data[ii*7],data[ii*7+1],data[ii*7+2]}, 
+                                           data[ii*7+3], data[ii*7+4], 
+                                           data[ii*7+5], data[ii*7+6]) );
         softness.push_back(1.0);
         magRSS.push_back(1.0);
     }
@@ -113,7 +114,7 @@ std::vector<double> fevor_distribution::stepInTime(const double &temperature, co
     return bulkM;
 }
 
-void fevor_distribution::getSoftness(std::vector<std::vector<double>> &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
+void fevor_distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
     if (contribNeighbor != 0.0) {
         
         unsigned int front, back, left, right, top, bottom;
@@ -201,10 +202,16 @@ void fevor_distribution::saveDistribution(std::string fname){
                   
         crystals[ii].printCrystal(file);
     }
-    
-    
 }
-
+void fevor_distribution::saveDistribution(std::vector<double> &data){
+    // TODO: check size!
+    // assert(data.size() == numberCrystals*7); 
+    for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
+        crystals[ii].getAll(data[ii*7  ], data[ii*7+1], data[ii*7+2],
+                            data[ii*7+3], data[ii*7+4], 
+                            data[ii*7+5], data[ii*7+6]);
+    }
+}
 
 void fevor_distribution::loadDistribution( std::string fname ) {
     std::ifstream file(fname);
@@ -240,6 +247,15 @@ void fevor_distribution::loadDistribution( std::string fname ) {
                             data[ii*8+7]);
     }
 }
+void fevor_distribution::loadDistribution( const std::vector<double> &data ) {
+    // TODO: check size!
+    // assert(data.size() == numberCrystals*7); 
+    for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
+        crystals[ii].setAll(data[ii*7  ], data[ii*7+1], data[ii*7+2],
+                            data[ii*7+3], data[ii*7+4], 
+                            data[ii*7+5], data[ii*7+6]);
+    }
+}
 
 void fevor_distribution::generateWatsonAxes(const double &wk) {
 
@@ -261,13 +277,13 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
                                 [&](double x){return x/sqrt(axisMag);} );
             }
         
-            crystals[ii].getNewAxis(axis);
+            crystals[ii].setNewAxis(axis);
         }
         
     } else if (wk < -1000.5) {
         // perfect bipolar (single maximum)
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
-                crystals[ii].getNewAxis({0.0,0.0,1.0});
+                crystals[ii].setNewAxis({0.0,0.0,1.0});
         }
     } else if (wk < 0) {
         // bipolar (single maximum)
@@ -289,7 +305,7 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
                 phi   = gPhi(seed);
                 theta = dTheta(seed);
                 
-                crystals[ii].getNewAxis(theta, phi);
+                crystals[ii].setNewAxis(theta, phi);
         }
         
         
@@ -301,7 +317,7 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
                 phi   = gPhi(seed);
-                crystals[ii].getNewAxis(theta, phi);
+                crystals[ii].setNewAxis(theta, phi);
         }
     } else { //(wk > 0)
         // equatorial girdle
@@ -322,7 +338,7 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
                 phi   = gPhi(seed);
                 theta = dTheta(seed);
                 
-                crystals[ii].getNewAxis(theta, phi);
+                crystals[ii].setNewAxis(theta, phi);
         }
     }
 }

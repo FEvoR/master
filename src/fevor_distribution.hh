@@ -61,10 +61,11 @@ class fevor_distribution {
         // save distribution to disk
         void saveDistribution();
         void saveDistribution(std::string fname);
+        void saveDistribution(std::vector<double> &data);
         
         // Load distribution from disk
         void loadDistribution( std::string fname );
-        
+        void loadDistribution( const std::vector<double> &data );
         //generate watson cAxis for distribution
         void generateWatsonAxes(const double &wk);
         

@@ -261,7 +261,7 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
         phi = dPhi(seed);
     }
     
-    getNewAxis(theta, phi);
+    setNewAxis(theta, phi);
     
     cTimeLastRecrystal = modelTime+timeStep;
     cSizeLastRecrystal = cSize;
@@ -312,7 +312,7 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
         theta += (  distribution(seed) < 50.0 ? -M_PI/36.0 : M_PI/36.0);
     } 
     
-    getNewAxis(theta, phi);
+    setNewAxis(theta, phi);
     
     cTimeLastRecrystal = modelTime+timeStep;
     cSizeLastRecrystal = cSize;
@@ -389,7 +389,6 @@ void fevor_crystal::printCrystal() {
               << std::setw(11) << cSizeLastRecrystal << std::endl;
     
 }
-
 void fevor_crystal::printCrystal(std::ofstream &file) {
      
     file.precision(4);
@@ -414,7 +413,7 @@ void fevor_crystal::getAxisAngles(double &theta, double &phi) {
     
 }
 
-void fevor_crystal::getNewAxis(double &theta, double &phi) {
+void fevor_crystal::setNewAxis(const double &theta, const double &phi) {
     
     cAxis = {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
     
@@ -425,21 +424,32 @@ void fevor_crystal::getNewAxis(double &theta, double &phi) {
                    [&](double x){return x/sqrt(cAxisMag);} );
     }
 }
-void fevor_crystal::getNewAxis(std::vector<double> ax) {
+void fevor_crystal::setNewAxis(const std::vector<double> &ax) {
     // TODO: error handling!
     //~ if (ax.size() == 3)
         cAxis = ax;
 }
 
- void fevor_crystal::setAll(const double &ca0, const double &ca1, const double &ca2, 
+void fevor_crystal::setAll(const double &ca0, const double &ca1, const double &ca2, 
                     const double &csz, const double &cdd, 
                     const double &ctlr, const double &cslr) {
     
-    getNewAxis({ca0, ca1, ca2});
+    setNewAxis({ca0, ca1, ca2});
     
     cSize     = csz;
     cDislDens = cdd;
     
     cTimeLastRecrystal = ctlr;
     cSizeLastRecrystal = cslr;
+}
+
+void fevor_crystal::getAll(double &ca0, double &ca1, double &ca2, 
+                    double &csz, double &cdd, double &ctlr, double &cslr) {
+    ca0  = cAxis[0];
+    ca1  = cAxis[1];
+    ca2  = cAxis[2];
+    csz  = cSize;
+    cdd  = cDislDens;
+    ctlr = cTimeLastRecrystal;
+    cslr = cSizeLastRecrystal;
 }

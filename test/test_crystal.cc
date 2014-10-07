@@ -53,7 +53,7 @@ void test_resolveM() {
     double theta, phi;
     theta = M_PI/4.0;
     phi = M_PI/4.0;
-    c1.getNewAxis(theta, phi);
+    c1.setNewAxis(theta, phi);
     
     std::vector<double> stress = {10000.0,     0.0,     0.0,
                                       0.0,     0.0,     0.0,
@@ -199,7 +199,7 @@ void test_angles() {
     std::cout.precision(4);
     std::cout << std::fixed << "New angles are: \n" << "Theta: " << theta << " Phi: " << phi << std::endl;
     
-    c1.getNewAxis(theta, phi);
+    c1.setNewAxis(theta, phi);
     
     c1.seeCrystal();
     

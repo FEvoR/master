@@ -5,17 +5,17 @@
  *
  * This file is part of FEvoR.
  *
- * FEvoR is free software: you can redistribute it and/or modify it under the 
- * terms of the GNU General Public License as published by the Free Software 
- * Foundation, either version 3 of the License, or (at your option) any later 
+ * FEvoR is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  *
- * FEvoR is distributed in the hope that it will be useful, but WITHOUT ANY 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more 
+ * FEvoR is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with FEvoR.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Additional permission under GNU GPL version 3 section 7
@@ -39,8 +39,8 @@ class fevor_crystal {
     public:
     // constructors
     fevor_crystal(std::vector<double> ca, double cs, double cdd);
-    fevor_crystal::fevor_crystal(std::vector<double> ca, double cs, double cdd, double cto, double cso);
-    
+    fevor_crystal(std::vector<double> ca, double cs, double cdd, double cto, double cso);
+
     // functions
         // get the strain-stress relation tensor (4th order)
         std::vector<double> resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot);
@@ -54,20 +54,23 @@ class fevor_crystal {
         unsigned int polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep);
         // rotate the crystals
         void rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress, const double &timeStep);
-        
-        void getAxisAngles(double &theta, double &phi);
-        
-        void getNewAxis(double &theta, double &phi);
-        void getNewAxis(std::vector<double> ax);
-        
+
         void seeCrystal();
+
         void printCrystal();
         void printCrystal(std::ofstream &file);
-        
-        void setAll(const double &ca1, const double &ca2, const double &ca3, 
-                    const double &csz, const double &cdd, 
+
+        void getAxisAngles(double &theta, double &phi);
+
+        void setNewAxis(const double &theta, const double &phi);
+        void setNewAxis(const std::vector<double> &ax);
+
+        void setAll(const double &ca1, const double &ca2, const double &ca3,
+                    const double &csz, const double &cdd,
                     const double &ctlr, const double &cslr);
-                    
+
+        void getAll(double &ca0, double &ca1, double &ca2,
+                    double &csz, double &cdd, double &ctlr, double &cslr);
     private:
         // holds the crystals c-axis orientation vector in cartesian coordinates
         std::vector<double> cAxis; // unit vector
@@ -79,8 +82,8 @@ class fevor_crystal {
         double cTimeLastRecrystal; // units: #/m^2
         // holds the cSize at last recrystallization
         double cSizeLastRecrystal; // units: m
-        
-        
+
+
 };
 
 
