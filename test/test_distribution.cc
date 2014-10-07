@@ -86,7 +86,7 @@ void test_getSoftness() {
     std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
 }
     
-void test_setSoftness() {
+void test_setSoftnessRatio() {
     //TODO: test fevor_distribution.setSoftnessParam()
     //TODO: rename  setSoftness to setSoftnessParam
     std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;

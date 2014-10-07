@@ -45,6 +45,8 @@ class fevor_distribution {
     fevor_distribution(std::vector<unsigned int> lwh, std::string fname);
     // construct a distribution using the Watson distribution for axis angles
     fevor_distribution(std::vector<unsigned int> lwh, double wk);
+    // construct a distribution from a big vector of all distribution data
+    fevor_distribution(std::vector<unsigned int> lwh, std::vector<double> &data);
         
     // functions
         // preform a time step
@@ -54,13 +56,13 @@ class fevor_distribution {
         void getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress);
         
         // set softness ratio
-        void setSoftness(double cc, double cn);
+        void setSoftnessRatio(double cc, double cn);
         
         // save distribution to disk
         void saveDistribution();
         void saveDistribution(std::string fname);
         
-        // save distribution to disk
+        // Load distribution from disk
         void loadDistribution( std::string fname );
         
         //generate watson cAxis for distribution

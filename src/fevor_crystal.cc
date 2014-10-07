@@ -44,7 +44,11 @@ fevor_crystal::fevor_crystal(std::vector<double> ca, double cs, double cdd):
     cTimeLastRecrystal = 0.0;
     cSizeLastRecrystal = cSize;
 }
-
+fevor_crystal::fevor_crystal(std::vector<double> ca, double cs, double cdd, double cto, double cso):
+    cAxis(ca), cSize(cs), cDislDens(cdd), cTimeLastRecrystal(cto), cSizeLastRecrystal(cso) {
+        /* nothing to do */
+}
+    
 // Define function members
 
 std::vector<double> fevor_crystal::resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot) {

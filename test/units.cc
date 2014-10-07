@@ -106,10 +106,10 @@ int main()
         test_getSoftness();
         
         std::cout << "\n"
-                  << "    ********************** \n"
-                  << "    BEGIN TEST_SETSOFTNESS \n"
-                  << "    ********************** \n" << std::endl;    
-        test_setSoftness();
+                  << "    *************************** \n"
+                  << "    BEGIN TEST_SETSOFTNESSRATIO \n"
+                  << "    *************************** \n" << std::endl;    
+        test_setSoftnessRatio();
             
         std::cout << "\n"
                   << "    *************************** \n"

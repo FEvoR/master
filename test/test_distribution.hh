@@ -37,7 +37,7 @@ void test_stepInTime();
     
 void test_getSoftness();
     
-void test_setSoftness();
+void test_setSoftnessRatio();
     
 void test_saveDistribution();
 

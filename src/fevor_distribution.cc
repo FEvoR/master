@@ -50,10 +50,9 @@ fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh): dimension
         crystals.push_back( fevor_crystal ({0.0,0.0,1.0}, 0.01, 1.0e10) );
         softness.push_back(1.0);
         magRSS.push_back(1.0);
-
-        contribCrystal  = 1.0;
-        contribNeighbor = 0.0;
     }
+    
+    setSoftnessRatio(1.0, 0.0);
 }
 
 // construct a distribution from a saved distribution of crystals
@@ -64,6 +63,20 @@ fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, std::strin
 // construct a distribution using the Watson distribution for axis angles
 fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, double wk): fevor_distribution(lwh)  {
     generateWatsonAxes(wk);
+}
+
+// construct a distribution from a big vector of all distribution data
+fevor_distribution(std::vector<unsigned int> lwh, std::vector<double> &data): dimensions(lwh) {
+    numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
+    for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
+        
+        crystals.push_back( fevor_crystal ({data[ii],data[ii+1],data[ii+2]}, 
+                                           data[ii+3], data[ii+4], data[ii+5], data[ii+6]) );
+        softness.push_back(1.0);
+        magRSS.push_back(1.0);
+    }
+    
+    setSoftnessRatio(1.0, 0.0);
 }
 
 // Define function members
@@ -146,7 +159,7 @@ void fevor_distribution::getSoftness(std::vector<std::vector<double>> &crystalM,
                     [&](double x){return x/2.0;});
 }
 
-void fevor_distribution::setSoftness(double cc, double cn) {
+void fevor_distribution::setSoftnessRatio(double cc, double cn) {
     contribCrystal  = cc;
     contribNeighbor = cn;
 }
