@@ -342,3 +342,7 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
         }
     }
 }
+
+unsigned int fevor_distribution::getNumberCrystals() {
+    return numberCrystals;
+}

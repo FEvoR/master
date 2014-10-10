@@ -69,6 +69,8 @@ class fevor_distribution {
         //generate watson cAxis for distribution
         void generateWatsonAxes(const double &wk);
         
+        unsigned int getNumberCrystals();
+        
     private:
         std::vector<unsigned int> dimensions;
 
