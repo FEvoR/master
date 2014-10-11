@@ -57,8 +57,8 @@ class fevor_crystal {
 
         void seeCrystal();
 
-        void printCrystal();
-        void printCrystal(std::ofstream &file);
+        void printCrystal() const;
+        void printCrystal(std::ofstream &file) const;
 
         void getAxisAngles(double &theta, double &phi);
 
@@ -70,7 +70,7 @@ class fevor_crystal {
                     const double &ctlr, const double &cslr);
 
         void getAll(double &ca0, double &ca1, double &ca2,
-                    double &csz, double &cdd, double &ctlr, double &cslr);
+                    double &csz, double &cdd, double &ctlr, double &cslr) const;
     private:
         // holds the crystals c-axis orientation vector in cartesian coordinates
         std::vector<double> cAxis; // unit vector

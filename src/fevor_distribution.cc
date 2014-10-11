@@ -165,7 +165,7 @@ void fevor_distribution::setSoftnessRatio(double cc, double cn) {
     contribNeighbor = cn;
 }
 
-void fevor_distribution::saveDistribution() {
+void fevor_distribution::saveDistribution() const {
     std::cout << "# "
               << "Crystal"                << ", "
               << "C-Axis (x)"             << ", "
@@ -183,7 +183,7 @@ void fevor_distribution::saveDistribution() {
         crystals[ii].printCrystal();
     }
 }
-void fevor_distribution::saveDistribution(std::string fname){
+void fevor_distribution::saveDistribution(std::string fname) const {
     std::ofstream file(fname);
     
     file << "# "
@@ -203,9 +203,9 @@ void fevor_distribution::saveDistribution(std::string fname){
         crystals[ii].printCrystal(file);
     }
 }
-void fevor_distribution::saveDistribution(std::vector<double> &data){
-    // TODO: check size!
-    // assert(data.size() == numberCrystals*7); 
+void fevor_distribution::saveDistribution(std::vector<double> &data) const {
+  data.resize(numberCrystals);
+
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         crystals[ii].getAll(data[ii*7  ], data[ii*7+1], data[ii*7+2],
                             data[ii*7+3], data[ii*7+4], 

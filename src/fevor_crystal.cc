@@ -374,7 +374,7 @@ void fevor_crystal::seeCrystal() {
     std::cout.precision(0);
 }
 
-void fevor_crystal::printCrystal() {
+void fevor_crystal::printCrystal() const {
      
     std::cout.precision(4);
     
@@ -389,7 +389,7 @@ void fevor_crystal::printCrystal() {
               << std::setw(11) << cSizeLastRecrystal << std::endl;
     
 }
-void fevor_crystal::printCrystal(std::ofstream &file) {
+void fevor_crystal::printCrystal(std::ofstream &file) const {
      
     file.precision(4);
     
@@ -444,7 +444,7 @@ void fevor_crystal::setAll(const double &ca0, const double &ca1, const double &c
 }
 
 void fevor_crystal::getAll(double &ca0, double &ca1, double &ca2, 
-                    double &csz, double &cdd, double &ctlr, double &cslr) {
+                    double &csz, double &cdd, double &ctlr, double &cslr) const {
     ca0  = cAxis[0];
     ca1  = cAxis[1];
     ca2  = cAxis[2];

@@ -59,9 +59,9 @@ class fevor_distribution {
         void setSoftnessRatio(double cc, double cn);
         
         // save distribution to disk
-        void saveDistribution();
-        void saveDistribution(std::string fname);
-        void saveDistribution(std::vector<double> &data);
+        void saveDistribution() const;
+        void saveDistribution(std::string fname) const;
+        void saveDistribution(std::vector<double> &data) const;
         
         // Load distribution from disk
         void loadDistribution( std::string fname );
