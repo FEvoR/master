@@ -71,6 +71,7 @@ class fevor_distribution {
         
         unsigned int getNumberCrystals();
         
+  static const int numberParameters;
     private:
         std::vector<unsigned int> dimensions;
 
