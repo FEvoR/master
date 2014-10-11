@@ -36,6 +36,8 @@
 #include <vector>
 #include "fevor_crystal.hh"
 
+namespace FEvoR {
+
 class fevor_distribution {
     public:
     // constructors
@@ -86,5 +88,7 @@ class fevor_distribution {
     
     
 };
+
+} // end of namespace FEvoR
 
 #endif 

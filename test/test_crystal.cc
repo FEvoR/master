@@ -40,6 +40,8 @@
 
 //TODO: develop a robust test suite that includes edge cases
 
+namespace FEvoR {
+
 void test_rotate(){
     
     //TODO: test fevor_crystal.rotate
@@ -205,3 +207,5 @@ void test_angles() {
     
     
 }
+
+} // end of namspace FEvoR

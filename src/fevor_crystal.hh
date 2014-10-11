@@ -35,6 +35,8 @@
 #include <vector>
 #include <fstream>
 
+namespace FEvoR {
+
 class fevor_crystal {
     public:
     // constructors
@@ -86,6 +88,6 @@ class fevor_crystal {
 
 };
 
-
+} // end of namespace FEvoR
 
 #endif

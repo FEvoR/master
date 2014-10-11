@@ -39,6 +39,8 @@
 #include "fevor_crystal.hh"
 #include "vector_tensor_operations.hh"
 
+namespace FEvoR {
+
 fevor_crystal::fevor_crystal(std::vector<double> ca, double cs, double cdd):
     cAxis(ca), cSize(cs), cDislDens(cdd) {
     cTimeLastRecrystal = 0.0;
@@ -453,3 +455,5 @@ void fevor_crystal::getAll(double &ca0, double &ca1, double &ca2,
     ctlr = cTimeLastRecrystal;
     cslr = cSizeLastRecrystal;
 }
+
+} // end of namespace FEvoR

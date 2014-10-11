@@ -44,6 +44,8 @@
 #include "fevor_distribution.hh"
 #include "Faddeeva.hh"
 
+namespace FEvoR {
+
 fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
@@ -346,3 +348,5 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
 unsigned int fevor_distribution::getNumberCrystals() {
     return numberCrystals;
 }
+
+} // end of namespace FEvoR

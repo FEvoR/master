@@ -38,6 +38,7 @@
 #include "test_distribution.hh"
 #include "vector_tensor_operations.hh"
 
+namespace FEvoR {
 
 void test_stepInTime() {
     fevor_distribution d1({3,3,3}, 1.0); 
@@ -99,3 +100,5 @@ void test_saveDistribution() {
             // (options to append, overwrite, etc)
     std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
 }
+
+} // end of namespace FEvoR

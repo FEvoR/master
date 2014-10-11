@@ -32,6 +32,7 @@
 #ifndef TEST_DISTRIBUTION
 #define TEST_DISTRIBUTION
 
+namespace FEvoR {
 
 void test_stepInTime();
     
@@ -41,5 +42,6 @@ void test_setSoftnessRatio();
     
 void test_saveDistribution();
 
+} // end of namespace FEvoR
 
 #endif
