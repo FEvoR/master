@@ -45,6 +45,10 @@
 #include "Faddeeva.hh"
 
 namespace FEvoR {
+// Each crystal has: the three components of the crystal axis, size,
+// dislocation density, time of last recrystallization, and size at
+// last recrystallization.
+const int fevor_distribution::numberParameters = 7;
 
 fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
@@ -70,11 +74,12 @@ fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, double wk)
 // construct a distribution from a big vector of all distribution data
 fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, std::vector<double> &data): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
+    const int n = numberParameters;
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         
-        crystals.push_back( fevor_crystal ({data[ii*7],data[ii*7+1],data[ii*7+2]}, 
-                                           data[ii*7+3], data[ii*7+4], 
-                                           data[ii*7+5], data[ii*7+6]) );
+        crystals.push_back( fevor_crystal ({data[ii*n+0],data[ii*n+1],data[ii*n+2]},
+                                           data[ii*n+3], data[ii*n+4],
+                                           data[ii*n+5], data[ii*n+6]) );
         softness.push_back(1.0);
         magRSS.push_back(1.0);
     }
@@ -167,7 +172,7 @@ void fevor_distribution::setSoftnessRatio(double cc, double cn) {
     contribNeighbor = cn;
 }
 
-void fevor_distribution::saveDistribution() {
+void fevor_distribution::saveDistribution() const {
     std::cout << "# "
               << "Crystal"                << ", "
               << "C-Axis (x)"             << ", "
@@ -185,7 +190,7 @@ void fevor_distribution::saveDistribution() {
         crystals[ii].printCrystal();
     }
 }
-void fevor_distribution::saveDistribution(std::string fname){
+void fevor_distribution::saveDistribution(std::string fname) const {
     std::ofstream file(fname);
     
     file << "# "
@@ -205,13 +210,14 @@ void fevor_distribution::saveDistribution(std::string fname){
         crystals[ii].printCrystal(file);
     }
 }
-void fevor_distribution::saveDistribution(std::vector<double> &data){
-    // TODO: check size!
-    // assert(data.size() == numberCrystals*7); 
+void fevor_distribution::saveDistribution(std::vector<double> &data) const {
+    data.resize(numberParameters*numberCrystals);
+    const int n = numberParameters;
+  
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
-        crystals[ii].getAll(data[ii*7  ], data[ii*7+1], data[ii*7+2],
-                            data[ii*7+3], data[ii*7+4], 
-                            data[ii*7+5], data[ii*7+6]);
+        crystals[ii].getAll(data[ii*n+0], data[ii*n+1], data[ii*n+2],
+                            data[ii*n+3], data[ii*n+4],
+                            data[ii*n+5], data[ii*n+6]);
     }
 }
 
@@ -252,10 +258,11 @@ void fevor_distribution::loadDistribution( std::string fname ) {
 void fevor_distribution::loadDistribution( const std::vector<double> &data ) {
     // TODO: check size!
     // assert(data.size() == numberCrystals*7); 
+  const int n = numberParameters;
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
-        crystals[ii].setAll(data[ii*7  ], data[ii*7+1], data[ii*7+2],
-                            data[ii*7+3], data[ii*7+4], 
-                            data[ii*7+5], data[ii*7+6]);
+        crystals[ii].setAll(data[ii*n+0], data[ii*n+1], data[ii*n+2],
+                            data[ii*n+3], data[ii*n+4], 
+                            data[ii*n+5], data[ii*n+6]);
     }
 }
 
