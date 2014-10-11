@@ -48,12 +48,12 @@ namespace FEvoR {
 // Each crystal has: the three components of the crystal axis, size,
 // dislocation density, time of last recrystallization, and size at
 // last recrystallization.
-const int fevor_distribution::numberParameters = 7;
+const int Distribution::numberParameters = 7;
 
-fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh): dimensions(lwh) {
+Distribution::Distribution(std::vector<unsigned int> lwh): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
-        crystals.push_back( fevor_crystal ({0.0,0.0,1.0}, 0.01, 1.0e10) );
+        crystals.push_back( Crystal ({0.0,0.0,1.0}, 0.01, 1.0e10) );
         softness.push_back(1.0);
         magRSS.push_back(1.0);
     }
@@ -62,22 +62,22 @@ fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh): dimension
 }
 
 // construct a distribution from a saved distribution of crystals
-fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, std::string fname): fevor_distribution(lwh)  {
+Distribution::Distribution(std::vector<unsigned int> lwh, std::string fname): Distribution(lwh)  {
     loadDistribution(fname);
 }
 
 // construct a distribution using the Watson distribution for axis angles
-fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, double wk): fevor_distribution(lwh)  {
+Distribution::Distribution(std::vector<unsigned int> lwh, double wk): Distribution(lwh)  {
     generateWatsonAxes(wk);
 }
 
 // construct a distribution from a big vector of all distribution data
-fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, std::vector<double> &data): dimensions(lwh) {
+Distribution::Distribution(std::vector<unsigned int> lwh, std::vector<double> &data): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
     const int n = numberParameters;
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         
-        crystals.push_back( fevor_crystal ({data[ii*n+0],data[ii*n+1],data[ii*n+2]},
+        crystals.push_back( Crystal ({data[ii*n+0],data[ii*n+1],data[ii*n+2]},
                                            data[ii*n+3], data[ii*n+4],
                                            data[ii*n+5], data[ii*n+6]) );
         softness.push_back(1.0);
@@ -88,7 +88,7 @@ fevor_distribution::fevor_distribution(std::vector<unsigned int> lwh, std::vecto
 }
 
 // Define function members
-std::vector<double> fevor_distribution::stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot) {
+std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot) {
     
     double crystalMagEdot;
     std::vector<double> bulkM(81, 0.0);
@@ -121,7 +121,7 @@ std::vector<double> fevor_distribution::stepInTime(const double &temperature, co
     return bulkM;
 }
 
-void fevor_distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
+void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
     if (contribNeighbor != 0.0) {
         
         unsigned int front, back, left, right, top, bottom;
@@ -167,12 +167,12 @@ void fevor_distribution::getSoftness(std::vector<std::vector<double> > &crystalM
                     [&](double x){return x/2.0;});
 }
 
-void fevor_distribution::setSoftnessRatio(double cc, double cn) {
+void Distribution::setSoftnessRatio(double cc, double cn) {
     contribCrystal  = cc;
     contribNeighbor = cn;
 }
 
-void fevor_distribution::saveDistribution() const {
+void Distribution::saveDistribution() const {
     std::cout << "# "
               << "Crystal"                << ", "
               << "C-Axis (x)"             << ", "
@@ -190,7 +190,7 @@ void fevor_distribution::saveDistribution() const {
         crystals[ii].printCrystal();
     }
 }
-void fevor_distribution::saveDistribution(std::string fname) const {
+void Distribution::saveDistribution(std::string fname) const {
     std::ofstream file(fname);
     
     file << "# "
@@ -210,7 +210,7 @@ void fevor_distribution::saveDistribution(std::string fname) const {
         crystals[ii].printCrystal(file);
     }
 }
-void fevor_distribution::saveDistribution(std::vector<double> &data) const {
+void Distribution::saveDistribution(std::vector<double> &data) const {
     data.resize(numberParameters*numberCrystals);
     const int n = numberParameters;
   
@@ -221,7 +221,7 @@ void fevor_distribution::saveDistribution(std::vector<double> &data) const {
     }
 }
 
-void fevor_distribution::loadDistribution( std::string fname ) {
+void Distribution::loadDistribution( std::string fname ) {
     std::ifstream file(fname);
     std::string line;
     std::string field;
@@ -255,7 +255,7 @@ void fevor_distribution::loadDistribution( std::string fname ) {
                             data[ii*8+7]);
     }
 }
-void fevor_distribution::loadDistribution( const std::vector<double> &data ) {
+void Distribution::loadDistribution( const std::vector<double> &data ) {
     // TODO: check size!
     // assert(data.size() == numberCrystals*7); 
   const int n = numberParameters;
@@ -266,7 +266,7 @@ void fevor_distribution::loadDistribution( const std::vector<double> &data ) {
     }
 }
 
-void fevor_distribution::generateWatsonAxes(const double &wk) {
+void Distribution::generateWatsonAxes(const double &wk) {
 
     //TODO: look up random_device vs default_random_engine and how to preserve
     // it across function calls
@@ -352,7 +352,7 @@ void fevor_distribution::generateWatsonAxes(const double &wk) {
     }
 }
 
-unsigned int fevor_distribution::getNumberCrystals() {
+unsigned int Distribution::getNumberCrystals() {
     return numberCrystals;
 }
 

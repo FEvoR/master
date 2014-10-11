@@ -41,7 +41,7 @@
 namespace FEvoR {
 
 void test_stepInTime() {
-    fevor_distribution d1({3,3,3}, 1.0); 
+    FEvoR::Distribution d1({3,3,3}, 1.0); 
     
     //~ d1.saveDistribution();
     
@@ -83,18 +83,18 @@ void test_stepInTime() {
 }
         
 void test_getSoftness() {
-    //TODO: test fevor_distribution.getSoftness()
+    //TODO: test FEvoR::distribution.getSoftness()
     std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
 }
     
 void test_setSoftnessRatio() {
-    //TODO: test fevor_distribution.setSoftnessParam()
+    //TODO: test FEvoR::distribution.setSoftnessParam()
     //TODO: rename  setSoftness to setSoftnessParam
     std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
 }
     
 void test_saveDistribution() {
-    //TODO: test fevor_distribution.saveDistribution()
+    //TODO: test FEvoR::distribution.saveDistribution()
     //TODO: have two overloaded methods: one with no input just prints to std::cout
             // the other takes in an input filename and prints to that file 
             // (options to append, overwrite, etc)

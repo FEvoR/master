@@ -38,17 +38,17 @@
 
 namespace FEvoR {
 
-class fevor_distribution {
+class Distribution {
     public:
     // constructors
     // TODO: check input of dimensions -- make sure vector is a length, width, and height
-    fevor_distribution(std::vector<unsigned int> lwh);
+    Distribution(std::vector<unsigned int> lwh);
     // construct a distribution from a saved distribution of crystals
-    fevor_distribution(std::vector<unsigned int> lwh, std::string fname);
+    Distribution(std::vector<unsigned int> lwh, std::string fname);
     // construct a distribution using the Watson distribution for axis angles
-    fevor_distribution(std::vector<unsigned int> lwh, double wk);
+    Distribution(std::vector<unsigned int> lwh, double wk);
     // construct a distribution from a big vector of all distribution data
-    fevor_distribution(std::vector<unsigned int> lwh, std::vector<double> &data);
+    Distribution(std::vector<unsigned int> lwh, std::vector<double> &data);
         
     // functions
         // preform a time step
@@ -79,7 +79,7 @@ class fevor_distribution {
 
         unsigned int  numberCrystals;
         
-        std::vector<fevor_crystal> crystals;
+        std::vector<Crystal> crystals;
         
         std::vector<double> softness;
         std::vector<double> magRSS;

@@ -34,7 +34,7 @@
 #include "test_distribution.hh"
 #include "vector_tensor_operations.hh"
 
-// Test the interface to fevor_crystal class
+// Test the interface to FEvoR::crystal class
 int main()
 {
     std::cout << "\n"
@@ -46,14 +46,14 @@ int main()
                   << "    ***************** \n"
                   << "    BEGIN TEST_ANGLES \n"
                   << "    ***************** \n" << std::endl;
-        test_angles();
+        FEvoR::test_angles();
         
         std::cout << "\n"
                   << "    *************** \n"
                   << "    BEGIN TEST_GROW \n"
                   << "    *************** \n" << std::endl;
         double K;
-        K = test_grow();
+        K = FEvoR::test_grow();
         
         std::cout << "    Growth Constant: " << K
                   << " \n" << std::endl;
@@ -62,31 +62,31 @@ int main()
                   << "    ******************** \n"
                   << "    BEGIN TEST_DISLOCATE \n"
                   << "    ******************** \n" << std::endl;
-        test_dislocate( K );          
+        FEvoR::test_dislocate( K );          
         
         std::cout << "\n"
                   << "    **************** \n"
                   << "    BEGIN TEST_MIGRE \n"
                   << "    **************** \n" << std::endl;
-        test_migRe();
+        FEvoR::test_migRe();
         
         std::cout << "\n"
                   << "    ********************* \n"
                   << "    BEGIN TEST_POLYGONIZE \n"
                   << "    ********************* \n" << std::endl;
-        test_polygonize();
+        FEvoR::test_polygonize();
         
         std::cout << "\n"
                   << "    ******************* \n"
                   << "    BEGIN TEST_RESOLVEM \n"
                   << "    ******************* \n" << std::endl;
-        test_resolveM();
+        FEvoR::test_resolveM();
         
         std::cout << "\n"
                   << "    ***************** \n"
                   << "    BEGIN TEST_ROTATE \n"
                   << "    ***************** \n" << std::endl;
-        test_rotate();
+        FEvoR::test_rotate();
         
     std::cout << "\n"
               << "*********************** \n"
@@ -97,25 +97,25 @@ int main()
                   << "    ********************* \n"
                   << "    BEGIN TEST_STEPINTIME \n"
                   << "    ********************* \n" << std::endl;
-        test_stepInTime();
+        FEvoR::test_stepInTime();
         
         std::cout << "\n"
                   << "    ********************** \n"
                   << "    BEGIN TEST_GETSOFTNESS \n"
                   << "    ********************** \n" << std::endl;
-        test_getSoftness();
+        FEvoR::test_getSoftness();
         
         std::cout << "\n"
                   << "    *************************** \n"
                   << "    BEGIN TEST_SETSOFTNESSRATIO \n"
                   << "    *************************** \n" << std::endl;    
-        test_setSoftnessRatio();
+        FEvoR::test_setSoftnessRatio();
             
         std::cout << "\n"
                   << "    *************************** \n"
                   << "    BEGIN TEST_SAVEDISTRIBUTION \n"
                   << "    *************************** \n" << std::endl;
-        test_saveDistribution();
+        FEvoR::test_saveDistribution();
     
     std::cout << "\n"
               << "********* \n"

@@ -64,10 +64,10 @@ int main()
         //~ double watsonK = -10000.0; // perfect bipolar
         double watsonK = 5.0;      // girdle
         //~ double watsonK = -2.0;     // bipolar
-    fevor_distribution d1(packingDimensions, watsonK);
+    FEvoR::Distribution d1(packingDimensions, watsonK);
     
     // load a distribution from a CSV file named FILENAME.csv
-    //~ fevor_distribution d1(packingDimensions, "FILENAME.csv");
+    //~ FEvoR::distribution d1(packingDimensions, "FILENAME.csv");
     
     std::cout << "\n" << "************************************ \n"
                       << "Example time step. \n"
@@ -77,7 +77,7 @@ int main()
                       << "    " << "Softness Parameters: 1, 0 \n"
                       << "    " << "Temperature: " << temperature << " degrees C\n"
                       << "    " << "Stress (Pa): " << std::endl;
-                    tensorDisplay(stress, 3, 3);
+                    FEvoR::tensorDisplay(stress, 3, 3);
     std::cout << "\n" << "    " << "Initial time: " << modelTime << "s \n"
                       << "    " "Time Step: " << timeStep << "s \n"
                       << std::endl;
@@ -104,7 +104,7 @@ int main()
                       << std::endl;
     
     std::cout << "Bulk Edot was:" << std::endl;
-    tensorDisplay(bulkEdot,3,3);
+    FEvoR::tensorDisplay(bulkEdot,3,3);
     std::cout << "Number of Polygonizations:" << nPoly << std::endl;
     std::cout << "Number of Migration Recrystallizations:" << nMigre << std::endl;
     

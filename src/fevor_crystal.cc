@@ -41,19 +41,19 @@
 
 namespace FEvoR {
 
-fevor_crystal::fevor_crystal(std::vector<double> ca, double cs, double cdd):
+Crystal::Crystal(std::vector<double> ca, double cs, double cdd):
     cAxis(ca), cSize(cs), cDislDens(cdd) {
     cTimeLastRecrystal = 0.0;
     cSizeLastRecrystal = cSize;
 }
-fevor_crystal::fevor_crystal(std::vector<double> ca, double cs, double cdd, double cto, double cso):
+Crystal::Crystal(std::vector<double> ca, double cs, double cdd, double cto, double cso):
     cAxis(ca), cSize(cs), cDislDens(cdd), cTimeLastRecrystal(cto), cSizeLastRecrystal(cso) {
         /* nothing to do */
 }
     
 // Define function members
 
-std::vector<double> fevor_crystal::resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot) {
+std::vector<double> Crystal::resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot) {
     double glenExp = 3.0;
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
     double beta = 630.0; // from Thors 2001 paper (pg 510, above eqn 16)
@@ -152,7 +152,7 @@ std::vector<double> fevor_crystal::resolveM(const double &temperature, const std
     
 }
 
-double fevor_crystal::grow(const double &tempature, const double &modelTime) {
+double Crystal::grow(const double &tempature, const double &modelTime) {
     double K_0 = 8.2e-9; // units: m^2 s^{-1}
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
     double Q = 0.0;
@@ -171,7 +171,7 @@ double fevor_crystal::grow(const double &tempature, const double &modelTime) {
 
 }
 
-void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const double &K) {
+void Crystal::dislocate(const double &timeStep, const double &Medot, const double &K) {
     double b = 4.5e-10; // units: m
     double alpha = 1.0; // units: -
         // Thor. 2002: constant grater than 1. However, everyone just uses 1:
@@ -189,7 +189,7 @@ void fevor_crystal::dislocate(const double &timeStep, const double &Medot, const
         cDislDens = 0.0; // units: m^{-2}
 }
 
-unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const double &modelTime, const double &timeStep) {
+unsigned int Crystal::migRe(const std::vector<double> &stress, const double &modelTime, const double &timeStep) {
     double Ggb = 0.065; // units: J m^{-2}
     double G = 3.4e9; // units: Pa
     double b = 4.5e-10; //units: m
@@ -271,7 +271,7 @@ unsigned int fevor_crystal::migRe(const std::vector<double> &stress, const doubl
     return 1;
 }
 
-unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep) {
+unsigned int Crystal::polygonize( const std::vector<double> &stress, const double &Mrss, const double &modelTime, const double &timeStep) {
     double del = 0.065; // units: - 
         // ratio threshold -- Thor. 2002 [26]
     double rhop = 5.4e10; // units: m^{-2} 
@@ -322,7 +322,7 @@ unsigned int fevor_crystal::polygonize( const std::vector<double> &stress, const
     return 1;
 }
 
-void fevor_crystal::rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress, const double &timeStep) {
+void Crystal::rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress, const double &timeStep) {
     
     std::vector<double> rdot, rdotTrans;
     rdot = tensorMixedInner(bigM, stress);
@@ -356,7 +356,7 @@ void fevor_crystal::rotate(const std::vector<double> &bigM, const std::vector<do
                     [&](double x){return x/magCaxis;});
 }
 
-void fevor_crystal::seeCrystal() { 
+void Crystal::seeCrystal() { 
     
     
     std::cout << "The C-Axis orientation is:" << std::endl;
@@ -376,7 +376,7 @@ void fevor_crystal::seeCrystal() {
     std::cout.precision(0);
 }
 
-void fevor_crystal::printCrystal() const {
+void Crystal::printCrystal() const {
      
     std::cout.precision(4);
     
@@ -391,7 +391,7 @@ void fevor_crystal::printCrystal() const {
               << std::setw(11) << cSizeLastRecrystal << std::endl;
     
 }
-void fevor_crystal::printCrystal(std::ofstream &file) const {
+void Crystal::printCrystal(std::ofstream &file) const {
      
     file.precision(4);
     
@@ -407,7 +407,7 @@ void fevor_crystal::printCrystal(std::ofstream &file) const {
     
 }
 
-void fevor_crystal::getAxisAngles(double &theta, double &phi) {
+void Crystal::getAxisAngles(double &theta, double &phi) {
     
     double HXY = sqrt(cAxis[0]*cAxis[0] + cAxis[1]*cAxis[1]);
     theta = atan2(HXY, cAxis[2]);
@@ -415,7 +415,7 @@ void fevor_crystal::getAxisAngles(double &theta, double &phi) {
     
 }
 
-void fevor_crystal::setNewAxis(const double &theta, const double &phi) {
+void Crystal::setNewAxis(const double &theta, const double &phi) {
     
     cAxis = {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
     
@@ -426,13 +426,13 @@ void fevor_crystal::setNewAxis(const double &theta, const double &phi) {
                    [&](double x){return x/sqrt(cAxisMag);} );
     }
 }
-void fevor_crystal::setNewAxis(const std::vector<double> &ax) {
+void Crystal::setNewAxis(const std::vector<double> &ax) {
     // TODO: error handling!
     //~ if (ax.size() == 3)
         cAxis = ax;
 }
 
-void fevor_crystal::setAll(const double &ca0, const double &ca1, const double &ca2, 
+void Crystal::setAll(const double &ca0, const double &ca1, const double &ca2, 
                     const double &csz, const double &cdd, 
                     const double &ctlr, const double &cslr) {
     
@@ -445,7 +445,7 @@ void fevor_crystal::setAll(const double &ca0, const double &ca1, const double &c
     cSizeLastRecrystal = cslr;
 }
 
-void fevor_crystal::getAll(double &ca0, double &ca1, double &ca2, 
+void Crystal::getAll(double &ca0, double &ca1, double &ca2, 
                     double &csz, double &cdd, double &ctlr, double &cslr) const {
     ca0  = cAxis[0];
     ca1  = cAxis[1];

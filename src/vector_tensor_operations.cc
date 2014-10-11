@@ -36,6 +36,8 @@
 #include <algorithm>
 #include "vector_tensor_operations.hh"
 
+namespace FEvoR {
+
 // Vector containing the independent elements of the outer product between
 // two vectors (upper triangle of resultant tensor) in ROW-MAJOR order.
 std::vector<double> vectorOuter(const std::vector<double> &v1, const std::vector<double> &v2) {
@@ -166,3 +168,5 @@ void tensorDisplay(const std::vector<double> &tensor, const int rows, const int 
     std::cout << std:: endl;
     
 }
+
+} // end of namespace FEvoR

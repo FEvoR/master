@@ -58,7 +58,7 @@ int main()
     //~ double watsonK = 2.0;      // girdle
     //~ double watsonK = -2.0;     // bipolar
     //~ "./util/compairisonDist.csv"
-    fevor_distribution d1(packingDimensions, "./util/compairisonDist.csv");
+    FEvoR::Distribution d1(packingDimensions, "./util/compairisonDist.csv");
                        // FIXME will not run -- make this based on build dir!
     
     std::cout << "\n" << "************************************ \n"
@@ -69,7 +69,7 @@ int main()
                     << "    " << "Softness Parameters: 1, 0 \n"
                     << "    " << "Temperature: " << temperature << " degrees C\n"
                     << "    " << "Stress (Pa): " << std::endl;
-                    tensorDisplay(stress, 3, 3);
+                    FEvoR::tensorDisplay(stress, 3, 3);
     std::cout << "\n" << "Initial time: " << modelTime << "s \n"
                     << "Time Step: " << timeStep << "s \n"
                     << std::endl;
@@ -88,7 +88,7 @@ int main()
                        // FIXME will not run -- make this based on build dir!
 
     std::cout << "Bulk Edot was:" << std::endl;
-    tensorDisplay(bulkEdot,3,3);
+    FEvoR::tensorDisplay(bulkEdot,3,3);
     std::cout << "Number of Polygonizations:" << nPoly << std::endl;
     std::cout << "Number of Migration Recrystallizations:" << nMigre << std::endl;
     

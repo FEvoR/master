@@ -34,6 +34,8 @@
  
 #include <vector>
 
+namespace FEvoR {
+    
 // Vector containing the independent elements of the outer product between
 // two vectors (upper triangle of resultant tensor) in ROW-MAJOR order.
 std::vector<double> vectorOuter(const std::vector<double> &v1, const std::vector<double> &v2);
@@ -62,6 +64,6 @@ int factorial(int n);
 // display a tensor
 void tensorDisplay(const std::vector<double> &tensor, const int rows, const int columns);
 
-
+} // end of namespace FEvoR
 
 #endif

@@ -44,13 +44,13 @@ namespace FEvoR {
 
 void test_rotate(){
     
-    //TODO: test fevor_crystal.rotate
+    //TODO: test FEvoR::Crystal.rotate
     std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
     
 }
 
 void test_resolveM() {
-    fevor_crystal c1(std::vector<double> {0,0,1},0.01,1e11);
+    FEvoR::Crystal c1(std::vector<double> {0,0,1},0.01,1e11);
     
     double theta, phi;
     theta = M_PI/4.0;
@@ -86,7 +86,7 @@ void test_resolveM() {
 }
 
 double test_grow(){
-    fevor_crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,10.0);
+    FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,10.0);
     //~ c1.seeCrystal();
     
     double temperature, model_time, K;
@@ -103,7 +103,7 @@ double test_grow(){
 }
 
 void test_dislocate(const double &K) {
-    fevor_crystal c1(std::vector<double> {1.0,0.0,0.0},1.0055e-2,1.0e10);
+    FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},1.0055e-2,1.0e10);
     //~ c1.seeCrystal();
     
     double timeStep = 1000.0*365.0*24.0*60.0*60.0;
@@ -118,7 +118,7 @@ void test_dislocate(const double &K) {
 }
 
 void test_migRe() {
-    fevor_crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,1.0e11);
+    FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,1.0e11);
     
     double model_time, time_step;
     model_time = time_step = 1000.0*365.0*24.0*60.0*60.0;
@@ -149,7 +149,7 @@ void test_migRe() {
 }
 
 void test_polygonize() {
-    fevor_crystal c1(std::vector<double> {0.0,0.0,1.0},0.01,1.0e11);
+    FEvoR::Crystal c1(std::vector<double> {0.0,0.0,1.0},0.01,1.0e11);
     
     double model_time, time_step;
     model_time = time_step = 1000.0*365.0*24.0*60.0*60.0;
@@ -182,7 +182,7 @@ void test_polygonize() {
 
 void test_angles() {
     
-    fevor_crystal c1(std::vector<double> {1.0,0.0,0.0},1.0,10.0);
+    FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},1.0,10.0);
     c1.seeCrystal();
     
     double theta = 0.0, phi = 0.0;

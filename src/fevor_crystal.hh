@@ -37,11 +37,11 @@
 
 namespace FEvoR {
 
-class fevor_crystal {
+class Crystal {
     public:
     // constructors
-    fevor_crystal(std::vector<double> ca, double cs, double cdd);
-    fevor_crystal(std::vector<double> ca, double cs, double cdd, double cto, double cso);
+    Crystal(std::vector<double> ca, double cs, double cdd);
+    Crystal(std::vector<double> ca, double cs, double cdd, double cto, double cso);
 
     // functions
         // get the strain-stress relation tensor (4th order)
