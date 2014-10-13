@@ -71,7 +71,7 @@ class Distribution {
         //generate watson cAxis for distribution
         void generateWatsonAxes(const double &wk);
         
-        unsigned int getNumberCrystals();
+        unsigned int getNumberCrystals() const;
         
   static const int numberParameters;
     private:

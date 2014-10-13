@@ -352,7 +352,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
     }
 }
 
-unsigned int Distribution::getNumberCrystals() {
+unsigned int Distribution::getNumberCrystals() const {
     return numberCrystals;
 }
 
