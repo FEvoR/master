@@ -48,7 +48,7 @@ namespace FEvoR {
 // Each crystal has: the three components of the crystal axis, size,
 // dislocation density, time of last recrystallization, and size at
 // last recrystallization.
-const int Distribution::numberParameters = 7;
+const unsigned int Distribution::numberParameters = 7;
 
 Distribution::Distribution(std::vector<unsigned int> lwh): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];

@@ -73,7 +73,7 @@ class Distribution {
         
         unsigned int getNumberCrystals() const;
         
-  static const int numberParameters;
+  static const unsigned int numberParameters;
     private:
         std::vector<unsigned int> dimensions;
 
