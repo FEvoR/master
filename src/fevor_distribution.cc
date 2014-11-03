@@ -121,6 +121,13 @@ std::vector<double> Distribution::stepInTime(const double &temperature, const st
     return bulkM;
 }
 
+std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, std::vector<double> &bulkEdot){
+    unsigned int nMigre = 0,
+                 nPoly  = 0;
+ 
+    return stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
+}
+
 void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
     if (contribNeighbor != 0.0) {
         

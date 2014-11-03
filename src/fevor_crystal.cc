@@ -61,7 +61,7 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     double A = 0.0;
     
     Q = (temperature > -10.0 ? 115.0 : 60.0);
-    A = 3.5e-25*beta*exp(-(Q/R)*(1.0/(273.13+temperature)-1.0/263.13)); // units: s^{-1} Pa^{-n}
+    A = 3.5e-25*beta*exp(-(Q/R)*(1.0/(273.15+temperature)-1.0/263.15)); // units: s^{-1} Pa^{-n}
     // From Cuffy + Patterson (4 ed.) pg. 73
     
     // Burgers vector for each slip system
@@ -220,7 +220,7 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
      * can be a constant. Note: log() is the natural log.
      */
     
-    double Egb = 0.0, Edis = 0.0;
+    double Egb, Edis;
     Egb = 3.0*Ggb/cSize; // units: J m^{-3}
     Edis = kappa*G*cDislDens*b*b; // units: J m^{-3}
     
