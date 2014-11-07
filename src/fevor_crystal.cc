@@ -68,25 +68,20 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     std::vector<double> burger1, burger2, burger3;
     burger1 = burger2 = burger3 = {0.0,0.0,0.0};
     
-    if ((cAxis[0] == 0.0) && (cAxis[1] == 0.0)) {
-        burger1 = {1.0/3.0,0.0,0.0};
-        burger2 = {(1.0+sqrt(3.0))/6.0,-sqrt(3.0)/6.0,0.0};
-        burger3 = {(1.0-sqrt(3.0))/6.0, sqrt(3.0)/6.0,0.0};
-    } else {
-        double xyline = sqrt(cAxis[0]*cAxis[0]+cAxis[1]*cAxis[1]);
+        // calculate using axis angles
+        double theta, phi;
+        getAxisAngles(theta, phi);
         
-        burger1 = {cAxis[0]*cAxis[2]/xyline/3.0,
-                   cAxis[1]*cAxis[2]/xyline/3.0,
-                   -xyline/3.0};
-        
-        burger2 = {burger1[0]/2.0+sqrt(3.0)*cAxis[1]/xyline/6.0,
-                   burger1[1]/2.0-sqrt(3.0)*cAxis[0]/xyline/6.0,
-                   -xyline/6.0};
-        
-        burger3 = {burger1[0]/2.0-sqrt(3.0)*cAxis[1]/xyline/6.0,
-                   burger1[1]/2.0+sqrt(3.0)*cAxis[0]/xyline/6.0,
-                   -xyline/6.0};
-    }
+        // sines and cosines so calculation only has to be preformed once
+        double  st = std::sin(theta), 
+                ct = std::cos(theta),
+                sp = std::sin(phi),
+                cp = std::cos(phi), 
+                sq3= sqrt(3.0);
+
+    burger1 = {ct*cp/3.0,             ct*sp/3.0,          -st/3.0};
+    burger2 = {(-ct*cp - sq3*sp)/6.0, (-ct*sp+sq3*cp)/6.0, st/6.0};
+    burger3 = {(-ct*cp + sq3*sp)/6.0, (-ct*sp-sq3*cp)/6.0, st/6.0};
     
     // calculate shmidt tensors
         // 1x9 vector containing the  3x3 shmidt tensor in ROW-MAJOR order. 
