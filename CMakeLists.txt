@@ -30,6 +30,9 @@ add_library(FEvoR
 add_executable(singleStep Example/singleStep.cc)
 target_link_libraries(singleStep FEvoR)
 
+add_executable(enhancementFactor Example/enhancementFactor.cc)
+target_link_libraries(enhancementFactor FEvoR)
+
 add_executable(testUnits ${test_sources} test/units.cc)
 target_link_libraries(testUnits FEvoR)
 
@@ -49,9 +52,9 @@ configure_package_config_file(
     INSTALL_DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}
     PATH_VARS INCLUDE_INSTALL_DIR LIB_INSTALL_DIR)
 write_basic_package_version_file(
-	${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
-	VERSION ${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}
-	COMPATIBILITY AnyNewerVersion )
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+    VERSION ${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}
+    COMPATIBILITY AnyNewerVersion )
 
 # install the FEvoR library
 install(TARGETS FEvoR

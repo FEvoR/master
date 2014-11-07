@@ -58,7 +58,7 @@ Distribution::Distribution(std::vector<unsigned int> lwh): dimensions(lwh) {
         magRSS.push_back(1.0);
     }
     
-    setSoftnessRatio(1.0, 0.0);
+    setSoftnessRatio(6.0, 1.0);
 }
 
 // construct a distribution from a saved distribution of crystals
@@ -84,7 +84,7 @@ Distribution::Distribution(std::vector<unsigned int> lwh, std::vector<double> &d
         magRSS.push_back(1.0);
     }
     
-    setSoftnessRatio(1.0, 0.0);
+    setSoftnessRatio(6.0, 1.0);
 }
 
 // Define function members
@@ -145,7 +145,7 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
             
             softy = (magRSS[front] + magRSS[back] + magRSS[left] + magRSS[right] + magRSS[top] + magRSS[bottom])/magRSS[ii];
             
-            softness[ii] = 1.0/(contribCrystal + 6*contribNeighbor)*(contribCrystal + contribNeighbor*softy);
+            softness[ii] = 1.0/(contribCrystal + 6.0*contribNeighbor)*(contribCrystal + contribNeighbor*softy);
             
             std::transform(crystalM[ii].begin(),crystalM[ii].end(),crystalM[ii].begin(), 
                         [&](double x){return x*softness[ii];});
