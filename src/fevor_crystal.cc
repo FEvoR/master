@@ -267,7 +267,7 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
         
     } else {
         // uniaxial comp. or pure shear -- orientation will be near theta = 45 degrees
-        std::uniform_real_distribution<double> dTheta(u_pSix,u_pThree);
+        std::uniform_real_distribution<double> du(u_pSix,u_pThree);
         double u   = du(seed);
         
         theta = std::acos(2.0*u-1.0);
