@@ -242,25 +242,36 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
     double theta = 0.0, phi = 0.0;
     getAxisAngles(theta, phi);
     
-    int stressIndex1 = (stress[4] > stress[0] ? 4 : 0);
-    int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
-    stressIndex2     = (stress[5] > stress[stressIndex2] ? 5 : stressIndex2);
+    /* Indexing: {0, 1, 2,
+     *            3, 4, 5,
+     *            6, 7, 8}
+     */
+    int stressIndex1 = (std::abs(stress[4]) > std::abs(stress[8]) ? 4 : 8);
+    int stressIndex2 = (std::abs(stress[1]) > std::abs(stress[2]) ? 1 : 2);
+    stressIndex2     = (std::abs(stress[5]) > std::abs(stress[stressIndex2]) 
+                        ? 5 : stressIndex2);
     
     std::random_device seed;
     std::uniform_real_distribution<double> dPhi(0.0,2.0*M_PI);
+    double u_pSix   = (std::cos(M_PI/6.0)+1.0)/2.0,
+           u_pThree = (std::cos(M_PI/3.0)+1.0)/2.0;
     
-    if (stress[stressIndex1] < stress[stressIndex2]) {
+    if ( std::abs(stress[stressIndex1]) < std::abs(stress[stressIndex2]) ) {
         // simple shear -- orientation will be near vertical
-        std::uniform_real_distribution<double> dTheta(0.0,M_PI/6.0);
-        theta = dTheta(seed);
-        phi = dPhi(seed);
+        std::uniform_real_distribution<double> du(0.0,u_pSix);
+        double u   = du(seed);
+        
+        theta = std::acos(2.0*u-1.0); 
+        phi   = dPhi(seed);
         
         
     } else {
         // uniaxial comp. or pure shear -- orientation will be near theta = 45 degrees
-        std::uniform_real_distribution<double> dTheta(M_PI/6.0,M_PI/3.0);
-        theta = dTheta(seed);
-        phi = dPhi(seed);
+        std::uniform_real_distribution<double> dTheta(u_pSix,u_pThree);
+        double u   = du(seed);
+        
+        theta = std::acos(2.0*u-1.0);
+        phi   = dPhi(seed);
     }
     
     setNewAxis(theta, phi);
