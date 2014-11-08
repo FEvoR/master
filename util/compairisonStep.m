@@ -1,14 +1,23 @@
 %% script to test Thor results line by line for compairison to FEvoR
+%
+%   Make sure to run compairisonStep! 
+%       ../bin/comparisonStep watsonK temperature(Celsius) dt(years)
+%   Example:
+%       ../bin/comparisonStep -3.0 -10.0 1000.0
+%   make sure temperature and dt as the same in this file as in command!!!!!
+
 
 temperature = -10; % Celsius
+dt = 1000; % years
+
+
 stress = [ 10000,     0, 10000;...
                0,     0,     0;...
            10000,     0,-10000];
 
-dt = 1000; % years
 addpath ~/Documents/Programs/Thor/trunk/
 
-
+%%
 theta = pi/3;
 phi   = pi/3;
 
@@ -206,3 +215,6 @@ hold off
 
 axis([-1,1,-1,1,-1,1])
 view([0,90])
+
+figure;
+Sims.Analyze.equalAreaPoint(cN)

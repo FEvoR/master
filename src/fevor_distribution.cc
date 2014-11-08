@@ -278,22 +278,23 @@ void Distribution::loadDistribution( const std::vector<double> &data ) {
 
 void Distribution::generateWatsonAxes(const double &wk) {
 
-    //TODO: look up random_device vs default_random_engine and how to preserve
-    // it across function calls
     std::random_device seed;
+    std::mt19937 gen(seed());
     
     if (wk == 0) {
         // isotropic
-        std::normal_distribution<double> rNumb(-1.0,1.0);
+        std::normal_distribution<double> rNumb(0.0,1.0);
         std::vector<double> axis;
         
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
         
-            axis = {rNumb(seed), rNumb(seed), rNumb(seed)};
+            axis = {rNumb(gen), rNumb(gen), rNumb(gen)};
+            
+            
             double axisMag = tensorMagnitude(axis);
             if (axisMag != 1.0) {
                 std::transform(axis.begin(), axis.end(), axis.begin(), 
-                                [&](double x){return x/sqrt(axisMag);} );
+                                [&](double x){return x/axisMag;} );
             }
         
             crystals[ii].setNewAxis(axis);
@@ -321,8 +322,8 @@ void Distribution::generateWatsonAxes(const double &wk) {
         double theta, phi;
         
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
-                phi   = gPhi(seed);
-                theta = dTheta(seed);
+                phi   = gPhi(gen);
+                theta = dTheta(gen);
                 
                 crystals[ii].setNewAxis(theta, phi);
         }
@@ -335,7 +336,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
         theta = M_PI/2.0;
         
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
-                phi   = gPhi(seed);
+                phi   = gPhi(gen);
                 crystals[ii].setNewAxis(theta, phi);
         }
     } else { //(wk > 0)
@@ -354,8 +355,8 @@ void Distribution::generateWatsonAxes(const double &wk) {
         double theta, phi;
         
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
-                phi   = gPhi(seed);
-                theta = dTheta(seed);
+                phi   = gPhi(gen);
+                theta = dTheta(gen);
                 
                 crystals[ii].setNewAxis(theta, phi);
         }
