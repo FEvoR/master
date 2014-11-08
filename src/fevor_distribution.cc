@@ -165,10 +165,13 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
     std::transform(bulkM.begin(),bulkM.end(),bulkM.begin(), 
                     [&](double x){return x/numberCrystals;});
     
-    std::vector<double> bulkEdotTrans;
-    bulkEdot = tensorMixedInner(bulkM, stress);
-    bulkEdotTrans = matrixTranspose(bulkEdot, 3, 3);
-    std::transform(bulkEdot.begin(), bulkEdot.end(), bulkEdotTrans.begin(),bulkEdot.begin(), 
+    std::vector<double> bulkVel;
+    bulkVel  = tensorMixedInner(bulkM, stress);
+    
+    std::vector<double> bulkVelT;
+    bulkVelT = matrixTranspose(bulkVel, 3, 3);
+    
+    std::transform(bulkVel.begin(), bulkVel.end(), bulkVelT.begin(),bulkEdot.begin(), 
                    std::plus<double>());
     std::transform(bulkEdot.begin(),bulkEdot.end(),bulkEdot.begin(), 
                     [&](double x){return x/2.0;});
@@ -296,7 +299,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
             crystals[ii].setNewAxis(axis);
         }
         
-    } else if (wk < -1000.5) {
+    } else if (wk < -700.0) {
         // perfect bipolar (single maximum)
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
                 crystals[ii].setNewAxis({0.0,0.0,1.0});

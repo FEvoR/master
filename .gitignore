@@ -2,7 +2,7 @@
 *.o
 
 # utility files
-util/compairisonDist_stepped*
+util/comparisonDist_*.csv
 
 # executables
 bin/**

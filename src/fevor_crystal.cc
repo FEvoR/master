@@ -97,7 +97,7 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     Mbase2 = tensorOuter(shmidt2, shmidt2);
     Mbase3 = tensorOuter(shmidt3, shmidt3);
     
-    double rss1, rss2,rss3;
+    double rss1, rss2, rss3;
     rss1 = std::inner_product(shmidt1.cbegin(),shmidt1.cend(), stress.cbegin(), 0.0);
     rss2 = std::inner_product(shmidt2.cbegin(),shmidt2.cend(), stress.cbegin(), 0.0);
     rss3 = std::inner_product(shmidt3.cbegin(),shmidt3.cend(), stress.cbegin(), 0.0);
@@ -128,18 +128,20 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
                    std::plus<double>());
     std::transform(Mbase1.begin(), Mbase1.end(), Mbase3.begin(),Mbase1.begin(), 
                    std::plus<double>());
-                   
+
     
+    std::vector<double> vel;
+    vel = FEvoR::tensorMixedInner(Mbase1, stress);
     
-    Mbase2 = matrixTranspose(Mbase1,9,9);
-    std::transform(Mbase2.begin(), Mbase2.end(), Mbase1.begin(),Mbase2.begin(), 
+    std::vector<double> velT, edot;
+    edot.resize(vel.size());
+    velT = FEvoR::matrixTranspose(vel, 3, 3);
+    
+    std::transform(vel.begin(), vel.end(), velT.begin(),edot.begin(), 
                    std::plus<double>());
-    std::transform(Mbase2.begin(),Mbase2.end(),Mbase2.begin(), 
+    std::transform(edot.begin(),edot.end(),edot.begin(), 
                     [&](double x){return x/2.0;});
-    // Mbase2 now (Mbase1 + Mbase1')/2
-    
-    std::vector<double> edot;
-    edot = tensorMixedInner(Mbase2, stress);
+                    
     
     Medot = tensorMagnitude(edot)*sqrt(1.0/2.0);
     

@@ -33,13 +33,11 @@ target_link_libraries(singleStep FEvoR)
 add_executable(enhancementFactor Example/enhancementFactor.cc)
 target_link_libraries(enhancementFactor FEvoR)
 
+
 add_executable(testUnits ${test_sources} test/units.cc)
 target_link_libraries(testUnits FEvoR)
 
-# This one compiles, but will crash unless executed from the top
-# directory of the source tree (the path to an input file is
-# hard-wired).
-add_executable(comparisonStep ${test_sources} test/comparisonStep.cc)
+add_executable(comparisonStep test/comparisonStep.cc)
 target_link_libraries(comparisonStep FEvoR)
 
 # build package config file

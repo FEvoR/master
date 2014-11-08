@@ -1,110 +1,208 @@
-%% Compairison between FEvoR and Thor time step
-    % make sure to run FEvoR/bin/compairisonStep before this script. '!' call to
-    % it doesn't work.
-    
-close all, clear all, clc
+%% script to test Thor results line by line for compairison to FEvoR
 
+temperature = -10; % Celsius
+stress = [ 10000,     0, 10000;...
+               0,     0,     0;...
+           10000,     0,-10000];
+
+dt = 1000; % years
 addpath ~/Documents/Programs/Thor/trunk/
 
-% perform a time step
-Test.timing; % FIXME: This is not included in FEvoR!
 
-iN   = [sin(icdist.theta).*cos(icdist.phi) sin(icdist.theta).*sin(icdist.phi) cos(icdist.theta)];
-fN   = [sin(fcdist.theta).*cos(fcdist.phi) sin(fcdist.theta).*sin(fcdist.phi) cos(fcdist.theta)];
+theta = pi/3;
+phi   = pi/3;
 
-% make data files from time step
- idata = [(1:SET.numbcrys)',iN, icdist.size, icdist.dislDens, iSET.to, iSET.Do];
- fdata = [(1:SET.numbcrys)',fN, fcdist.size, fcdist.dislDens, fSET.to, fSET.Do];
-    
-% write data file
-ifilename = 'compairisonDist.csv';
-ffilename = 'compairisonDist_stepped_matlab.csv';
-cfilename = 'compairisonDist_stepped_cpp.csv';
+n = 3;
+R = 0.008314472; % units: kJ K^{-1} mol^{-1}
+beta = 630.0;    % from Thors 2001 paper (pg 510, above eqn 16)
 
-fid = fopen(ifilename, 'w');
-fprintf(fid, '# Crystal, C-Axis (x), C-Axis (y), C-Axis (z), Size (m), Disl. dens. (1/m^2), Last recr. time (s), Size at last recr. (m)\n');
-fclose(fid);
+if (temperature > -10)
+    Q = 115;
+else
+    Q = 60;
+end
+A = 3.5e-25*beta*exp(-(Q/R)*(1.0/(273.15+temperature)-1.0/263.15)); % units: s^{-1} Pa^{-n}
 
-dlmwrite(ifilename, idata, '-append', 'precision', '%.6f', 'delimiter', ',');
+% sines and cosines so calculation only has to be preformed once
+st = sin(theta); ct = cos(theta);
+sp = sin(phi);   cp = cos(phi); sq3 = sqrt(3);
 
-fid = fopen(ffilename, 'w');
-fprintf(fid, '# Crystal, C-Axis (x), C-Axis (y), C-Axis (z), Size (m), Disl. dens. (1/m^2), Last recr. time (s), Size at last recr. (m)\n');
-fclose(fid);
+% Basal plane vectors
+B1 = [ct.*cp/3, ct.*sp/3, -st/3]; % -
+B2 = [(-ct.*cp - sq3.*sp)/6, (-ct.*sp+sq3.*cp)/6, st/6]; % -
+B3 = [(-ct.*cp + sq3.*sp)/6, (-ct.*sp-sq3.*cp)/6, st/6]; % -
 
-dlmwrite(ffilename, fdata, '-append', 'precision', '%.6f', 'delimiter', ',');
+% C-axis orientation
+cAxis = [st.*cp, st.*sp, ct]; % -
 
-% cpp step
-% !../bin/compairisonStep > compairisonDist_stepped_cpp.csv
-    % stupid this doesn't work.
+shmidt1 = B1'*cAxis;
+shmidt2 = B2'*cAxis;
+shmidt3 = B3'*cAxis;
 
-cpp = importdata(cfilename,',',1);
+rss1 = sum(sum(shmidt1.*stress));
+rss2 = sum(sum(shmidt2.*stress));
+rss3 = sum(sum(shmidt3.*stress));
+Mrss = sqrt( sum( ( B1*rss1 + B2*rss2+B3*rss3 ).^2 ) );  % Pa
+
+Mbase1 = kron(shmidt1,shmidt1);
+Mbase2 = kron(shmidt2,shmidt2);
+Mbase3 = kron(shmidt3,shmidt3);
+M = A*(Mbase1*rss1^(n-1)+Mbase2*rss2^(n-1)+Mbase3*rss3^(n-1));
+
+G1 = A*rss1.*abs(rss1).^(n-1); % s^{-1}
+G2 = A*rss2.*abs(rss2).^(n-1); % s^{-1}
+G3 = A*rss3.*abs(rss3).^(n-1); % s^{-1}
+
+% calculate the velocity gradient (size 3x3xN)
+Gvel = shmidt1*G1+shmidt2*G2+shmidt3*G3; % s^{-1}
+GvelT = Gvel';
+           
+% calculate the strain rate (size 3x3xN)
+Gecdot = Gvel/2+Gvel'/2; % s^{-1}
+
+Gmecdot = sqrt(1/2*sum(sum(Gecdot.^2)));
+
+display('************************************')
+display('   Stepping a crystal')
+display('************************************')
+
+display(shmidt1)
+display(shmidt2)
+display(shmidt3)
+display(rss1)
+display(rss2)
+display(rss3)
+display(Mrss)
+display(M)
+display(Gvel)
+display(GvelT)
+display(Gecdot)
+display(Gmecdot)
+
+%%
+
+cpp = importdata('comparisonDist_initial.csv',',',1);
 cdata = cpp.data;
+%# Crystal, C-Axis (x), C-Axis (y), C-Axis (z), Size (m), Disl. dens. (1/m^2), Last recr. time (s), Size at last recr. (m)
+cN = cdata(:,2:4)';
 
-cN = cdata(:,2:4);
+% get new angles
+HXY = sqrt(cN(1,:).^2+cN(2,:).^2);
+c.theta = atan2(HXY,cN(3,:))';
+c.phi   = atan2(cN(2,:),cN(1,:))';
 
-%% flip N(:,3) < 0
-imsk = iN(:,3) < 0;
-fmsk = fN(:,3) < 0;
+c.size = cdata(:,5);
+c.dislDens=cdata(:,6);
+
+cdist = c;
+
+SET = load('/home/joseph/Documents/Programs/Thor/trunk/+Test/timing.mat','A');
+SET.nelem = 1;
+SET.numbcrys = 8000;
+SET.stress = stress; 
+SET.xcec = [1, 0];
+SET.T = temperature; 
+SET.glenexp = n;
+SET.width = [20 20 20];
+SET.tstep = dt*365*24*60*60;
+SET.CONN = 'cube8000.mat';
+SET.to = zeros(SET.numbcrys,SET.nelem);
+SET.ti = zeros(SET.nelem, 1);
+SET.poly = true;
+SET.migre = true;
+SET.run = 1; 
+SET.Do = cdist.size;
+
+
+eigenMask = ones(8000,1);
+ii = 1; 
+
+NPOLY = zeros(SET.nelem,size(eigenMask,2));
+NMIGRE = zeros(SET.nelem,size(eigenMask,2));
+
+    % calculate velocity gradients and crystal strain rates
+    cdist = Thor.Utilities.vec( cdist, SET, ii);        
+
+    % calculate bulk strain rate
+    [bedot] = Thor.Utilities.bedot( cdist );
+
+    % grow the crystals
+    [cdist, K] = Thor.Utilities.grow(cdist, SET, ii);
+
+    % calculate new dislocation density
+    [cdist, ~] = Thor.Utilities.disl(cdist, SET, ii, K);
+
+    % check for migration recrystallization
+    if (SET.migre)
+        [cdist, SET, NMIGRE(ii,:)] = Thor.Utilities.migre(cdist, SET, ii, eigenMask);
+    end
+
+    % check for polygonization
+    if (SET.poly)
+        [cdist, SET, NPOLY(ii,:)] = Thor.Utilities.poly(cdist, SET, ii, eigenMask);
+    end
+
+%     % check crystal orientation bounds
+%     cdist = Thor.Utilities.bound(cdist);
+
+    % rotate the crystals from last time steps calculations
+    cdist = Thor.Utilities.rotate(cdist, SET, ii );
+
+display('************************************')
+display('   Stepping a disribution')
+display('************************************')
+    
+display(NMIGRE)
+display(NPOLY)
+display(bedot)
+
+%% plot
+
+% sines and cosines so calculation only has to be preformed once
+st = sin(cdist.theta); ct = cos(cdist.theta);
+sp = sin(cdist.phi);   cp = cos(cdist.phi); sq3 = sqrt(3);
+
+% C-axis orientation
+mN = [st.*cp, st.*sp, ct]; % -
+
+fpp = importdata('comparisonDist_final.csv',',',1);
+fdata = fpp.data;
+%# Crystal, C-Axis (x), C-Axis (y), C-Axis (z), Size (m), Disl. dens. (1/m^2), Last recr. time (s), Size at last recr. (m)
+fN = fdata(:,2:4)';
+
+% get new angles
+HXY = sqrt(fN(1,:).^2+fN(2,:).^2);
+f.theta = atan2(HXY,fN(3,:))';
+f.phi   = atan2(fN(2,:),fN(1,:))';
+
+f.size = fdata(:,5);
+f.dislDens=fdata(:,6);
+
+cN = cN';
+fN = fN';
+
+% make sure all upper hemisphere
 cmsk = cN(:,3) < 0;
+fmsk = fN(:,3) < 0;
+mmsk = mN(:,3) < 0;
 
-iN(imsk,:) = -iN(imsk,:);
-fN(fmsk,:) = -fN(fmsk,:);
 cN(cmsk,:) = -cN(cmsk,:);
+fN(fmsk,:) = -fN(fmsk,:);
+mN(mmsk,:) = -mN(mmsk,:);
 
-idata(:,2:4) = iN;
-fdata(:,2:4) = fN;
-cdata(:,2:4) = cN;
-
-
-%% plot data
-
-display(bedot);
-display(NPOLY);
-display(NMIGRE);
-
-MSize = 90;
+MSize = 200;
 LWidth = 3;
 
+
 figure;
-scatter3(idata(1:100:end,2),idata(1:100:end,3),idata(1:100:end,4), MSize, 'xb','LineWidth',LWidth)
+scatter3(cN(1:100:end,1),cN(1:100:end,2),cN(1:100:end,3), MSize*2, 'xb','LineWidth',LWidth)
 hold on
 
-scatter3(fdata(1:100:end,2),fdata(1:100:end,3),fdata(1:100:end,4), 'or','LineWidth',LWidth)
+scatter3(fN(1:100:end,1),fN(1:100:end,2),fN(1:100:end,3),MSize, 'or','LineWidth',LWidth)
 hold on
 
-scatter3(cdata(1:100:end,2),cdata(1:100:end,3),cdata(1:100:end,4), 'og','LineWidth',LWidth)
+scatter3(mN(1:100:end,1),mN(1:100:end,2),mN(1:100:end,3), MSize,'+g','LineWidth',LWidth)
 hold off
 
 axis([-1,1,-1,1,-1,1])
 view([0,90])
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% FEvoR: Fabric Evolution with Recrystallization %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) 2009-2014  Joseph H Kennedy
-%
-% This file is part of FEvoR.
-%
-% FEvoR is free software: you can redistribute it and/or modify it under the 
-% terms of the GNU General Public License as published by the Free Software 
-% Foundation, either version 3 of the License, or (at your option) any later 
-% version.
-%
-% FEvoR is distributed in the hope that it will be useful, but WITHOUT ANY 
-% WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-% FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more 
-% details.
-%
-% You should have received a copy of the GNU General Public License along 
-% with FEvoR.  If not, see <http://www.gnu.org/licenses/>.
-%
-% Additional permission under GNU GPL version 3 section 7
-%
-% If you modify FEvoR, or any covered work, to interface with
-% other modules (such as MATLAB code and MEX-files) available in a
-% MATLAB(R) or comparable environment containing parts covered
-% under other licensing terms, the licensors of FEvoR grant
-% you additional permission to convey the resulting work.
-
-
