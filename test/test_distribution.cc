@@ -69,6 +69,7 @@ void test_stepInTime() {
     tensorDisplay(stress,3,3);
     
     d1.stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
+    modelTime+=timeStep;
     
     std::cout.precision(4);
     std::cout << std::scientific 

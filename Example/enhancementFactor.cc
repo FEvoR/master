@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
     
     start = clock();
     
-    double dmt1 = 0.0, dmti = 0.0;
-    d1.stepInTime(temperature, stress, dmt1, timeStep, nMigre, nPoly, bulkEdot);
-    di.stepInTime(temperature, stress, dmti, timeStep, bulkEdot_iso);
+    double modelTime = 0.0;
+    d1.stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
+    di.stepInTime(temperature, stress, modelTime, timeStep, bulkEdot_iso);
     
     
     double M = 0.0,
