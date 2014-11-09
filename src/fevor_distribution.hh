@@ -52,9 +52,9 @@ class Distribution {
         
     // functions
         // preform a time step
-        std::vector<double> stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot);
+        std::vector<double> stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot);
         // preform a time step without tracking recrystallization
-        std::vector<double> stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, std::vector<double> &bulkEdot);
+        std::vector<double> stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, std::vector<double> &bulkEdot);
         
         // calculate NNI softness parameter
         void getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress);

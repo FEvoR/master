@@ -88,7 +88,7 @@ Distribution::Distribution(std::vector<unsigned int> lwh, std::vector<double> &d
 }
 
 // Define function members
-std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot) {
+std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot) {
     
     double crystalMagEdot;
     std::vector<double> bulkM(81, 0.0);
@@ -116,12 +116,10 @@ std::vector<double> Distribution::stepInTime(const double &temperature, const st
         crystals[ii].rotate(crystalM[ii], bulkEdot, stress, timeStep);
     }
     
-    modelTime += timeStep;
-    
     return bulkM;
 }
 
-std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, double &modelTime, const double &timeStep, std::vector<double> &bulkEdot){
+std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, std::vector<double> &bulkEdot){
     unsigned int nMigre = 0,
                  nPoly  = 0;
  
