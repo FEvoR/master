@@ -44,8 +44,8 @@
 int main(int argc, char *argv[])
 {
     if (argc != 12) {
-        std::cout << "usage: " << argv[0] << " w T Sxx(Pa) Sxy Sxz Syy Syz Szz dt(years) cc cn" << std::endl;
-        std::cout << "example: " << argv[0] << " -3.0 -30.0 0.0 0.0 500 0.0 0.0 0.0 1000.0 1.0 0.0" << std::endl;
+        std::cout << "usage: " << argv[0] << " w T(K) Sxx(Pa) Sxy Sxz Syy Syz Szz dt(years) cc cn" << std::endl;
+        std::cout << "example: " << argv[0] << " -3.0 263.15 0.0 0.0 500 0.0 0.0 0.0 1000.0 1.0 0.0" << std::endl;
         return 0;
     }
     
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
                       << "Model Setup is: \n"
                       << "    " << "Watson K: " << watsonK << " \n"
                       << "    " << "Softness Parameters: " << cc << " , " << cn << " \n"
-                      << "    " << "Temperature: " << temperature << " degrees C\n"
+                      << "    " << "Temperature: " << temperature << " Kelvin\n"
                       << "    " << "Stress (Pa): " << std::endl;
     FEvoR::tensorDisplay(stress, 3, 3);
     std::cout         << "    " << "Time Step: " << timeStep << "s \n"

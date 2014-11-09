@@ -45,7 +45,7 @@ void test_stepInTime() {
     
     //~ d1.saveDistribution();
     
-    double temperature = -10.0;
+    double temperature = 273.15-10.0;
     std::vector<double> stress = { 10000,     0, 10000,
                                        0,     0,     0,
                                    10000,     0,-10000};
@@ -59,12 +59,12 @@ void test_stepInTime() {
     
     std::cout.precision(4);
     std::cout << std::scientific 
-              << "Model time: " << modelTime << "\n"
-              << "Time Step:  " << timeStep << "\n"
-              << "Temp:  " << temperature << "\n"
+              << "Model time: " << modelTime << "s \n"
+              << "Time Step:  " << timeStep << "s \n"
+              << "Temp:  " << temperature << "K \n"
               << std::endl;
     
-    std::cout << "Stress:" << std::endl;
+    std::cout << "Stress (Pa):" << std::endl;
     
     tensorDisplay(stress,3,3);
     

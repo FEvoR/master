@@ -45,8 +45,8 @@
 int main(int argc, char *argv[])
 {
     if (argc != 4) {
-        std::cout << "  usage: " << argv[0] << " w T(Celsius) dt(years)" << std::endl;
-        std::cout << "example: " << argv[0] << "-3.0 -30.0 1.0" << std::endl;
+        std::cout << "  usage: " << argv[0] << " w T(K) dt(years)" << std::endl;
+        std::cout << "example: " << argv[0] << "-3.0 263.15 1.0" << std::endl;
         return 0;
     }
     
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     std::stringstream ss;
     ss << argv[1]; ss >> watsonK;
     ss.clear();
-    ss << argv[2]; ss >> temperature; // Celsius
+    ss << argv[2]; ss >> temperature; // Kelvin
     ss.clear();
     ss << argv[3]; ss >> dt; // years
     ss.clear();
@@ -88,8 +88,8 @@ int main(int argc, char *argv[])
     double Q = 0.0;
     double A = 0.0;
     
-    Q = (temperature > -10.0 ? 115.0 : 60.0);
-    A = 3.5e-25*exp(-(Q/R)*(1.0/(273.15+temperature)-1.0/263.15));
+    Q = (temperature > 263.15 ? 115.0 : 60.0);
+    A = 3.5e-25*exp(-(Q/R)*(1.0/temperature - 1.0/263.15));
     
     
     std::cout   << "\n" 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
                 << "\n"
                 << "Model Setup is: \n"
                 << "    " << "Softness Parameters: " << cc << " , " << cn << " \n"
-                << "    " << "Temperature: " << temperature << " degrees C\n"
+                << "    " << "Temperature: " << temperature << " Kelvin\n"
                 << "    " << "Flow factor: " << A << " s^-1 Pa^-3\n"
                 << "    " << "Stress (Pa): " << std::endl;
     FEvoR::tensorDisplay(stress, 3, 3);

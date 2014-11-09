@@ -45,7 +45,7 @@ int main()
     double msecs;
 
     
-    double temperature = -10.0;
+    double temperature = 273.15-10.0;
     std::vector<double> stress = { 10000,     0, 10000,
                                        0,     0,     0,
                                    10000,     0,-10000};
@@ -75,7 +75,7 @@ int main()
                       << "\n"
                       << "Model Setup is: \n"
                       << "    " << "Softness Parameters: 1, 0 \n"
-                      << "    " << "Temperature: " << temperature << " degrees C\n"
+                      << "    " << "Temperature: " << temperature << " Kelvin\n"
                       << "    " << "Stress (Pa): " << std::endl;
                     FEvoR::tensorDisplay(stress, 3, 3);
     std::cout << "\n" << "    " << "Initial time: " << modelTime << "s \n"

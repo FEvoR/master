@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # enhancementFactor watsonK temperature Sxx Sxy Sxz Syy Syz Szz dt cc cn 
-#                      -      Celsius   Pa  Pa  Pa  Pa  Pa  Pa  yr -  -
+#                      -      Kelvin   Pa  Pa  Pa  Pa  Pa  Pa  yr -  -
 
 # path to executable
 path=${1%/}
 # Watson concentration parameter
 k=${2}
 # temperature
-T=-10.0
+T=263.15
 ####### stress ######
 #                   #
 # | Sxx, Sxy, Sxz | #

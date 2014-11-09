@@ -60,7 +60,7 @@ void test_resolveM() {
     std::vector<double> stress = {10000.0,     0.0,     0.0,
                                       0.0,     0.0,     0.0,
                                       0.0,     0.0,-10000.0};
-    double temperature = -10.0;
+    double temperature = 273.15-10.0;
     double Mrss = 1.0;
     double Medot = 1.0;
     
@@ -90,7 +90,7 @@ double test_grow(){
     //~ c1.seeCrystal();
     
     double temperature, model_time, K;
-    temperature = -11.0; // units: degrees C
+    temperature = 273.15-11.0; // units: Kelvin
     model_time = 1000.0*365.0*24.0*60.0*60.0;   // units: m
     
     K = c1.grow(temperature, model_time);
@@ -192,11 +192,13 @@ void test_angles() {
     std::cout << std::fixed << "Angles are: \n" << "Theta: " << theta << " Phi: " << phi << std::endl;
     
     std::random_device seed;
+    std::mt19937 gen(seed());
+    
     std::uniform_real_distribution<double> dPhi(0.0,2.0*M_PI);
     std::uniform_real_distribution<double> dTheta(0.0,M_PI/2.0);
     
-    theta = dTheta(seed);
-    phi = dPhi(seed);
+    theta = dTheta(gen);
+    phi = dPhi(gen);
     
     std::cout.precision(4);
     std::cout << std::fixed << "New angles are: \n" << "Theta: " << theta << " Phi: " << phi << std::endl;

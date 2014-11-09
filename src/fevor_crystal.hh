@@ -47,7 +47,7 @@ class Crystal {
         // get the strain-stress relation tensor (4th order)
         std::vector<double> resolveM(const double &temperature, const std::vector<double> &stress, double &Mrss, double &Medot);
         // grow the crystal
-        double grow(const double &Tempature, const double &modelTime);
+        double grow(const double &temperature, const double &modelTime);
         // get new dislocation density
         void dislocate(const double &timeStep, const double &Medot, const double &K);
         // migration recrystallize if favorable to do so

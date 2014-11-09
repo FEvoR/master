@@ -1,13 +1,13 @@
 %% script to test Thor results line by line for compairison to FEvoR
 %
 %   Make sure to run compairisonStep! 
-%       ../bin/comparisonStep watsonK temperature(Celsius) dt(years)
+%       ../bin/comparisonStep watsonK temperature(K) dt(years)
 %   Example:
-%       ../bin/comparisonStep -3.0 -10.0 1000.0
+%       ../bin/comparisonStep -3.0 263.15 1000.0
 %   make sure temperature and dt as the same in this file as in command!!!!!
 
 
-temperature = -10; % Celsius
+temperature = 273.15-10.0; % Kelvin
 dt = 1000; % years
 
 
@@ -25,12 +25,12 @@ n = 3;
 R = 0.008314472; % units: kJ K^{-1} mol^{-1}
 beta = 630.0;    % from Thors 2001 paper (pg 510, above eqn 16)
 
-if (temperature > -10)
+if (temperature > 263.15)
     Q = 115;
 else
     Q = 60;
 end
-A = 3.5e-25*beta*exp(-(Q/R)*(1.0/(273.15+temperature)-1.0/263.15)); % units: s^{-1} Pa^{-n}
+A = 3.5e-25*beta*exp(-(Q/R)*(1.0/temperature - 1.0/263.15)); % units: s^{-1} Pa^{-n}
 
 % sines and cosines so calculation only has to be preformed once
 st = sin(theta); ct = cos(theta);
@@ -110,7 +110,7 @@ SET.nelem = 1;
 SET.numbcrys = 8000;
 SET.stress = stress; 
 SET.xcec = [1, 0];
-SET.T = temperature; 
+SET.T = temperature-273.15; % Celcius 
 SET.glenexp = n;
 SET.width = [20 20 20];
 SET.tstep = dt*365*24*60*60;

@@ -60,8 +60,8 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     double Q = 0.0;
     double A = 0.0;
     
-    Q = (temperature > -10.0 ? 115.0 : 60.0);
-    A = 3.5e-25*beta*exp(-(Q/R)*(1.0/(273.15+temperature)-1.0/263.15)); // units: s^{-1} Pa^{-n}
+    Q = (temperature > 263.15 ? 115.0 : 60.0);
+    A = 3.5e-25*beta*exp(-(Q/R)*(1.0/temperature - 1.0/263.15)); // units: s^{-1} Pa^{-n}
     // From Cuffy + Patterson (4 ed.) pg. 73
     
     // Burgers vector for each slip system
@@ -149,18 +149,18 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     
 }
 
-double Crystal::grow(const double &tempature, const double &modelTime) {
+double Crystal::grow(const double &temperature, const double &modelTime) {
     double K_0 = 8.2e-9; // units: m^2 s^{-1}
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
     double Q = 0.0;
-    if (tempature >= -10.0) // in degrees C
+    if (temperature >= 263.15) // units: Kelvin
         Q = 0.7*115.0; // units: kJ mol^{-1}
     else
         Q = 0.7*60.0; // units: kJ mol^{-1}
         // From Cuffy + Patterson (4 ed.) pg. 40
     
     double K = 0.0;
-    K  = K_0*exp(-Q/(R*(273.13+tempature))); // units: m^2 s^{-1}
+    K  = K_0*exp(-Q/(R*temperature)); // units: m^2 s^{-1}
     
     cSize = std::sqrt(K*(modelTime-cTimeLastRecrystal) + cSizeLastRecrystal*cSizeLastRecrystal);
     
@@ -249,6 +249,8 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
                         ? 5 : stressIndex2);
     
     std::random_device seed;
+    std::mt19937 gen(seed());
+    
     std::uniform_real_distribution<double> dPhi(0.0,2.0*M_PI);
     double u_pSix   = (std::cos(M_PI/6.0)+1.0)/2.0,
            u_pThree = (std::cos(M_PI/3.0)+1.0)/2.0;
@@ -256,19 +258,19 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
     if ( std::abs(stress[stressIndex1]) < std::abs(stress[stressIndex2]) ) {
         // simple shear -- orientation will be near vertical
         std::uniform_real_distribution<double> du(0.0,u_pSix);
-        double u   = du(seed);
+        double u   = du(gen);
         
         theta = std::acos(2.0*u-1.0); 
-        phi   = dPhi(seed);
+        phi   = dPhi(gen);
         
         
     } else {
         // uniaxial comp. or pure shear -- orientation will be near theta = 45 degrees
         std::uniform_real_distribution<double> du(u_pSix,u_pThree);
-        double u   = du(seed);
+        double u   = du(gen);
         
         theta = std::acos(2.0*u-1.0);
-        phi   = dPhi(seed);
+        phi   = dPhi(gen);
     }
     
     setNewAxis(theta, phi);
