@@ -121,7 +121,6 @@ int main(int argc, char *argv[])
     d1.stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
     di.stepInTime(temperature, stress, modelTime, timeStep, bulkEdot_iso);
     
-    
     d1.saveDistribution("eDist_wk_final.csv");
     di.saveDistribution("eDist_iso_final.csv");
     
@@ -166,5 +165,11 @@ int main(int argc, char *argv[])
         E_weights = (E_13*std::abs(stress[2])+E_33*std::abs(stress[8]))/(std::abs(stress[2])+std::abs(stress[8]));
     std::cout << "E_weights     was:" << std::fixed << E_weights << "\n" << std::endl;
     
+    
+    std::cout << "\n" << "************************************ \n"
+                      << "   Saving distributions \n"
+                      << "************************************ \n"
+                      << "\n"
+                      << "see eDist*.csv \n" << std::endl;
     return 0;
 }
