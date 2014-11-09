@@ -252,8 +252,8 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
     std::mt19937 gen(seed());
     
     std::uniform_real_distribution<double> dPhi(0.0,2.0*M_PI);
-    double u_pSix   = (std::cos(M_PI/6.0)+1.0)/2.0,
-           u_pThree = (std::cos(M_PI/3.0)+1.0)/2.0;
+    double u_pSix   = (1.0-std::cos(M_PI/6.0))/2.0,
+           u_pThree = (1.0-std::cos(M_PI/3.0))/2.0;
     
     if ( std::abs(stress[stressIndex1]) < std::abs(stress[stressIndex2]) ) {
         // simple shear -- orientation will be near vertical
