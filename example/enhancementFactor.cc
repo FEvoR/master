@@ -50,23 +50,23 @@ int main(int argc, char *argv[])
     }
     
     
-    double watsonK, temperature, s11, s12, s13, s22, s23, s33, dt, cc, cn;
+    double watsonK, temperature, sxx, sxy, sxz, syy, syz, szz, dt, cc, cn;
     std::stringstream ss;
     ss << argv[1]; ss >> watsonK;
     ss.clear();
     ss << argv[2]; ss >> temperature;
     ss.clear();
-    ss << argv[3]; ss >> s11;
+    ss << argv[3]; ss >> sxx;
     ss.clear();
-    ss << argv[4]; ss >> s12;
+    ss << argv[4]; ss >> sxy;
     ss.clear();
-    ss << argv[5]; ss >> s13;
+    ss << argv[5]; ss >> sxz;
     ss.clear();
-    ss << argv[6]; ss >> s22;
+    ss << argv[6]; ss >> syy;
     ss.clear();
-    ss << argv[7]; ss >> s23;
+    ss << argv[7]; ss >> syz;
     ss.clear();
-    ss << argv[8]; ss >> s33;
+    ss << argv[8]; ss >> szz;
     ss.clear();
     ss << argv[9]; ss >> dt;
     ss.clear();
@@ -79,9 +79,9 @@ int main(int argc, char *argv[])
     clock_t start, end;
     double msecs;
 
-    std::vector<double> stress = { s11, s12, s13,
-                                   s12, s22, s23,
-                                   s13, s23, s33};
+    std::vector<double> stress = { sxx, sxy, sxz,
+                                   sxy, syy, syz,
+                                   sxz, syz, szz};
     
     double timeStep = dt*365.0*24.0*60.0*60.0;
     
@@ -150,13 +150,20 @@ int main(int argc, char *argv[])
      *            3, 4, 5,
      *            6, 7, 8}
      */
-    double E_33 = std::abs(bulkEdot[8]/bulkEdot_iso[8]);
+    double  E_33 = 0.0,
+            E_13 = 0.0,
+        E_weights= 0.0;
+    
+    if (bulkEdot_iso[8] != 0.0)
+        E_33 = std::abs(bulkEdot[8]/bulkEdot_iso[8]);
     std::cout << "E_33         was:" << std::fixed << E_33 << "\n" << std::endl;
     
-    double E_13 = std::abs(bulkEdot[2]/bulkEdot_iso[2]);
+    if (bulkEdot_iso[2] != 0.0)
+        E_13 = std::abs(bulkEdot[2]/bulkEdot_iso[2]);        
     std::cout << "E_13         was:" << std::fixed << E_13 << "\n" << std::endl;
     
-    double E_weights = (E_13*std::abs(stress[2])+E_33*std::abs(stress[8]))/(std::abs(stress[2])+std::abs(stress[8]));
+    if (std::abs(stress[2])+std::abs(stress[8]) != 0.0 )
+        E_weights = (E_13*std::abs(stress[2])+E_33*std::abs(stress[8]))/(std::abs(stress[2])+std::abs(stress[8]));
     std::cout << "E_weights     was:" << std::fixed << E_weights << "\n" << std::endl;
     
     return 0;

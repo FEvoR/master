@@ -16,12 +16,12 @@ T=266.98
 # | Sxz, Syz, Szz | #
 #                   #
 #####################
-sxx=-${4}
+sxx=${4}
 sxy=0.0
 sxz=${3}
-syy=-${4}
+syy=${4}
 syz=0.0
-szz=-${4}
+szz=${4}
 # time step
 dt=10
 # nearest neighbor interaction
