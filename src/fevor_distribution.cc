@@ -90,10 +90,10 @@ Distribution::Distribution(std::vector<unsigned int> lwh, std::vector<double> &d
 // Define function members
 std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot) {
     
-    double crystalMagEdot;
+    double crystalMagEdot=0.0;
     std::vector<double> bulkM(81, 0.0);
-    std::vector<std::vector<double>> crystalM;
-    double crystalK;
+    std::vector<std::vector<double>> crystalM(numberCrystals, bulkM);
+    double crystalK=0.0;
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         crystalM.push_back( crystals[ii].resolveM(temperature, stress, magRSS[ii], crystalMagEdot) );

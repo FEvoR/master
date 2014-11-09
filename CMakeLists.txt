@@ -27,10 +27,10 @@ add_library(FEvoR
   src/Faddeeva.cc
 )
 
-add_executable(singleStep Example/singleStep.cc)
+add_executable(singleStep example/singleStep.cc)
 target_link_libraries(singleStep FEvoR)
 
-add_executable(enhancementFactor Example/enhancementFactor.cc)
+add_executable(enhancementFactor example/enhancementFactor.cc)
 target_link_libraries(enhancementFactor FEvoR)
 
 

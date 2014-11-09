@@ -25,9 +25,9 @@ skratch.tex
 *~
 
 # Examples
-Example/distribution_initial.csv
-Example/distribution_final.csv
-Example/eDist_*.csv
+example/distribution_initial.csv
+example/distribution_final.csv
+example/eDist_*.csv
 
 # files to maintain proper license documentation
 prependLicense.sh
