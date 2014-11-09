@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     std::vector<double> bulkEdot(9, 0.0);
     std::vector<double> bulkEdot_iso(9, 0.0);
     
-    std::vector<unsigned int> packingDimensions = {20,20,20};
+    std::vector<unsigned int> packingDimensions = {5,5,5};
     
 
     FEvoR::Distribution d1(packingDimensions, watsonK);
@@ -121,6 +121,9 @@ int main(int argc, char *argv[])
     d1.stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
     di.stepInTime(temperature, stress, modelTime, timeStep, bulkEdot_iso);
     
+    
+    d1.saveDistribution("eDist_wk_final.csv");
+    di.saveDistribution("eDist_iso_final.csv");
     
     double M = 0.0,
        M_iso = 0.0;

@@ -8,7 +8,7 @@ path=${1%/}
 # Watson concentration parameter
 k=${2}
 # temperature
-T=263.15
+T=266.98
 ####### stress ######
 #                   #
 # | Sxx, Sxy, Sxz | #
@@ -16,14 +16,14 @@ T=263.15
 # | Sxz, Syz, Szz | #
 #                   #
 #####################
-sxx=${4}
+sxx=-${4}
 sxy=0.0
 sxz=${3}
-syy=0.0
+syy=-${4}
 syz=0.0
 szz=-${4}
 # time step
-dt=1000
+dt=10
 # nearest neighbor interaction
 cc=1.0 # contribution of crystal
 cn=0.0 # contribution of neighbors
