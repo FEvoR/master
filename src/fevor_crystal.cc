@@ -36,6 +36,8 @@
 #include <algorithm>
 #include <chrono>
 #include <random>
+#include <cassert>
+
 #include "fevor_crystal.hh"
 #include "vector_tensor_operations.hh"
 
@@ -60,6 +62,7 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     double Q = 0.0;
     double A = 0.0;
     
+    assert(temperature != 0.0);
     Q = (temperature > 263.15 ? 115.0 : 60.0);
     A = 3.5e-25*beta*exp(-(Q/R)*(1.0/temperature - 1.0/263.15)); // units: s^{-1} Pa^{-n}
     // From Cuffy + Patterson (4 ed.) pg. 73
@@ -160,6 +163,7 @@ double Crystal::grow(const double &temperature, const double &modelTime) {
         // From Cuffy + Patterson (4 ed.) pg. 40
     
     double K = 0.0;
+    assert(temperature != 0.0);
     K  = K_0*exp(-Q/(R*temperature)); // units: m^2 s^{-1}
     
     cSize = std::sqrt(K*(modelTime-cTimeLastRecrystal) + cSizeLastRecrystal*cSizeLastRecrystal);
@@ -176,6 +180,7 @@ void Crystal::dislocate(const double &timeStep, const double &Medot, const doubl
     double rhoDot = 0.0; // units: m^{-2} s^{-1}
     
     
+    assert(cSize != 0.0);
     // Change in dislocation density
     rhoDot = Medot/(b*cSize) - alpha*cDislDens*K/(cSize*cSize);  // units: m^{-2} s^{-1}
     
@@ -218,6 +223,7 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
      */
     
     double Egb, Edis;
+    assert(cSize != 0.0);
     Egb = 3.0*Ggb/cSize; // units: J m^{-3}
     Edis = kappa*G*cDislDens*b*b; // units: J m^{-3}
     
@@ -293,6 +299,7 @@ unsigned int Crystal::polygonize( const std::vector<double> &stress, const doubl
     
     Mstress = tensorMagnitude(c)*sqrt(1.0/2.0);
     
+    assert(Mstress != 0.0);
     if (Mrss/Mstress >= del || cDislDens < rhop)
         return 0;
     
@@ -362,6 +369,7 @@ void Crystal::rotate(const std::vector<double> &bigM, const std::vector<double> 
     //make unit vectors!
     double magCaxis;
     magCaxis = tensorMagnitude(cAxis);
+    assert(magCaxis != 0.0);
     std::transform(cAxis.begin(),cAxis.end(),cAxis.begin(), 
                     [&](double x){return x/magCaxis;});
 }
@@ -431,6 +439,7 @@ void Crystal::setNewAxis(const double &theta, const double &phi) {
     
     double cAxisMag = tensorMagnitude(cAxis);
     
+    assert(cAxisMag != 0.0);
     if (cAxisMag != 1.0) {
     std::transform(cAxis.begin(), cAxis.end(), cAxis.begin(), 
                    [&](double x){return x/sqrt(cAxisMag);} );

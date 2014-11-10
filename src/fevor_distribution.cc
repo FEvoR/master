@@ -43,6 +43,8 @@
 #include "vector_tensor_operations.hh"
 #include "fevor_distribution.hh"
 #include "Faddeeva.hh"
+#include <cassert>
+
 
 namespace FEvoR {
 // Each crystal has: the three components of the crystal axis, size,
@@ -141,6 +143,7 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
             top   = right = (ii + numberCrystals + dimensions[0]*dimensions[1]) % numberCrystals;
             bottom= right = (ii + numberCrystals - dimensions[0]*dimensions[1]) % numberCrystals;
             
+            assert(magRSS[ii] != 0.0);
             softy = (magRSS[front] + magRSS[back] + magRSS[left] + magRSS[right] + magRSS[top] + magRSS[bottom])/magRSS[ii];
             
             softness[ii] = 1.0/(contribCrystal + 6.0*contribNeighbor)*(contribCrystal + contribNeighbor*softy);
@@ -290,6 +293,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
             
             
             double axisMag = tensorMagnitude(axis);
+            assert(axisMag != 0.0);
             if (axisMag != 1.0) {
                 std::transform(axis.begin(), axis.end(), axis.begin(), 
                                 [&](double x){return x/axisMag;} );
@@ -310,6 +314,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
         double abs_wk = std::abs(wk);
         double DawsonVal = Faddeeva::Dawson(abs_wk);
         
+        assert(DawsonVal != 0.0);
         for (double ww = 0.0; ww < M_PI; ww+=0.001){
             x.push_back(ww);
             weights.push_back( 1.0/(4.0*M_PI)*std::sqrt(abs_wk)*std::exp(wk)/DawsonVal*std::exp(-wk*std::cos(ww)*std::cos(ww)) );
@@ -343,6 +348,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
         std::vector<double> x;
         double erfVal = Faddeeva::erf(wk);
         
+        assert(erfVal != 0.0);
         for (double ww = 0.0; ww < M_PI; ww+=0.001){
             x.push_back(ww);
             weights.push_back( 1.0/(2.0*M_PI)*std::sqrt(wk/M_PI)*(1.0/erfVal)*std::exp(-wk*std::cos(ww)*std::cos(ww)) );
