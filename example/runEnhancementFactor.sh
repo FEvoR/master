@@ -25,8 +25,8 @@ szz=${4}
 # time step
 dt=10
 # nearest neighbor interaction
-cc=1.0 # contribution of crystal
-cn=0.0 # contribution of neighbors
+cc=6.0 # contribution of crystal
+cn=1.0 # contribution of neighbors
 
 
 ${path}/enhancementFactor ${k} ${T} ${sxx} ${sxy} ${sxz} ${syy} ${syz} ${szz} ${dt} ${cc} ${cn}

@@ -299,8 +299,7 @@ unsigned int Crystal::polygonize( const std::vector<double> &stress, const doubl
     
     Mstress = tensorMagnitude(c)*sqrt(1.0/2.0);
     
-    assert(Mstress != 0.0);
-    if (Mrss/Mstress >= del || cDislDens < rhop)
+    if (Mstress == 0.0 || Mrss/Mstress >= del || cDislDens < rhop)
         return 0;
     
     cDislDens -= rhop;
@@ -442,12 +441,12 @@ void Crystal::setNewAxis(const double &theta, const double &phi) {
     assert(cAxisMag != 0.0);
     if (cAxisMag != 1.0) {
     std::transform(cAxis.begin(), cAxis.end(), cAxis.begin(), 
-                   [&](double x){return x/sqrt(cAxisMag);} );
+                   [&](double x){return x/cAxisMag;} );
     }
 }
 void Crystal::setNewAxis(const std::vector<double> &ax) {
-    // TODO: error handling!
-    //~ if (ax.size() == 3)
+
+        assert(ax.size() == 3);
         cAxis = ax;
 }
 

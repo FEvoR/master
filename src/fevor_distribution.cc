@@ -39,12 +39,12 @@
 #include <algorithm>
 #include <chrono>
 #include <random>
+#include <cassert>
+
 #include "fevor_crystal.hh"
 #include "vector_tensor_operations.hh"
 #include "fevor_distribution.hh"
 #include "Faddeeva.hh"
-#include <cassert>
-
 
 namespace FEvoR {
 // Each crystal has: the three components of the crystal axis, size,
@@ -92,26 +92,27 @@ Distribution::Distribution(std::vector<unsigned int> lwh, std::vector<double> &d
 // Define function members
 std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot) {
     
-    double crystalMagEdot=0.0;
+    std::vector<double> crystalMagEdot(numberCrystals, 0.0);
     std::vector<double> bulkM(81, 0.0);
     std::vector<std::vector<double>> crystalM;
     double crystalK=0.0;
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
-        crystalM.push_back( crystals[ii].resolveM(temperature, stress, magRSS[ii], crystalMagEdot) );
-        
+        crystalM.push_back( crystals[ii].resolveM(temperature, stress, magRSS[ii], crystalMagEdot[ii]) );
+    }
+    
+    getSoftness(crystalM, crystalMagEdot, bulkM, bulkEdot, stress);
+    
+    for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {    
         crystalK = crystals[ii].grow(temperature, modelTime);
 
-        crystals[ii].dislocate(timeStep, crystalMagEdot, crystalK);
+        crystals[ii].dislocate(timeStep, crystalMagEdot[ii], crystalK);
 
         nMigre += crystals[ii].migRe(stress, modelTime, timeStep);
 
         nPoly  += crystals[ii].polygonize(stress, magRSS[ii], modelTime, timeStep);
         
     }
-    
-    
-    getSoftness(crystalM, bulkM, bulkEdot, stress);
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         
@@ -128,12 +129,13 @@ std::vector<double> Distribution::stepInTime(const double &temperature, const st
     return stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
 }
 
-void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
+void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &crystalMagEdot, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
     if (contribNeighbor != 0.0) {
+        double glenExp = 3.0;
         
         unsigned int front, back, left, right, top, bottom;
         front = back = left = right = top = bottom = 0;
-        double softy;
+        double softy = 10.0;
         
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
             front = (ii + numberCrystals + 1) % numberCrystals; 
@@ -143,13 +145,20 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
             top   = right = (ii + numberCrystals + dimensions[0]*dimensions[1]) % numberCrystals;
             bottom= right = (ii + numberCrystals - dimensions[0]*dimensions[1]) % numberCrystals;
             
-            assert(magRSS[ii] != 0.0);
-            softy = (magRSS[front] + magRSS[back] + magRSS[left] + magRSS[right] + magRSS[top] + magRSS[bottom])/magRSS[ii];
+            if (magRSS[ii] != 0.0)
+                softy = (magRSS[front] + magRSS[back] + magRSS[left] + magRSS[right] + magRSS[top] + magRSS[bottom])/magRSS[ii];
+                
+            // maximum softness
+            if (softy > 10.0)
+                softy = 10.0; 
             
+            assert(contribCrystal != 0.0 || contribNeighbor !=0.0);
             softness[ii] = 1.0/(contribCrystal + 6.0*contribNeighbor)*(contribCrystal + contribNeighbor*softy);
             
             std::transform(crystalM[ii].begin(),crystalM[ii].end(),crystalM[ii].begin(), 
-                        [&](double x){return x*softness[ii];});
+                        [&](double x){return x*pow(softness[ii],glenExp);});
+            
+            crystalMagEdot[ii] *= pow(softness[ii],glenExp);
                         
             std::transform(bulkM.begin(),bulkM.end(),crystalM[ii].begin(), bulkM.begin(),
                            std::plus<double>());
@@ -163,6 +172,7 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
         }
     }
     
+    assert(numberCrystals != 0);
     std::transform(bulkM.begin(),bulkM.end(),bulkM.begin(), 
                     [&](double x){return x/numberCrystals;});
     
