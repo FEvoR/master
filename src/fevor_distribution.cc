@@ -94,7 +94,7 @@ std::vector<double> Distribution::stepInTime(const double &temperature, const st
     
     double crystalMagEdot=0.0;
     std::vector<double> bulkM(81, 0.0);
-    std::vector<std::vector<double>> crystalM(numberCrystals, bulkM);
+    std::vector<std::vector<double>> crystalM;
     double crystalK=0.0;
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
