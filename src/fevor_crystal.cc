@@ -64,7 +64,7 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     
     assert(temperature != 0.0);
     Q = (temperature > 263.15 ? 115.0 : 60.0);
-    A = 3.5e-25*beta*exp(-(Q/R)*(1.0/temperature - 1.0/263.15)); // units: s^{-1} Pa^{-n}
+    A = 3.5e-25*beta*std::exp(-(Q/R)*(1.0/temperature - 1.0/263.15)); // units: s^{-1} Pa^{-n}
     // From Cuffy + Patterson (4 ed.) pg. 73
     
     // Burgers vector for each slip system
@@ -80,7 +80,7 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
                 ct = std::cos(theta),
                 sp = std::sin(phi),
                 cp = std::cos(phi), 
-                sq3= sqrt(3.0);
+                sq3= std::sqrt(3.0);
 
     burger1 = {ct*cp/3.0,             ct*sp/3.0,          -st/3.0};
     burger2 = {(-ct*cp - sq3*sp)/6.0, (-ct*sp+sq3*cp)/6.0, st/6.0};
@@ -120,11 +120,11 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     Mrss = tensorMagnitude(burger1);
     
     std::transform(Mbase1.begin(), Mbase1.end(), Mbase1.begin(), 
-                   [&](double x){return A*pow(rss1,glenExp-1)*x;} );
+                   [&](double x){return A*std::pow(rss1,glenExp-1.0)*x;} );
     std::transform(Mbase2.begin(), Mbase2.end(), Mbase2.begin(), 
-                   [&](double x){return A*pow(rss2,glenExp-1)*x;} );
+                   [&](double x){return A*std::pow(rss2,glenExp-1.0)*x;} );
     std::transform(Mbase3.begin(), Mbase3.end(), Mbase3.begin(), 
-                   [&](double x){return A*pow(rss3,glenExp-1)*x;} );
+                   [&](double x){return A*std::pow(rss3,glenExp-1.0)*x;} );
            
     
     std::transform(Mbase1.begin(), Mbase1.end(), Mbase2.begin(),Mbase1.begin(), 
@@ -146,7 +146,7 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
                     [&](double x){return x/2.0;});
                     
     
-    Medot = tensorMagnitude(edot)*sqrt(1.0/2.0);
+    Medot = tensorMagnitude(edot)*std::sqrt(1.0/2.0);
     
     return Mbase1;
     
@@ -155,18 +155,22 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
 double Crystal::grow(const double &temperature, const double &modelTime) {
     double K_0 = 8.2e-9; // units: m^2 s^{-1}
     double R = 0.008314472; // units: kJ K^{-1} mol^{-1}
-    double Q = 0.0;
+    
+    double Q = 0.7*60.0; // units: kJ mol^{-1}
     if (temperature >= 263.15) // units: Kelvin
         Q = 0.7*115.0; // units: kJ mol^{-1}
-    else
-        Q = 0.7*60.0; // units: kJ mol^{-1}
         // From Cuffy + Patterson (4 ed.) pg. 40
     
     double K = 0.0;
     assert(temperature != 0.0);
-    K  = K_0*exp(-Q/(R*temperature)); // units: m^2 s^{-1}
+    K  = K_0*std::exp(-Q/(R*temperature)); // units: m^2 s^{-1}
     
     cSize = std::sqrt(K*(modelTime-cTimeLastRecrystal) + cSizeLastRecrystal*cSizeLastRecrystal);
+    
+    //~ std::cout << "Crystal K: " << K << std::endl;
+    //~ std::cout << "Crystal Q: " << Q << std::endl;
+    //~ std::cout << "Crystal K_0: " << K_0 << std::endl;
+    //~ std::cout << "Temperature: " << temperature << std::endl;
     
     return K;
 
@@ -233,12 +237,12 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
     cDislDens = 1.0e10; // units: m^{-2} 
     
     double Mstress = 0.0;
-    Mstress = tensorMagnitude(stress)*sqrt(1.0/2.0); 
+    Mstress = tensorMagnitude(stress)*std::sqrt(1.0/2.0); 
         // effective stress: Thor. 2002, 3-4, [29]
     
     double PC = 1.0; // units Pa^{4/3} m 
         // Shimizu 2008
-    cSize = PC*pow(Mstress, -4.0/3.0); // units: m
+    cSize = PC*std::pow(Mstress, -4.0/3.0); // units: m
     
     // Select an orientation!
         // Should be close to max MRSS
@@ -293,11 +297,11 @@ unsigned int Crystal::polygonize( const std::vector<double> &stress, const doubl
     double rhop = 5.4e10; // units: m^{-2} 
         // dislocation density needed to form a wall -- Thor. 2002 [26]
     double Mstress = 0.0;
-    std::vector<double> c = {1.0, sqrt(2.0), sqrt(2.0), 1.0, sqrt(2.0), 1.0};
+    std::vector<double> c = {1.0, std::sqrt(2.0), std::sqrt(2.0), 1.0, std::sqrt(2.0), 1.0};
     std::transform(c.begin(), c.end(), stress.begin(),c.begin(), 
                    std::multiplies<double>());
     
-    Mstress = tensorMagnitude(c)*sqrt(1.0/2.0);
+    Mstress = tensorMagnitude(c)*std::sqrt(1.0/2.0);
     
     if (Mstress == 0.0 || Mrss/Mstress >= del || cDislDens < rhop)
         return 0;
@@ -426,9 +430,9 @@ void Crystal::printCrystal(std::ofstream &file) const {
 
 void Crystal::getAxisAngles(double &theta, double &phi) {
     
-    double HXY = sqrt(cAxis[0]*cAxis[0] + cAxis[1]*cAxis[1]);
-    theta = atan2(HXY, cAxis[2]);
-    phi   = atan2(cAxis[1], cAxis[0]);
+    double HXY = std::sqrt(cAxis[0]*cAxis[0] + cAxis[1]*cAxis[1]);
+    theta = std::atan2(HXY, cAxis[2]);
+    phi   = std::atan2(cAxis[1], cAxis[0]);
     
 }
 

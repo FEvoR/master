@@ -95,7 +95,7 @@ double tensorMagnitude(const std::vector<double> &t1) {
     for (auto &ii : t1)
         mag += ii*ii;
         
-    return sqrt(mag);
+    return std::sqrt(mag);
 }
 
 std::vector<double> matrixTranspose(const std::vector<double> &m1, const int rows, const int columns) {

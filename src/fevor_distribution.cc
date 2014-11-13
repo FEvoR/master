@@ -97,6 +97,7 @@ std::vector<double> Distribution::stepInTime(const double &temperature, const st
     std::vector<std::vector<double>> crystalM;
     double crystalK=0.0;
     
+    
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         crystalM.push_back( crystals[ii].resolveM(temperature, stress, magRSS[ii], crystalMagEdot[ii]) );
     }
@@ -156,9 +157,9 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
             softness[ii] = 1.0/(contribCrystal + 6.0*contribNeighbor)*(contribCrystal + contribNeighbor*softy);
             
             std::transform(crystalM[ii].begin(),crystalM[ii].end(),crystalM[ii].begin(), 
-                        [&](double x){return x*pow(softness[ii],glenExp);});
+                        [&](double x){return x*std::pow(softness[ii],glenExp);});
             
-            crystalMagEdot[ii] *= pow(softness[ii],glenExp);
+            crystalMagEdot[ii] *= std::pow(softness[ii],glenExp);
                         
             std::transform(bulkM.begin(),bulkM.end(),crystalM[ii].begin(), bulkM.begin(),
                            std::plus<double>());
