@@ -318,7 +318,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
                 crystals[ii].setNewAxis({0.0,0.0,1.0});
         }
-    } else if (wk < 0) {
+    } else if (wk < 0.0) {
         // bipolar (single maximum)
         std::vector<double> weights;
         std::vector<double> x;
@@ -353,7 +353,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
                 phi   = gPhi(gen);
                 crystals[ii].setNewAxis(theta, phi);
         }
-    } else { //(wk > 0)
+    } else { //(wk > 0.0)
         // equatorial girdle
         std::vector<double> weights;
         std::vector<double> x;
