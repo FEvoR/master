@@ -290,8 +290,10 @@ void Distribution::loadDistribution( const std::vector<double> &data ) {
 
 void Distribution::generateWatsonAxes(const double &wk) {
 
-    std::random_device seed;
-    std::mt19937 gen(seed());
+    //std::random_device seed;
+    //std::mt19937 gen(seed());
+    double seed = 1337.0;
+    std::mt19937 gen(seed);
     
     if (wk == 0) {
         // isotropic
