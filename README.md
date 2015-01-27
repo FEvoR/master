@@ -70,10 +70,10 @@ To install:
 Clone the FEvoR repository from github. 
 
 ```bash
-git clone git://github.com:FEvoR/master.git fevor
+git clone git@github.com:FEvoR/master.git fevor
 ```
 
-Then, if you have boost installed, you can make and install FEvoR like so:
+Then you can make and install FEvoR like so:
 
 ```bash
 cd fevor
@@ -81,7 +81,7 @@ mkdir build && cd build
 cmake ..
 make install
 ```
-There is no unistall routine within the make file. However, you can uninstall
+There is no uninstall routine within the make file. However, you can uninstall
 the FEvoR library by running
 
 ```bash
