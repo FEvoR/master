@@ -90,34 +90,44 @@ Distribution::Distribution(std::vector<unsigned int> lwh, std::vector<double> &d
 }
 
 // Define function members
-std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot) {
+std::vector<double> Distribution::stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, unsigned int &nMigre, unsigned int &nPoly, std::vector<double> &bulkEdot){
     
     std::vector<double> crystalMagEdot(numberCrystals, 0.0);
     std::vector<double> bulkM(81, 0.0);
     std::vector<std::vector<double>> crystalM;
     double crystalK=0.0;
-    
+
+    /* Ensure deviatoric stress 
+     * Indexing: {0, 1, 2,
+     *            3, 4, 5,
+     *            6, 7, 8}
+     */
+    double hydrostatic = (stress[0] + stress[4] + stress[8])/3.0;
+    std::vector<double> devStress = stress;
+    devStress[0] -= hydrostatic;
+    devStress[4] -= hydrostatic;
+    devStress[8] -= hydrostatic;
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
-        crystalM.push_back( crystals[ii].resolveM(temperature, stress, magRSS[ii], crystalMagEdot[ii]) );
+        crystalM.push_back( crystals[ii].resolveM(temperature, devStress, magRSS[ii], crystalMagEdot[ii]) );
     }
     
-    getSoftness(crystalM, crystalMagEdot, bulkM, bulkEdot, stress);
+    getSoftness(crystalM, crystalMagEdot, bulkM, bulkEdot, devStress);
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {    
         crystalK = crystals[ii].grow(temperature, modelTime);
 
         crystals[ii].dislocate(timeStep, crystalMagEdot[ii], crystalK);
 
-        nMigre += crystals[ii].migRe(stress, modelTime, timeStep);
+        nMigre += crystals[ii].migRe(devStress, modelTime, timeStep);
 
-        nPoly  += crystals[ii].polygonize(stress, magRSS[ii], modelTime, timeStep);
+        nPoly  += crystals[ii].polygonize(devStress, magRSS[ii], modelTime, timeStep);
         
     }
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         
-        crystals[ii].rotate(crystalM[ii], bulkEdot, stress, timeStep);
+        crystals[ii].rotate(crystalM[ii], bulkEdot, devStress, timeStep);
     }
     
     return bulkM;
@@ -131,6 +141,18 @@ std::vector<double> Distribution::stepInTime(const double &temperature, const st
 }
 
 void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &crystalMagEdot, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
+    
+    /* Ensure deviatoric stress 
+     * Indexing: {0, 1, 2,
+     *            3, 4, 5,
+     *            6, 7, 8}
+     */
+    double hydrostatic = (stress[0] + stress[4] + stress[8])/3.0;
+    std::vector<double> devStress = stress;
+    devStress[0] -= hydrostatic;
+    devStress[4] -= hydrostatic;
+    devStress[8] -= hydrostatic;
+    
     if (contribNeighbor != 0.0) {
         double glenExp = 3.0;
         
@@ -178,7 +200,7 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
                     [&](double x){return x/numberCrystals;});
     
     std::vector<double> bulkVel;
-    bulkVel  = tensorMixedInner(bulkM, stress);
+    bulkVel  = tensorMixedInner(bulkM, devStress);
     
     std::vector<double> bulkVelT;
     bulkVelT = matrixTranspose(bulkVel, 3, 3);
