@@ -62,7 +62,7 @@ INSTALL INSTRUCTIONS
 ====================
 
 FEvoR only requires the C++ standard library and C++11 compliant compiler.
-FEvor comes packaged with the Faddeeva package (Dec. 2012) available at
+FEvoR comes packaged with the Faddeeva package (Dec. 2012) available at
 <http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package>.
 
 To install:
