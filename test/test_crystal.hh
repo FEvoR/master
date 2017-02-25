@@ -38,8 +38,6 @@ void test_rotate();
 
 void test_resolveM();
 
-double test_grow();
-
 void test_dislocate(const double &K);
 
 void test_migRe();

@@ -34,6 +34,8 @@
 #include <chrono>
 #include <random>
 #include <cmath>
+
+#include "catch.hpp"
 #include "fevor_crystal.hh"
 #include "test_crystal.hh"
 #include "vector_tensor_operations.hh"
@@ -85,21 +87,21 @@ void test_resolveM() {
     
 }
 
-double test_grow(){
+TEST_CASE("Normal grain growth",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,10.0);
-    //~ c1.seeCrystal();
     
     double temperature, model_time, K;
     temperature = 273.15-11.0; // units: Kelvin
     model_time = 1000.0*365.0*24.0*60.0*60.0;   // units: m
     
     K = c1.grow(temperature, model_time);
+
+    double ca0, ca1, ca2, csz, cdd, ctlr, cslr; 
+
+    c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
+
+    REQUIRE( csz == Approx( 1.0055e-2).epsilon(1.e-6) );
     
-    c1.seeCrystal();
-    
-    std::cout << "New Crystal Size should be: 1.0055e-2" << std::endl;
-    
-    return K;
 }
 
 void test_dislocate(const double &K) {
