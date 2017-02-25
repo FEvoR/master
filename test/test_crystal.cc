@@ -88,36 +88,45 @@ void test_resolveM() {
 }
 
 TEST_CASE("Normal grain growth",  "[crystal]") {
-    FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,10.0);
+    FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,1.0e10);
+    
+    double ca0, ca1, ca2, csz, cdd, ctlr, cslr; 
     
     double temperature, model_time, K;
     temperature = 273.15-11.0; // units: Kelvin
     model_time = 1000.0*365.0*24.0*60.0*60.0;   // units: m
     
     K = c1.grow(temperature, model_time);
-
-    double ca0, ca1, ca2, csz, cdd, ctlr, cslr; 
-
     c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
 
-    REQUIRE( csz == Approx( 1.0055e-2).epsilon(1.e-6) );
+    //onlything changed should be the crystal size
+    REQUIRE( ca0 == Approx( 1.0 ) );
+    REQUIRE( ca1 == Approx( 0.0 ) );
+    REQUIRE( ca2 == Approx( 0.0 ) );
+    REQUIRE( cdd == Approx( 1.0e10 ) );
+    REQUIRE( ctlr == Approx( 0.0 ) );
+    REQUIRE( cslr == Approx( 0.01 ) );
     
+    REQUIRE( csz == Approx( 1.0055e-2).epsilon( 1.e-6 ) );
+    
+    SECTION("Update dislocation density") {
+        double Medot = sqrt(1.0/2.0);
+        
+        c1.dislocate(model_time, Medot, K);
+        c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
+
+        //onlything changed should be the dislocation density
+        REQUIRE( ca0 == Approx( 1.0 ) );
+        REQUIRE( ca1 == Approx( 0.0 ) );
+        REQUIRE( ca2 == Approx( 0.0 ) );
+        REQUIRE( csz == Approx( 1.0055e-2).epsilon( 1.e-6 ) );
+        REQUIRE( ctlr == Approx( 0.0 ) );
+        REQUIRE( cslr == Approx( 0.01 ) );
+        
+        REQUIRE( cdd == Approx( 4.9282e21).epsilon( 1e17 ) );
+    }
 }
 
-void test_dislocate(const double &K) {
-    FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},1.0055e-2,1.0e10);
-    //~ c1.seeCrystal();
-    
-    double timeStep = 1000.0*365.0*24.0*60.0*60.0;
-    double Medot = sqrt(1.0/2.0);
-    
-    c1.dislocate(timeStep, Medot, K);
-    
-    c1.seeCrystal();
-    
-    std::cout << "Growth Constant was:" << K << "\n"
-              << "New Dislocation Density should be: 4.9282e21" << std::endl;
-}
 
 void test_migRe() {
     FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,1.0e11);
