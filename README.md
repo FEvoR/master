@@ -1,32 +1,29 @@
 ===============================================
  FEvoR: Fabric Evolution with Recrystallization
 ===============================================
-Copyright (C) 2009-2014  Joseph H Kennedy
+Copyright (C) 2009-2017  Joseph H. Kennedy
 
 This file is part of FEvoR
 
 FEvoR is hosted at https://github.com/FEvoR
 
-FEvoR is free software: you can redistribute it and/or modify it under the 
-terms of the GNU General Public License as published by the Free Software 
-Foundation, either version 3 of the License, or (at your option) any later 
-version.
+FEvoR is free software: you can redistribute it and/or modify it under the terms
+of the GNU General Public License as published by the Free Software Foundation,
+either version 3 of the License, or (at your option) any later version.
 
-FEvoR is distributed in the hope that it will be useful, but WITHOUT ANY 
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more 
-details.
+FEvoR is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along 
-with FEvoR.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with
+FEvoR.  If not, see <http://www.gnu.org/licenses/>.
 
 Additional permission under GNU GPL version 3 section 7
 
-If you modify FEvoR, or any covered work, to interface with
-other modules (such as MATLAB code and MEX-files) available in a
-MATLAB(R) or comparable environment containing parts covered
-under other licensing terms, the licensors of FEvoR grant
-you additional permission to convey the resulting work.
+If you modify FEvoR, or any covered work, to interface with other modules (such
+as MATLAB code and MEX-files) available in a MATLAB(R) or comparable environment
+containing parts covered under other licensing terms, the licensors of FEvoR
+grant you additional permission to convey the resulting work.
 
 =============
  About FEvoR
@@ -39,8 +36,12 @@ recrystallization processes such as:
     Migration Recrystallization
 
 FEvoR was developed at the University of Alaska Fairbanks (UAF) by 
-Joseph H Kennedy. For a detailed description of this model, see:
+Joseph H. Kennedy. For a detailed description of this model, see:
  
+    Kennedy, J. H., and E. C. Pettit (2015). The response of climate induced
+    fabric variations to simple shear and migration recrystallization. Journal
+    of Glaciology, 61 (227), 537--550. doi:10.3189/2015JoG14J156. 
+    
     Kennedy, J. H., Pettit, E. C., & Di Prinzio, C. L. (2013). 
     The evolution of crystal fabric in ice sheets and its link to climate 
     history. Journal of Glaciology, 59(214), 357–373. 
@@ -62,8 +63,9 @@ INSTALL INSTRUCTIONS
 ====================
 
 FEvoR only requires the C++ standard library and C++11 compliant compiler.
-FEvoR comes packaged with the Faddeeva package (Dec. 2012) available at
-<http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package>.
+FEvoR comes packaged with the [Faddeeva package (Dec.
+2012)](http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package), and
+[Catch v1.7.2](://github.com/philsquared/Catch) for unit testing.
 
 To install:
 

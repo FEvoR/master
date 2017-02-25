@@ -13,7 +13,7 @@ add_definitions(-std=c++11)
 
 option (BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-include_directories(src)
+include_directories(src test)
 
 set(test_sources
   test/test_crystal.cc

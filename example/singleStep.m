@@ -22,7 +22,7 @@ Sims.Analyze.equalAreaContour(N_i) % FIXME this is from Thor!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FEvoR: Fabric Evolution with Recrystallization %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) 2009-2014  Joseph H Kennedy
+% Copyright (C) 2009-2017  Joseph H. Kennedy
 %
 % This file is part of FEvoR.
 %
