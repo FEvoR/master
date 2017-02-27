@@ -436,6 +436,12 @@ void Crystal::getAxisAngles(double &theta, double &phi) {
     
 }
 
+void Crystal::getAxis(double &ca0, double &ca1, double &ca2) {
+    ca0 = cAxis[0];
+    ca1 = cAxis[1];
+    ca2 = cAxis[2];
+}
+
 void Crystal::setNewAxis(const double &theta, const double &phi) {
     
     cAxis = {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};

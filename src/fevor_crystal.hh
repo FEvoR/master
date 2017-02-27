@@ -62,6 +62,7 @@ class Crystal {
         void printCrystal() const;
         void printCrystal(std::ofstream &file) const;
 
+        void getAxis(double &ca0, double &ca1, double &ca2);
         void getAxisAngles(double &theta, double &phi);
 
         void setNewAxis(const double &theta, const double &phi);

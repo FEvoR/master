@@ -37,21 +37,18 @@
 
 #include "catch.hpp"
 #include "fevor_crystal.hh"
-#include "test_crystal.hh"
 #include "vector_tensor_operations.hh"
 
 //TODO: develop a robust test suite that includes edge cases
 
 namespace FEvoR {
 
-void test_rotate(){
-    
+TEST_CASE("Rotate", "[crystal]") {
     //TODO: test FEvoR::Crystal.rotate
-    std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
-    
 }
 
-void test_resolveM() {
+
+TEST_CASE("Resolve M",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {0,0,1},0.01,1e11);
     
     double theta, phi;
@@ -68,24 +65,11 @@ void test_resolveM() {
     
     std::vector<double> bigM;
     bigM = c1.resolveM(temperature, stress, Mrss, Medot);
-    
-    std::cout << "bigM size should be: 81" << "\n"
-              << "bigM size is: " << bigM.size() << std::endl;
-              
-    std::vector<double> vel;
-    vel = tensorMixedInner(bigM, stress);
-    
-    std::cout << "\n" << "vel is:" << std::endl;
-    tensorDisplay(vel, 9, 1);
-    
-    std::cout << "\n" << "bigM is:" << std::endl;
-    tensorDisplay(bigM, 9, 9);
-    
-    std::cout << "\n" << "stress is:" << std::endl;
-    tensorDisplay(stress, 9, 1);
-    
-    
+   
+    REQUIRE( bigM.size() == 81 );
+    //TODO: actual tests for bigM
 }
+
 
 TEST_CASE("Normal grain growth",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,1.0e10);
@@ -99,7 +83,7 @@ TEST_CASE("Normal grain growth",  "[crystal]") {
     K = c1.grow(temperature, model_time);
     c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
 
-    //onlything changed should be the crystal size
+    //only thing changed should be the crystal size
     REQUIRE( ca0 == Approx( 1.0 ) );
     REQUIRE( ca1 == Approx( 0.0 ) );
     REQUIRE( ca2 == Approx( 0.0 ) );
@@ -115,7 +99,7 @@ TEST_CASE("Normal grain growth",  "[crystal]") {
         c1.dislocate(model_time, Medot, K);
         c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
 
-        //onlything changed should be the dislocation density
+        //only thing changed should be the dislocation density
         REQUIRE( ca0 == Approx( 1.0 ) );
         REQUIRE( ca1 == Approx( 0.0 ) );
         REQUIRE( ca2 == Approx( 0.0 ) );
@@ -128,8 +112,10 @@ TEST_CASE("Normal grain growth",  "[crystal]") {
 }
 
 
-void test_migRe() {
+TEST_CASE("Migration recrystallization",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,1.0e11);
+    
+    double ca0, ca1, ca2, csz, cdd, ctlr, cslr; 
     
     double model_time, time_step;
     model_time = time_step = 1000.0*365.0*24.0*60.0*60.0;
@@ -139,28 +125,23 @@ void test_migRe() {
                                       0.0,     0.0,-10000.0};
     
     c1.migRe(stress, model_time, time_step);
+    c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
 
-    c1.seeCrystal();
-    
-    std::cout << "New Grain Size should be: 4.6416e-6" << "\n"
-              << "New Dislocation Density should be: 1.0000e10" << std::endl;
+    REQUIRE( csz == Approx(4.6416e-6).epsilon(1.0e-10) );
+    REQUIRE( cdd == Approx(1.0e10) );
     
     double theta, phi;
-    theta = phi = 0.0;
     c1.getAxisAngles(theta, phi);
     
-    std::cout.precision(4);
-    
-    std::cout << "New Angles are: \n"
-              << "    Theta: " << std::fixed << theta << "\n" 
-              << "    Phi:   " << phi << "\n "
-              << "New Angles should be: \n"
-              << "     0.5236 <= theta <= 1.0472 \n"
-              << "    -6.2832 <=  phi  <= 6.2832" << std::endl;
+    REQUIRE( theta == Approx(M_PI/4.0).epsilon(M_PI/12.0));
+    REQUIRE( phi == Approx(0.0).epsilon(M_PI) );
 }
 
-void test_polygonize() {
+
+TEST_CASE("Polygonize",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {0.0,0.0,1.0},0.01,1.0e11);
+    
+    double ca0, ca1, ca2, csz, cdd, ctlr, cslr; 
     
     double model_time, time_step;
     model_time = time_step = 1000.0*365.0*24.0*60.0*60.0;
@@ -170,55 +151,54 @@ void test_polygonize() {
                                       0.0,     0.0,-10000.0};
     
     c1.polygonize(stress, 1.0, model_time, time_step);
-    c1.seeCrystal();
-    
-    std::cout << "New Grain Size should be: 5.0000e-3" << "\n"
-              << "New Dislocation Density should be: 4.6000e10" << std::endl;
-    
+    c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
+   
+    REQUIRE( csz == Approx(5.0e-3).epsilon(1.0e-7) );
+    REQUIRE( cdd == Approx(4.6e10).epsilon(1.0e6) );
+
     double theta, phi;
-    theta = phi = 0.0;
     c1.getAxisAngles(theta, phi);
     
-    std::cout.precision(4);
-    
-    std::cout << "New Angles are: \n"
-              << "    Theta: " << std::fixed << theta << "\n" 
-              << "    Phi:   " << phi << "\n "
-              << "New Angles should be: \n"
-              << "     theta == 0.0873 \n"
-              << "    -6.2832 <=  phi  <= 6.2832" << std::endl;
-    
-    
+    REQUIRE( theta == Approx(M_PI/36.0) ); // 5 degrees
+    REQUIRE( phi == Approx(0.0).epsilon(M_PI) );
 }
 
-void test_angles() {
-    
+
+TEST_CASE("Crystal angles",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},1.0,10.0);
-    c1.seeCrystal();
-    
+   
     double theta = 0.0, phi = 0.0;
     c1.getAxisAngles(theta, phi);
+
+    REQUIRE( theta == Approx( M_PI/2.0 ) );
+    REQUIRE( phi == Approx( 0.0 ) );
+
+    c1.setNewAxis(M_PI/2.0, M_PI/2.0);
     
-    std::cout.precision(4);
-    std::cout << std::fixed << "Angles are: \n" << "Theta: " << theta << " Phi: " << phi << std::endl;
-    
+    double ca0, ca1, ca2; 
+    c1.getAxis(ca0, ca1, ca2);
+
+    REQUIRE( ca0 == Approx(0.0) );
+    REQUIRE( ca1 == Approx(1.0) );
+    REQUIRE( ca2 == Approx(0.0) );
+
     std::random_device seed;
     std::mt19937 gen(seed());
     
-    std::uniform_real_distribution<double> dPhi(0.0,2.0*M_PI);
+    std::uniform_real_distribution<double> dPhi(-M_PI,M_PI);
     std::uniform_real_distribution<double> dTheta(0.0,M_PI/2.0);
     
     theta = dTheta(gen);
     phi = dPhi(gen);
     
-    std::cout.precision(4);
-    std::cout << std::fixed << "New angles are: \n" << "Theta: " << theta << " Phi: " << phi << std::endl;
-    
     c1.setNewAxis(theta, phi);
     
-    c1.seeCrystal();
-    
-    
+    double theta2 = 0.0, phi2 = 0.0;
+    c1.getAxisAngles(theta2, phi2);
+
+    REQUIRE( theta2 == Approx(theta) );
+    REQUIRE( phi2 == Approx(phi) );
 }
+
 
 } // end of namspace FEvoR
