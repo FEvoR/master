@@ -34,6 +34,7 @@
 #define FEVOR_DISTRIBUTION
 
 #include <vector>
+
 #include "fevor_crystal.hh"
 
 namespace FEvoR {

@@ -34,16 +34,16 @@
 #include <chrono>
 #include <random>
 #include <cmath>
+
+#include "catch.hpp"
 #include "fevor_distribution.hh"
-#include "test_distribution.hh"
 #include "vector_tensor_operations.hh"
 
 namespace FEvoR {
 
-void test_stepInTime() {
+TEST_CASE("Step in time", "[distro]") {
+    //TODO: test FEvoR::distribution.stepInTime()
     FEvoR::Distribution d1({3,3,3}, 1.0); 
-    
-    //~ d1.saveDistribution();
     
     double temperature = 273.15-10.0;
     std::vector<double> stress = { 10000,     0, 10000,
@@ -57,49 +57,42 @@ void test_stepInTime() {
                                     0.0, 0.0, 0.0,
                                     0.0, 0.0, 0.0};
     
-    std::cout.precision(4);
-    std::cout << std::scientific 
-              << "Model time: " << modelTime << "s \n"
-              << "Time Step:  " << timeStep << "s \n"
-              << "Temp:  " << temperature << "K \n"
-              << std::endl;
-    
-    std::cout << "Stress (Pa):" << std::endl;
-    
-    tensorDisplay(stress,3,3);
+    // std::cout.precision(4);
+    // std::cout << std::scientific 
+    //           << "Model time: " << modelTime << "s \n"
+    //           << "Time Step:  " << timeStep << "s \n"
+    //           << "Temp:  " << temperature << "K \n"
+    //           << std::endl;
+    // 
+    // std::cout << "Stress (Pa):" << std::endl;
+    // 
+    // tensorDisplay(stress,3,3);
     
     d1.stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
     modelTime+=timeStep;
     
-    std::cout.precision(4);
-    std::cout << std::scientific 
-              << "Model time: " << modelTime << "\n"
-              << "Number of MigRes: " << nMigre << "\n"
-              << "Number of Polys:  " << nPoly << "\n"
-              << std::endl;
-    
-    std::cout << "edot:" << std::endl;
-        
-    tensorDisplay(bulkEdot,3,3);
+    // std::cout.precision(4);
+    // std::cout << std::scientific 
+    //           << "Model time: " << modelTime << "\n"
+    //           << "Number of MigRes: " << nMigre << "\n"
+    //           << "Number of Polys:  " << nPoly << "\n"
+    //           << std::endl;
+    // 
+    // std::cout << "edot:" << std::endl;
+    //     
+    // tensorDisplay(bulkEdot,3,3);
 }
         
-void test_getSoftness() {
-    //TODO: test FEvoR::distribution.getSoftness()
-    std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
-}
-    
-void test_setSoftnessRatio() {
+TEST_CASE("Softness ratio", "[distro]") {
     //TODO: test FEvoR::distribution.setSoftnessParam()
-    //TODO: rename  setSoftness to setSoftnessParam
-    std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
+    //TODO: test FEvoR::distribution.getSoftness()
 }
     
-void test_saveDistribution() {
+TEST_CASE("Save", "[distro]") {
     //TODO: test FEvoR::distribution.saveDistribution()
     //TODO: have two overloaded methods: one with no input just prints to std::cout
             // the other takes in an input filename and prints to that file 
             // (options to append, overwrite, etc)
-    std::cout << "Test?! Test?! We don't see no stinkin\' Test!" << std::endl;
 }
 
 } // end of namespace FEvoR

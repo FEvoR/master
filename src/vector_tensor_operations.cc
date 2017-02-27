@@ -34,6 +34,7 @@
 #include <cmath>
 #include <numeric>
 #include <algorithm>
+
 #include "vector_tensor_operations.hh"
 
 namespace FEvoR {
