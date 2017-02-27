@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     std::vector<unsigned int> packingDimensions = {20,20,20};
     
     FEvoR::Distribution d1(packingDimensions, watsonK);
-    d1.setSoftnessRatio(cc, cn);
+    d1.softnessRatio(cc, cn);
     
     // calculate the flow factor
     double glenExp = 3.0;
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
              phi = M_PI/3; 
     
     FEvoR::Crystal c1({0.0,0.0,1.0}, 0.01, 1.0e10);
-    c1.setNewAxis(theta, phi);
+    (void) c1.axis(theta, phi);
     
     double  Mrss = 1.0,
             Medot =0.0;
@@ -189,12 +189,12 @@ int main(int argc, char *argv[])
                 << "************************************ \n"
                 << std::endl;
     
-    d1.saveDistribution("comparisonDist_initial.csv");
+    d1.save("comparisonDist_initial.csv");
     
     std::vector<double> bulkM;
     bulkM = d1.stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
     
-    d1.saveDistribution("comparisonDist_final.csv");
+    d1.save("comparisonDist_final.csv");
     
     std::cout   << "   nMigRe:" << nMigre << "\n"
                 << "    nPoly:" << nPoly << "\n"

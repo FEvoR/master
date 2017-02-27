@@ -84,8 +84,8 @@ TEST_CASE("Step in time", "[distro]") {
 }
         
 TEST_CASE("Softness ratio", "[distro]") {
-    //TODO: test FEvoR::distribution.setSoftnessParam()
-    //TODO: test FEvoR::distribution.getSoftness()
+    //TODO: test FEvoR::distribution.softnessRatio()
+    //TODO: test FEvoR::distribution.soften()
 }
     
 TEST_CASE("Save", "[distro]") {

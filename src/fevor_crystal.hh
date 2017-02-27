@@ -57,23 +57,20 @@ class Crystal {
         // rotate the crystals
         void rotate(const std::vector<double> &bigM, const std::vector<double> &bulkEdot, const std::vector<double> &stress, const double &timeStep);
 
-        void seeCrystal();
+        void view();
 
-        void printCrystal() const;
-        void printCrystal(std::ofstream &file) const;
+        void print() const;
+        void print(std::ofstream &file) const;
 
-        void getAxis(double &ca0, double &ca1, double &ca2);
-        void getAxisAngles(double &theta, double &phi);
+        void angles(double &theta, double &phi);
 
-        void setNewAxis(const double &theta, const double &phi);
-        void setNewAxis(const std::vector<double> &ax);
+        std::vector<double> axis();
+        std::vector<double> axis(const double &theta, const double &phi);
+        std::vector<double> axis(const std::vector<double> &ax);
 
-        void setAll(const double &ca1, const double &ca2, const double &ca3,
-                    const double &csz, const double &cdd,
-                    const double &ctlr, const double &cslr);
+        std::vector<double> all() const;
+        std::vector<double> all(const std::vector<double> &al);
 
-        void getAll(double &ca0, double &ca1, double &ca2,
-                    double &csz, double &cdd, double &ctlr, double &cslr) const;
     private:
         // holds the crystals c-axis orientation vector in cartesian coordinates
         std::vector<double> cAxis; // unit vector

@@ -58,25 +58,26 @@ class Distribution {
         std::vector<double> stepInTime(const double &temperature, const std::vector<double> &stress, const double &modelTime, const double &timeStep, std::vector<double> &bulkEdot);
         
         // calculate NNI softness parameter
-        void getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &crystalMagEdot, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress);
+        void soften(std::vector<std::vector<double> > &crystalM, std::vector<double> &crystalMagEdot, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress);
         
         // set softness ratio
-        void setSoftnessRatio(double cc, double cn);
+        void softnessRatio(double cc, double cn);
         
         // save distribution to disk
-        void saveDistribution() const;
-        void saveDistribution(std::string fname) const;
-        void saveDistribution(std::vector<double> &data) const;
+        void save() const;
+        void save(std::string fname) const;
+        void save(std::vector<double> &data) const;
         
         // Load distribution from disk
-        void loadDistribution( std::string fname );
-        void loadDistribution( const std::vector<double> &data );
+        void load( std::string fname );
+        void load( const std::vector<double> &data );
         //generate watson cAxis for distribution
         void generateWatsonAxes(const double &wk);
         
-        unsigned int getNumberCrystals() const;
+        unsigned int size() const;
         
-  static const unsigned int numberParameters;
+        static const unsigned int numberParameters;
+        
     private:
         std::vector<unsigned int> dimensions;
 
@@ -84,7 +85,7 @@ class Distribution {
         
         std::vector<Crystal> crystals;
         
-        std::vector<double> softness;
+        std::vector<double> crystalSoftness;
         std::vector<double> magRSS;
         
         double contribCrystal;

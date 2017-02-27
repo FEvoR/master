@@ -73,7 +73,7 @@ std::vector<double> Crystal::resolveM(const double &temperature, const std::vect
     
         // calculate using axis angles
         double theta, phi;
-        getAxisAngles(theta, phi);
+        angles(theta, phi);
         
         // sines and cosines so calculation only has to be preformed once
         double  st = std::sin(theta), 
@@ -247,7 +247,7 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
     // Select an orientation!
         // Should be close to max MRSS
     double theta = 0.0, phi = 0.0;
-    getAxisAngles(theta, phi);
+    angles(theta, phi);
     
     /* Indexing: {0, 1, 2,
      *            3, 4, 5,
@@ -283,7 +283,7 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
         phi   = dPhi(gen);
     }
     
-    setNewAxis(theta, phi);
+    (void) axis(theta, phi);
     
     cTimeLastRecrystal = modelTime+timeStep;
     cSizeLastRecrystal = cSize;
@@ -313,7 +313,7 @@ unsigned int Crystal::polygonize( const std::vector<double> &stress, const doubl
         // Should be toward max MRSS --away from vertical in uni. comp. or 
         // pure shear, towards vertical if simple shear.
     double theta = 0.0, phi = 0.0;
-    getAxisAngles(theta, phi);
+    angles(theta, phi);
     
     int stressIndex1 = (stress[4] > stress[0] ? 4 : 0);
     int stressIndex2 = (stress[1] > stress[2] ? 1 : 2);
@@ -334,7 +334,7 @@ unsigned int Crystal::polygonize( const std::vector<double> &stress, const doubl
         theta += (  distribution(seed) < 50.0 ? -M_PI/36.0 : M_PI/36.0);
     } 
     
-    setNewAxis(theta, phi);
+    (void) axis(theta, phi);
     
     cTimeLastRecrystal = modelTime+timeStep;
     cSizeLastRecrystal = cSize;
@@ -377,7 +377,7 @@ void Crystal::rotate(const std::vector<double> &bigM, const std::vector<double> 
                     [&](double x){return x/magCaxis;});
 }
 
-void Crystal::seeCrystal() { 
+void Crystal::view() { 
     
     
     std::cout << "The C-Axis orientation is:" << std::endl;
@@ -397,7 +397,7 @@ void Crystal::seeCrystal() {
     std::cout.precision(0);
 }
 
-void Crystal::printCrystal() const {
+void Crystal::print() const {
      
     std::cout.precision(4);
     
@@ -412,7 +412,7 @@ void Crystal::printCrystal() const {
               << std::setw(11) << cSizeLastRecrystal << std::endl;
     
 }
-void Crystal::printCrystal(std::ofstream &file) const {
+void Crystal::print(std::ofstream &file) const {
      
     file.precision(4);
     
@@ -428,7 +428,7 @@ void Crystal::printCrystal(std::ofstream &file) const {
     
 }
 
-void Crystal::getAxisAngles(double &theta, double &phi) {
+void Crystal::angles(double &theta, double &phi) {
     
     double HXY = std::sqrt(cAxis[0]*cAxis[0] + cAxis[1]*cAxis[1]);
     theta = std::atan2(HXY, cAxis[2]);
@@ -436,13 +436,11 @@ void Crystal::getAxisAngles(double &theta, double &phi) {
     
 }
 
-void Crystal::getAxis(double &ca0, double &ca1, double &ca2) {
-    ca0 = cAxis[0];
-    ca1 = cAxis[1];
-    ca2 = cAxis[2];
+std::vector<double> Crystal::axis() {
+    return cAxis;
 }
 
-void Crystal::setNewAxis(const double &theta, const double &phi) {
+std::vector<double> Crystal::axis(const double &theta, const double &phi) {
     
     cAxis = {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
     
@@ -453,35 +451,33 @@ void Crystal::setNewAxis(const double &theta, const double &phi) {
     std::transform(cAxis.begin(), cAxis.end(), cAxis.begin(), 
                    [&](double x){return x/cAxisMag;} );
     }
-}
-void Crystal::setNewAxis(const std::vector<double> &ax) {
 
-        assert(ax.size() == 3);
-        cAxis = ax;
+    return cAxis;
 }
 
-void Crystal::setAll(const double &ca0, const double &ca1, const double &ca2, 
-                    const double &csz, const double &cdd, 
-                    const double &ctlr, const double &cslr) {
-    
-    setNewAxis({ca0, ca1, ca2});
-    
-    cSize     = csz;
-    cDislDens = cdd;
-    
-    cTimeLastRecrystal = ctlr;
-    cSizeLastRecrystal = cslr;
+std::vector<double> Crystal::axis(const std::vector<double> &ax) {
+    assert(ax.size() == 3);
+    cAxis = ax;
+    return cAxis;
 }
 
-void Crystal::getAll(double &ca0, double &ca1, double &ca2, 
-                    double &csz, double &cdd, double &ctlr, double &cslr) const {
-    ca0  = cAxis[0];
-    ca1  = cAxis[1];
-    ca2  = cAxis[2];
-    csz  = cSize;
-    cdd  = cDislDens;
-    ctlr = cTimeLastRecrystal;
-    cslr = cSizeLastRecrystal;
+
+std::vector<double> Crystal::all() const {
+    return {cAxis[0], cAxis[1], cAxis[2], cSize, cDislDens, 
+            cTimeLastRecrystal, cSizeLastRecrystal};
+}
+
+std::vector<double> Crystal::all(const std::vector<double> &al) {
+    
+    assert(al.size() == 7);
+    
+    (void) axis({al[0], al[1], al[2]});
+    
+    cSize     = al[3];
+    cDislDens = al[4];
+    
+    cTimeLastRecrystal = al[5];
+    cSizeLastRecrystal = al[6];
 }
 
 } // end of namespace FEvoR

@@ -83,7 +83,7 @@ int main()
                       << std::endl;
     
     std::string saveInitial = "distribution_initial.csv";
-    d1.saveDistribution(saveInitial);
+    d1.save(saveInitial);
     
     std::cout << "\n" << "Initial distribution saved in: " 
                       << saveInitial << "\n"
@@ -97,7 +97,7 @@ int main()
     msecs = ((double) (end - start)) * 1000 / CLOCKS_PER_SEC;
     
     std::string saveFinal = "distribution_final.csv";
-    d1.saveDistribution(saveFinal);
+    d1.save(saveFinal);
     
     std::cout << "\n" << "Stepped Distribution! Saved in: " 
                       << saveFinal << "\n" 

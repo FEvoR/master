@@ -56,16 +56,16 @@ Distribution::Distribution(std::vector<unsigned int> lwh): dimensions(lwh) {
     numberCrystals = dimensions[0]*dimensions[1]*dimensions[2];
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         crystals.push_back( Crystal ({0.0,0.0,1.0}, 0.01, 1.0e10) );
-        softness.push_back(1.0);
+        crystalSoftness.push_back(1.0);
         magRSS.push_back(1.0);
     }
     
-    setSoftnessRatio(6.0, 1.0);
+    softnessRatio(6.0, 1.0);
 }
 
 // construct a distribution from a saved distribution of crystals
 Distribution::Distribution(std::vector<unsigned int> lwh, std::string fname): Distribution(lwh)  {
-    loadDistribution(fname);
+    load(fname);
 }
 
 // construct a distribution using the Watson distribution for axis angles
@@ -82,11 +82,11 @@ Distribution::Distribution(std::vector<unsigned int> lwh, std::vector<double> &d
         crystals.push_back( Crystal ({data[ii*n+0],data[ii*n+1],data[ii*n+2]},
                                            data[ii*n+3], data[ii*n+4],
                                            data[ii*n+5], data[ii*n+6]) );
-        softness.push_back(1.0);
+        crystalSoftness.push_back(1.0);
         magRSS.push_back(1.0);
     }
     
-    setSoftnessRatio(6.0, 1.0);
+    softnessRatio(6.0, 1.0);
 }
 
 // Define function members
@@ -112,7 +112,7 @@ std::vector<double> Distribution::stepInTime(const double &temperature, const st
         crystalM.push_back( crystals[ii].resolveM(temperature, devStress, magRSS[ii], crystalMagEdot[ii]) );
     }
     
-    getSoftness(crystalM, crystalMagEdot, bulkM, bulkEdot, devStress);
+    soften(crystalM, crystalMagEdot, bulkM, bulkEdot, devStress);
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {    
         crystalK = crystals[ii].grow(temperature, modelTime);
@@ -140,7 +140,7 @@ std::vector<double> Distribution::stepInTime(const double &temperature, const st
     return stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
 }
 
-void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std::vector<double> &crystalMagEdot, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
+void Distribution::soften(std::vector<std::vector<double> > &crystalM, std::vector<double> &crystalMagEdot, std::vector<double> &bulkM, std::vector<double> &bulkEdot, const std::vector<double> &stress) {
     
     /* Ensure deviatoric stress 
      * Indexing: {0, 1, 2,
@@ -176,12 +176,12 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
                 softy = 10.0; 
             
             assert(contribCrystal != 0.0 || contribNeighbor !=0.0);
-            softness[ii] = 1.0/(contribCrystal + 6.0*contribNeighbor)*(contribCrystal + contribNeighbor*softy);
+            crystalSoftness[ii] = 1.0/(contribCrystal + 6.0*contribNeighbor)*(contribCrystal + contribNeighbor*softy);
             
             std::transform(crystalM[ii].begin(),crystalM[ii].end(),crystalM[ii].begin(), 
-                        [&](double x){return x*std::pow(softness[ii],glenExp);});
+                        [&](double x){return x*std::pow(crystalSoftness[ii],glenExp);});
             
-            crystalMagEdot[ii] *= std::pow(softness[ii],glenExp);
+            crystalMagEdot[ii] *= std::pow(crystalSoftness[ii],glenExp);
                         
             std::transform(bulkM.begin(),bulkM.end(),crystalM[ii].begin(), bulkM.begin(),
                            std::plus<double>());
@@ -211,12 +211,12 @@ void Distribution::getSoftness(std::vector<std::vector<double> > &crystalM, std:
                     [&](double x){return x/2.0;});
 }
 
-void Distribution::setSoftnessRatio(double cc, double cn) {
+void Distribution::softnessRatio(double cc, double cn) {
     contribCrystal  = cc;
     contribNeighbor = cn;
 }
 
-void Distribution::saveDistribution() const {
+void Distribution::save() const {
     std::cout << "# "
               << "Crystal"                << ", "
               << "C-Axis (x)"             << ", "
@@ -231,10 +231,10 @@ void Distribution::saveDistribution() const {
         
         std::cout << std::setw(5) << ii << ", ";
                   
-        crystals[ii].printCrystal();
+        crystals[ii].print();
     }
 }
-void Distribution::saveDistribution(std::string fname) const {
+void Distribution::save(std::string fname) const {
     std::ofstream file(fname);
     
     file << "# "
@@ -251,21 +251,28 @@ void Distribution::saveDistribution(std::string fname) const {
         
         file << std::setw(5) << ii << ", ";
                   
-        crystals[ii].printCrystal(file);
+        crystals[ii].print(file);
     }
 }
-void Distribution::saveDistribution(std::vector<double> &data) const {
+void Distribution::save(std::vector<double> &data) const {
     data.resize(numberParameters*numberCrystals);
     const int n = numberParameters;
   
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
-        crystals[ii].getAll(data[ii*n+0], data[ii*n+1], data[ii*n+2],
-                            data[ii*n+3], data[ii*n+4],
-                            data[ii*n+5], data[ii*n+6]);
+        std::vector<double> al;
+        al = crystals[ii].all();
+        
+        data[ii*n+0] = al[0]; 
+        data[ii*n+1] = al[1]; 
+        data[ii*n+2] = al[2];
+        data[ii*n+3] = al[3]; 
+        data[ii*n+4] = al[4];
+        data[ii*n+5] = al[5]; 
+        data[ii*n+6] = al[6];
     }
 }
 
-void Distribution::loadDistribution( std::string fname ) {
+void Distribution::load( std::string fname ) {
     std::ifstream file(fname);
     std::string line;
     std::string field;
@@ -290,23 +297,23 @@ void Distribution::loadDistribution( std::string fname ) {
     
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
         // data[ii*8] is crystal number, skip this
-        crystals[ii].setAll(data[ii*8+1],
-                            data[ii*8+2],
-                            data[ii*8+3],
-                            data[ii*8+4],
-                            data[ii*8+5],
-                            data[ii*8+6],
-                            data[ii*8+7]);
+        crystals[ii].all({data[ii*8+1],
+                          data[ii*8+2],
+                          data[ii*8+3],
+                          data[ii*8+4],
+                          data[ii*8+5],
+                          data[ii*8+6],
+                          data[ii*8+7]});
     }
 }
-void Distribution::loadDistribution( const std::vector<double> &data ) {
+void Distribution::load( const std::vector<double> &data ) {
     // TODO: check size!
     // assert(data.size() == numberCrystals*7); 
   const int n = numberParameters;
     for (unsigned int ii = 0; ii!= numberCrystals; ++ii) {
-        crystals[ii].setAll(data[ii*n+0], data[ii*n+1], data[ii*n+2],
-                            data[ii*n+3], data[ii*n+4], 
-                            data[ii*n+5], data[ii*n+6]);
+        crystals[ii].all({data[ii*n+0], data[ii*n+1], data[ii*n+2],
+                          data[ii*n+3], data[ii*n+4], 
+                          data[ii*n+5], data[ii*n+6]});
     }
 }
 
@@ -334,13 +341,13 @@ void Distribution::generateWatsonAxes(const double &wk) {
                                 [&](double x){return x/axisMag;} );
             }
         
-            crystals[ii].setNewAxis(axis);
+            crystals[ii].axis(axis);
         }
         
     } else if (wk < -700.0) {
         // perfect bipolar (single maximum)
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
-                crystals[ii].setNewAxis({0.0,0.0,1.0});
+                crystals[ii].axis({0.0,0.0,1.0});
         }
     } else if (wk < 0.0) {
         // bipolar (single maximum)
@@ -363,7 +370,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
                 phi   = gPhi(gen);
                 theta = dTheta(gen);
                 
-                crystals[ii].setNewAxis(theta, phi);
+                crystals[ii].axis(theta, phi);
         }
         
         
@@ -375,7 +382,7 @@ void Distribution::generateWatsonAxes(const double &wk) {
         
         for (unsigned int ii = 0; ii!= numberCrystals; ++ii) { 
                 phi   = gPhi(gen);
-                crystals[ii].setNewAxis(theta, phi);
+                crystals[ii].axis(theta, phi);
         }
     } else { //(wk > 0.0)
         // equatorial girdle
@@ -397,12 +404,12 @@ void Distribution::generateWatsonAxes(const double &wk) {
                 phi   = gPhi(gen);
                 theta = dTheta(gen);
                 
-                crystals[ii].setNewAxis(theta, phi);
+                crystals[ii].axis(theta, phi);
         }
     }
 }
 
-unsigned int Distribution::getNumberCrystals() const {
+unsigned int Distribution::size() const {
     return numberCrystals;
 }
 

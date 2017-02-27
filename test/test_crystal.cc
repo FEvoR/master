@@ -51,10 +51,7 @@ TEST_CASE("Rotate", "[crystal]") {
 TEST_CASE("Resolve M",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {0,0,1},0.01,1e11);
     
-    double theta, phi;
-    theta = M_PI/4.0;
-    phi = M_PI/4.0;
-    c1.setNewAxis(theta, phi);
+    (void) c1.axis(M_PI/4.0, M_PI/4.0);
     
     std::vector<double> stress = {10000.0,     0.0,     0.0,
                                       0.0,     0.0,     0.0,
@@ -74,40 +71,41 @@ TEST_CASE("Resolve M",  "[crystal]") {
 TEST_CASE("Normal grain growth",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,1.0e10);
     
-    double ca0, ca1, ca2, csz, cdd, ctlr, cslr; 
+    std::vector<double> al; 
     
     double temperature, model_time, K;
     temperature = 273.15-11.0; // units: Kelvin
     model_time = 1000.0*365.0*24.0*60.0*60.0;   // units: m
     
     K = c1.grow(temperature, model_time);
-    c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
+    al = c1.all();
 
     //only thing changed should be the crystal size
-    REQUIRE( ca0 == Approx( 1.0 ) );
-    REQUIRE( ca1 == Approx( 0.0 ) );
-    REQUIRE( ca2 == Approx( 0.0 ) );
-    REQUIRE( cdd == Approx( 1.0e10 ) );
-    REQUIRE( ctlr == Approx( 0.0 ) );
-    REQUIRE( cslr == Approx( 0.01 ) );
+    REQUIRE( al.size() == 7 );
+    REQUIRE( al[0] == Approx( 1.0 ) );
+    REQUIRE( al[1] == Approx( 0.0 ) );
+    REQUIRE( al[2] == Approx( 0.0 ) );
+    REQUIRE( al[4] == Approx( 1.0e10 ) );
+    REQUIRE( al[5] == Approx( 0.0 ) );
+    REQUIRE( al[6] == Approx( 0.01 ) );
     
-    REQUIRE( csz == Approx( 1.0055e-2).epsilon( 1.e-6 ) );
+    REQUIRE( al[3] == Approx( 1.0055e-2).epsilon( 1.e-6 ) );
     
     SECTION("Update dislocation density") {
         double Medot = sqrt(1.0/2.0);
         
         c1.dislocate(model_time, Medot, K);
-        c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
+        al = c1.all();
 
         //only thing changed should be the dislocation density
-        REQUIRE( ca0 == Approx( 1.0 ) );
-        REQUIRE( ca1 == Approx( 0.0 ) );
-        REQUIRE( ca2 == Approx( 0.0 ) );
-        REQUIRE( csz == Approx( 1.0055e-2).epsilon( 1.e-6 ) );
-        REQUIRE( ctlr == Approx( 0.0 ) );
-        REQUIRE( cslr == Approx( 0.01 ) );
+        REQUIRE( al[0] == Approx( 1.0 ) );
+        REQUIRE( al[1] == Approx( 0.0 ) );
+        REQUIRE( al[2] == Approx( 0.0 ) );
+        REQUIRE( al[3] == Approx( 1.0055e-2).epsilon( 1.e-6 ) );
+        REQUIRE( al[5] == Approx( 0.0 ) );
+        REQUIRE( al[6] == Approx( 0.01 ) );
         
-        REQUIRE( cdd == Approx( 4.9282e21).epsilon( 1e17 ) );
+        REQUIRE( al[4] == Approx( 4.9282e21).epsilon( 1e17 ) );
     }
 }
 
@@ -115,7 +113,7 @@ TEST_CASE("Normal grain growth",  "[crystal]") {
 TEST_CASE("Migration recrystallization",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},0.01,1.0e11);
     
-    double ca0, ca1, ca2, csz, cdd, ctlr, cslr; 
+    std::vector<double> al; 
     
     double model_time, time_step;
     model_time = time_step = 1000.0*365.0*24.0*60.0*60.0;
@@ -125,13 +123,13 @@ TEST_CASE("Migration recrystallization",  "[crystal]") {
                                       0.0,     0.0,-10000.0};
     
     c1.migRe(stress, model_time, time_step);
-    c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
+    al = c1.all();
 
-    REQUIRE( csz == Approx(4.6416e-6).epsilon(1.0e-10) );
-    REQUIRE( cdd == Approx(1.0e10) );
+    REQUIRE( al[3] == Approx(4.6416e-6).epsilon(1.0e-10) );
+    REQUIRE( al[4] == Approx(1.0e10) );
     
     double theta, phi;
-    c1.getAxisAngles(theta, phi);
+    c1.angles(theta, phi);
     
     REQUIRE( theta == Approx(M_PI/4.0).epsilon(M_PI/12.0));
     REQUIRE( phi == Approx(0.0).epsilon(M_PI) );
@@ -141,7 +139,7 @@ TEST_CASE("Migration recrystallization",  "[crystal]") {
 TEST_CASE("Polygonize",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {0.0,0.0,1.0},0.01,1.0e11);
     
-    double ca0, ca1, ca2, csz, cdd, ctlr, cslr; 
+    std::vector<double> al; 
     
     double model_time, time_step;
     model_time = time_step = 1000.0*365.0*24.0*60.0*60.0;
@@ -151,13 +149,13 @@ TEST_CASE("Polygonize",  "[crystal]") {
                                       0.0,     0.0,-10000.0};
     
     c1.polygonize(stress, 1.0, model_time, time_step);
-    c1.getAll(ca0, ca1, ca2, csz, cdd, ctlr, cslr);
+    al = c1.all();
    
-    REQUIRE( csz == Approx(5.0e-3).epsilon(1.0e-7) );
-    REQUIRE( cdd == Approx(4.6e10).epsilon(1.0e6) );
+    REQUIRE( al[3] == Approx(5.0e-3).epsilon(1.0e-7) );
+    REQUIRE( al[4] == Approx(4.6e10).epsilon(1.0e6) );
 
     double theta, phi;
-    c1.getAxisAngles(theta, phi);
+    c1.angles(theta, phi);
     
     REQUIRE( theta == Approx(M_PI/36.0) ); // 5 degrees
     REQUIRE( phi == Approx(0.0).epsilon(M_PI) );
@@ -168,19 +166,18 @@ TEST_CASE("Crystal angles",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {1.0,0.0,0.0},1.0,10.0);
    
     double theta = 0.0, phi = 0.0;
-    c1.getAxisAngles(theta, phi);
+    c1.angles(theta, phi);
 
     REQUIRE( theta == Approx( M_PI/2.0 ) );
     REQUIRE( phi == Approx( 0.0 ) );
 
-    c1.setNewAxis(M_PI/2.0, M_PI/2.0);
+    std::vector<double> ca; 
+    ca = c1.axis(M_PI/2.0, M_PI/2.0);
     
-    double ca0, ca1, ca2; 
-    c1.getAxis(ca0, ca1, ca2);
-
-    REQUIRE( ca0 == Approx(0.0) );
-    REQUIRE( ca1 == Approx(1.0) );
-    REQUIRE( ca2 == Approx(0.0) );
+    REQUIRE( ca.size() == 3 );
+    REQUIRE( ca[0] == Approx(0.0) );
+    REQUIRE( ca[1] == Approx(1.0) );
+    REQUIRE( ca[2] == Approx(0.0) );
 
     std::random_device seed;
     std::mt19937 gen(seed());
@@ -191,10 +188,10 @@ TEST_CASE("Crystal angles",  "[crystal]") {
     theta = dTheta(gen);
     phi = dPhi(gen);
     
-    c1.setNewAxis(theta, phi);
+    (void) c1.axis(theta, phi);
     
     double theta2 = 0.0, phi2 = 0.0;
-    c1.getAxisAngles(theta2, phi2);
+    c1.angles(theta2, phi2);
 
     REQUIRE( theta2 == Approx(theta) );
     REQUIRE( phi2 == Approx(phi) );

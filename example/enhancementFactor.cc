@@ -96,11 +96,11 @@ int main(int argc, char *argv[])
 
     FEvoR::Distribution d1(packingDimensions, watsonK);
     FEvoR::Distribution di(packingDimensions,0.0);
-    d1.setSoftnessRatio(cc, cn);
-    di.setSoftnessRatio(cc, cn);
+    d1.softnessRatio(cc, cn);
+    di.softnessRatio(cc, cn);
     
-    d1.saveDistribution("eDist_wk_initial.csv");
-    di.saveDistribution("eDist_iso_initial.csv");
+    d1.save("eDist_wk_initial.csv");
+    di.save("eDist_iso_initial.csv");
     
     std::cout << "\n" << "************************************ \n"
                       << "Example time step. \n"
@@ -121,8 +121,8 @@ int main(int argc, char *argv[])
     d1.stepInTime(temperature, stress, modelTime, timeStep, nMigre, nPoly, bulkEdot);
     di.stepInTime(temperature, stress, modelTime, timeStep, bulkEdot_iso);
     
-    d1.saveDistribution("eDist_wk_final.csv");
-    di.saveDistribution("eDist_iso_final.csv");
+    d1.save("eDist_wk_final.csv");
+    di.save("eDist_iso_final.csv");
     
     double M = 0.0,
        M_iso = 0.0;
