@@ -261,6 +261,7 @@ unsigned int Crystal::migRe(const std::vector<double> &stress, const double &mod
     std::random_device seed;
     std::mt19937 gen(seed());
     
+    //NOTE: see http://mathworld.wolfram.com/SpherePointPicking.html
     std::uniform_real_distribution<double> dPhi(0.0,2.0*M_PI);
     double u_pSix   = (std::cos(M_PI/6.0)+1.0)/2.0,
            u_pThree = (std::cos(M_PI/3.0)+1.0)/2.0;
