@@ -39,8 +39,6 @@
 #include "fevor_crystal.hh"
 #include "vector_tensor_operations.hh"
 
-//TODO: develop a robust test suite that includes edge cases
-
 namespace FEvoR {
 
 TEST_CASE("Rotate", "[crystal]") {
@@ -50,21 +48,31 @@ TEST_CASE("Rotate", "[crystal]") {
 
 TEST_CASE("Resolve M",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {0,0,1},0.01,1e11);
+   
+    double theta = M_PI/4.0;
+    double phi = M_PI/4.0;
     
-    (void) c1.axis(M_PI/4.0, M_PI/4.0);
+    (void) c1.axis(theta, phi);
     
-    std::vector<double> stress = {10000.0,     0.0,     0.0,
-                                      0.0,     0.0,     0.0,
+    std::vector<double> stress = { 5000.0,     0.0,     0.0,
+                                      0.0,  5000.0,     0.0,
                                       0.0,     0.0,-10000.0};
-    double temperature = 273.15-10.0;
-    double Mrss = 1.0;
-    double Medot = 1.0;
-    
+    double temperature = 263.15;
+    double Mrss;
+    double Medot;
     std::vector<double> bigM;
     bigM = c1.resolveM(temperature, stress, Mrss, Medot);
-   
+    
+    std::vector<double> velCrystal;
+    velCrystal = tensorMixedInner(bigM, stress);
+
     REQUIRE( bigM.size() == 81 );
-    //TODO: actual tests for bigM
+    REQUIRE( velCrystal.size() == 9 );
+    
+    double e33 = 630.0*3.5e-25*std::pow(stress[8],3)*std::pow(std::cos(theta),4)*std::pow(std::sin(theta),4)/72.0;
+        //From: Thorsteinsson 2001, Eqn. 14, p. 510
+
+    REQUIRE( velCrystal[8] == Approx(e33) );
 }
 
 
