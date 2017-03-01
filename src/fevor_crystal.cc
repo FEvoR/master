@@ -353,13 +353,13 @@ void Crystal::rotate(const std::vector<double> &bigM, const std::vector<double> 
     std::transform(rdot.begin(),rdot.end(),rdot.begin(), 
                     [&](double x){return x/2.0;});
     
+    //NOTE: see Castelnau and Duval (1994), Eqn. 1-6, p. 279
     std::vector<double> r = { 0, 1, 1,
                              -1, 0, 1,
                              -1,-1, 0};
-    
-    
     std::transform(r.begin(),r.end(), bulkEdot.begin(), r.begin(), 
                     std::multiplies<double>() );
+    
     std::transform(r.begin(),r.end(), rdot.begin(), r.begin(), 
                     std::minus<double>() );
                     

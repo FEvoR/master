@@ -41,10 +41,6 @@
 
 namespace FEvoR {
 
-TEST_CASE("Rotate", "[crystal]") {
-    //TODO: test FEvoR::Crystal.rotate
-}
-
 
 TEST_CASE("Resolve M",  "[crystal]") {
     FEvoR::Crystal c1(std::vector<double> {0,0,1},0.01,1e11);
@@ -57,22 +53,47 @@ TEST_CASE("Resolve M",  "[crystal]") {
     std::vector<double> stress = { 5000.0,     0.0,     0.0,
                                       0.0,  5000.0,     0.0,
                                       0.0,     0.0,-10000.0};
+    
     double temperature = 263.15;
     double Mrss;
     double Medot;
     std::vector<double> bigM;
     bigM = c1.resolveM(temperature, stress, Mrss, Medot);
+    REQUIRE( bigM.size() == 81 );
     
+    double theta2, phi2;
+    c1.angles(theta2, phi2);
+
+    REQUIRE( theta2 == Approx(theta) );
+    REQUIRE( phi2 == Approx(phi) );
+
     std::vector<double> velCrystal;
     velCrystal = tensorMixedInner(bigM, stress);
-
-    REQUIRE( bigM.size() == 81 );
     REQUIRE( velCrystal.size() == 9 );
     
     double e33 = 630.0*3.5e-25*std::pow(stress[8],3)*std::pow(std::cos(theta),4)*std::pow(std::sin(theta),4)/72.0;
         //From: Thorsteinsson 2001, Eqn. 14, p. 510
-
     REQUIRE( velCrystal[8] == Approx(e33) );
+
+    SECTION( "Rotate" ) {
+        std::vector<double> bulkEdot = { 0.0, 0.0, 0.0,
+                                         0.0, 0.0, 0.0,
+                                         0.0, 0.0, 0.0};
+        
+        
+        std::vector<double> years = {1000.0, 100.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0};
+        for (unsigned int ii = 0; ii != years.size(); ++ii) {
+            
+            INFO("Cannot resolve rotations using " << years[ii] << " years time steps.");
+
+            (void) c1.axis(theta, phi);
+            double timeStep = years[ii]*365.0*24.0*60.0*60.0;
+            
+            c1.rotate(bigM, bulkEdot, stress, timeStep);
+            c1.angles(theta2, phi2);
+            CHECK( theta2 != Approx(theta) );
+        }
+    }
 }
 
 
